@@ -8,6 +8,8 @@ import org.opencv.core.Mat
 import org.opencv.imgcodecs.Imgcodecs
 import kotlin.properties.Delegates
 import javafx.fxml.FXML
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
 
 /**
  * Created by cansik on 29.09.16.
@@ -29,7 +31,23 @@ class MainView {
     fun testImage_Clicked()
     {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-        val image = Imgcodecs.imread("data/A_N1.png")
-        imageViewOriginal!!.image = image!!.toImage()
+        val source = Imgcodecs.imread("data/A_N1.png")
+        imageViewOriginal!!.image = source.toImage()
+
+        var destination = Mat(source.rows(), source.cols(), source.type())
+
+        destination = source
+
+        val erosion_size = 50
+        val dilation_size = 50
+
+        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosion_size + 1.0, 2.0 * erosion_size + 1.0))
+        Imgproc.erode(source, destination, element)
+
+        destination = source
+
+        val element1 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size + 1.0, 2.0 * dilation_size + 1.0))
+        Imgproc.dilate(source, destination, element1)
+        imageViewResult!!.image = destination.toImage()
     }
 }
