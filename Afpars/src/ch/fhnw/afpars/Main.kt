@@ -3,18 +3,26 @@
  */
 package ch.fhnw.afpars
 
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Mat
+import javafx.application.Application
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.stage.Stage
 
-class Main {
+class Main : Application() {
+
+    @Throws(Exception::class)
+    override fun start(primaryStage: Stage) {
+        val root = FXMLLoader.load<Parent>(javaClass.classLoader.getResource("view/MainView.fxml"))
+        primaryStage.title = "Afpars"
+        primaryStage.scene = Scene(root, 300.0, 275.0)
+        primaryStage.show()
+    }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-            val mat = Mat.eye(3, 3, CvType.CV_8UC1);
-            System.out.println("mat = " + mat.dump());
+            launch(Main::class.java)
         }
     }
 }
