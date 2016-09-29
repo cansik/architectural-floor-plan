@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-
-<GridPane alignment="center" hgap="10" minHeight="300.0" minWidth="300.0" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
-   <columnConstraints>
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-   </rowConstraints>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
    <children>
-      <Button mnemonicParsing="false" onAction="#testOpenCV_Clicked" text="Test OpenCV" />
+      <Button layoutX="106.0" layoutY="319.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked" text="Test OpenCV" />
+      <ImageView id="test" fx:id="imageViewResult" fitHeight="250.0" fitWidth="250.0" layoutX="318.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test" />
+      <ImageView fx:id="imageViewOriginal" fitHeight="250.0" fitWidth="250.0" layoutX="31.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" />
+      <Button layoutX="400.0" layoutY="319.0" mnemonicParsing="false" onAction="#testImage_Clicked" text="Image Test" />
    </children>
-</GridPane>
+</AnchorPane>
