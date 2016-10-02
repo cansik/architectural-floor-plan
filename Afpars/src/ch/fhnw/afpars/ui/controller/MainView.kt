@@ -32,14 +32,26 @@ class MainView {
     {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
         val source = Imgcodecs.imread("data/A_N1.png")
+        Imgproc.threshold(source,source, 253.0,255.0,0)
+
         imageViewOriginal!!.image = source.toImage()
 
         var destination = Mat(source.rows(), source.cols(), source.type())
 
         destination = source
 
-        val erosion_size = 50
-        val dilation_size = 50
+        val dilation_size1 = 6
+        val erosion_size = 20
+        val dilation_size = 20
+
+        val element2 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
+        Imgproc.dilate(source, destination, element2)
+
+        destination = source
+
+        val element3 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
+        Imgproc.erode(source, destination, element3)
+        destination = source
 
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosion_size + 1.0, 2.0 * erosion_size + 1.0))
         Imgproc.erode(source, destination, element)
