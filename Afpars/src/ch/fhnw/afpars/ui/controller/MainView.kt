@@ -1,19 +1,14 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.util.drawHough
 import ch.fhnw.afpars.util.toImage
 import javafx.scene.image.ImageView
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Mat
 import org.opencv.imgcodecs.Imgcodecs
 import kotlin.properties.Delegates
 import javafx.fxml.FXML
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
-/**
- * Created by cansik on 29.09.16.
- */
 class MainView {
     @FXML
     var imageViewOriginal: ImageView? = null
@@ -40,26 +35,30 @@ class MainView {
 
         destination = source
 
-        val dilation_size1 = 6
-        val erosion_size = 20
-        val dilation_size = 20
+        val dilation_size1 = 8
+        val erosion_size = 25
+        val dilation_size = 34
 
         val element2 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
-        Imgproc.dilate(source, destination, element2)
-
-        destination = source
+        Imgproc.dilate(destination, destination, element2)
 
         val element3 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
-        Imgproc.erode(source, destination, element3)
-        destination = source
+        Imgproc.erode(destination, destination, element3)
 
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosion_size + 1.0, 2.0 * erosion_size + 1.0))
-        Imgproc.erode(source, destination, element)
+        Imgproc.erode(destination, destination, element)
 
-        destination = source
 
         val element1 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size + 1.0, 2.0 * dilation_size + 1.0))
-        Imgproc.dilate(source, destination, element1)
-        imageViewResult!!.image = destination.toImage()
+        Imgproc.dilate(destination, destination, element1)
+
+        //Hough-Transformation
+        val dest = drawHough(destination)
+
+
+
+        imageViewResult!!.image = dest.toImage()
     }
+
+
 }
