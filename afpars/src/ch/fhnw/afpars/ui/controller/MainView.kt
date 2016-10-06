@@ -2,11 +2,13 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.util.drawHough
 import ch.fhnw.afpars.util.toImage
-import javafx.scene.image.ImageView
-import org.opencv.imgcodecs.Imgcodecs
-import kotlin.properties.Delegates
 import javafx.fxml.FXML
-import org.opencv.core.*
+import javafx.scene.image.ImageView
+import org.opencv.core.Core
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.Size
+import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 
 class MainView {
@@ -14,20 +16,18 @@ class MainView {
     var imageViewOriginal: ImageView? = null
 
     @FXML
-    var imageViewResult:ImageView? = null
+    var imageViewResult: ImageView? = null
 
-    fun testOpenCV_Clicked()
-    {
+    fun testOpenCV_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
         val mat = Mat.eye(3, 3, CvType.CV_8UC1)
         System.out.println("mat = " + mat.dump())
     }
 
-    fun testImage_Clicked()
-    {
+    fun testImage_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
         val source = Imgcodecs.imread("data/A_N1.png")
-        Imgproc.threshold(source,source, 253.0,255.0,0)
+        Imgproc.threshold(source, source, 253.0, 255.0, 0)
 
         imageViewOriginal!!.image = source.toImage()
 
@@ -54,8 +54,6 @@ class MainView {
 
         //Hough-Transformation
         val dest = drawHough(destination)
-
-
 
         imageViewResult!!.image = dest.toImage()
     }
