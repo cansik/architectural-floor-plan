@@ -1,11 +1,12 @@
-Afpars/.gradle
-Afpars/.idea
-Afpars/build
-Afpars/target
-Afpars/Afpars.iml
+afpars/.gradle
+afpars/.idea
+afpars/build
+afpars/target
+afpars/Afpars.iml
 afpars/out
 afpars/afpars.iml___jb_tmp___
 *.aux
 *.log
 *.toc
 *.gz
+afpars.iml
