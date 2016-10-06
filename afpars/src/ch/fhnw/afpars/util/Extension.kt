@@ -17,9 +17,13 @@ Hough-Transformation mit einzeichnen der Linien in eine Mat()
  */
 fun drawHough(destination:Mat):Mat{
     //Canny Image
+    //val dilation_size1 = 8
+    //val element2 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
+    //Imgproc.erode(destination,destination,element2)
     var canny = Mat()
+    //Imgproc.blur(destination, canny, Size(3.0,3.0) );
     val threshlow = 1.0
-    Imgproc.Canny(destination, canny, threshlow, 1000.0);
+    Imgproc.Canny(destination, canny, 50.0, 150.0);
 
     //HoughTransformation
     val lines = Mat()

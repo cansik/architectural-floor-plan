@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
    <children>
-      <Button layoutX="106.0" layoutY="319.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked" text="Test OpenCV" />
-      <ImageView id="test" fx:id="imageViewResult" fitHeight="600.0" fitWidth="600.0" layoutX="318.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test" />
-      <ImageView fx:id="imageViewOriginal" fitHeight="250.0" fitWidth="250.0" layoutX="31.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" />
-      <Button layoutX="400.0" layoutY="319.0" mnemonicParsing="false" onAction="#testImage_Clicked" text="Image Test" />
+      <Button layoutX="234.0" layoutY="516.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked" text="Test OpenCV" />
+      <ImageView id="test" fx:id="imageViewResult" fitHeight="600.0" fitWidth="600.0" layoutX="577.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test" />
+      <ImageView fx:id="imageViewOriginal" fitHeight="473.0" fitWidth="464.0" layoutX="38.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" />
+      <Button layoutX="773.0" layoutY="516.0" mnemonicParsing="false" onAction="#testImage_Clicked" text="Image Test" />
    </children>
 </AnchorPane>
