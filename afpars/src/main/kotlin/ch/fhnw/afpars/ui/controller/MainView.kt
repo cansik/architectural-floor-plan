@@ -2,7 +2,10 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.util.drawHough
+import ch.fhnw.afpars.util.standardAlg
 import ch.fhnw.afpars.util.toImage
+import ch.fhnw.afpars.workflow.Workflow
+import ch.fhnw.afpars.workflow.WorkflowEngine
 import javafx.fxml.FXML
 import javafx.scene.image.ImageView
 import javafx.stage.FileChooser
@@ -38,27 +41,13 @@ class MainView {
 
         imageViewOriginal!!.image = source.image.toImage()
 
-        var destination = source.image
+        var destination = source
 
-        val dilation_size1 = 8
-        val erosion_size = 25
-        val dilation_size = 34
-
-        val element2 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
-        Imgproc.dilate(destination, destination, element2)
-
-        val element3 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
-        Imgproc.erode(destination, destination, element3)
-
-        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosion_size + 1.0, 2.0 * erosion_size + 1.0))
-        Imgproc.erode(destination, destination, element)
-
-
-        val element1 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size + 1.0, 2.0 * dilation_size + 1.0))
-        Imgproc.dilate(destination, destination, element1)
+        val workflow = WorkflowEngine()
+        destination = workflow.run(Workflow(standardAlg()),destination)
 
         //Hough-Transformation
-        val dest = drawHough(destination)
+        val dest = drawHough(destination.image)
 
         imageViewResult!!.image = dest.toImage()}
     }

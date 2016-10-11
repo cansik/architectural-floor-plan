@@ -1,5 +1,8 @@
 package ch.fhnw.afpars.util
 
+import ch.fhnw.afpars.algorithm.IAlgorithm
+import ch.fhnw.afpars.algorithm.preprocessing.Dilate
+import ch.fhnw.afpars.algorithm.preprocessing.Erode
 import javafx.scene.image.Image
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -56,4 +59,13 @@ fun drawHough(destination:Mat):Mat{
     //Im moment wird eine Matrize mit allen Linien zurückgegeben.
     //Es könnte auch das ganze Bild zurückgegeben werden.
     return dest
+}
+
+fun standardAlg():Array<out IAlgorithm>{
+    val algorithms:MutableList<IAlgorithm> = arrayListOf()
+    algorithms.add(Dilate(8))
+    algorithms.add(Erode(8))
+    algorithms.add(Erode(25))
+    algorithms.add(Dilate(34))
+    return algorithms.toTypedArray()
 }
