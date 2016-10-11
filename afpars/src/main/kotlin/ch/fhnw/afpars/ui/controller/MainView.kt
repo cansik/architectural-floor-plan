@@ -1,14 +1,15 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.util.drawHough
 import ch.fhnw.afpars.util.toImage
 import javafx.fxml.FXML
 import javafx.scene.image.ImageView
+import javafx.stage.FileChooser
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
-import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 
 class MainView {
@@ -26,14 +27,18 @@ class MainView {
 
     fun testImage_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-        val source = Imgcodecs.imread("data/A_N1.png")
-        Imgproc.threshold(source, source, 253.0, 255.0, 0)
+        //val source = Imgcodecs.imread("data/A_N1.png")
+        //Imgproc.threshold(source, source, 253.0, 255.0, 0)
 
-        imageViewOriginal!!.image = source.toImage()
+        val fileChooser = FileChooser()
+        fileChooser.title = "Open image"
+        val file = fileChooser.showOpenDialog(null)
+        if(file != null){
+        val source = AFImageReader().read(file.toPath())
 
-        var destination = Mat(source.rows(), source.cols(), source.type())
+        imageViewOriginal!!.image = source.image.toImage()
 
-        destination = source
+        var destination = source.image
 
         val dilation_size1 = 8
         val erosion_size = 25
@@ -55,7 +60,7 @@ class MainView {
         //Hough-Transformation
         val dest = drawHough(destination)
 
-        imageViewResult!!.image = dest.toImage()
+        imageViewResult!!.image = dest.toImage()}
     }
 
 
