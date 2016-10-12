@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.DilateView">
+   <children>
+      <Slider fx:id="dilation" layoutX="132.0" layoutY="257.0" />
+      <ImageView id="test" fx:id="showimage" fitHeight="211.0" fitWidth="420.0" layoutX="79.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test" />
+      <Button layoutX="433.0" layoutY="298.0" mnemonicParsing="false" text="Button" />
+   </children>
+</AnchorPane>
