@@ -1,18 +1,22 @@
 package ch.fhnw.afpars.workflow
 
+import ch.fhnw.afpars.event.Event
 import ch.fhnw.afpars.model.AFImage
-import org.opencv.core.Mat
+import kotlin.concurrent.thread
 
 /**
  * Created by cansik on 07.10.16.
  */
 class WorkflowEngine {
+    val finished = Event<AFImage>()
 
-    fun run(workflow: Workflow, afImage: AFImage):AFImage {
-        var image = afImage
-        for(alg in workflow.algorithms){
-            image = alg.run(image)
+    fun run(workflow: Workflow, afImage: AFImage) {
+        thread {
+            var image = afImage
+            for (alg in workflow.algorithms) {
+                image = alg.run(image)
+            }
+            finished(image)
         }
-        return image
     }
 }

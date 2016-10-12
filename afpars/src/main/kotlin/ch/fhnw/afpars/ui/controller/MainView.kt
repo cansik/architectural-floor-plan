@@ -20,6 +20,17 @@ class MainView {
     @FXML
     var imageViewResult: PreviewImageView? = null
 
+    val workflow = WorkflowEngine()
+
+    init {
+        workflow.finished += {
+            println("Algorithm finished!")
+            // show result image with hough
+            val dest = drawHough(it.image)
+            imageViewResult!!.newImage(dest.toImage())
+        }
+    }
+
     fun testOpenCV_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
         val mat = Mat.eye(3, 3, CvType.CV_8UC1)
@@ -39,15 +50,8 @@ class MainView {
 
             imageViewOriginal!!.newImage(source.image.toImage())
 
-            var destination = source
-
-            val workflow = WorkflowEngine()
-            destination = workflow.run(Workflow(standardAlg()), destination)
-
-            //Hough-Transformation
-            val dest = drawHough(destination.image)
-
-            imageViewResult!!.newImage(dest.toImage())
+            val destination = source
+            workflow.run(Workflow(standardAlg()), destination)
         }
     }
 
