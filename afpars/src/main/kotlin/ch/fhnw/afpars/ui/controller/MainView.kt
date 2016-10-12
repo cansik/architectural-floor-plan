@@ -58,7 +58,8 @@ class MainView {
                             Erode(8),
                             Erode(25),
                             Dilate(34)).toTypedArray()
-            ), destination)
+            ), destination,
+                    true)
         }
     }
 
