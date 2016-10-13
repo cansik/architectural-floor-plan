@@ -1,4 +1,4 @@
-package ch.fhnw.afpars.algorithm.preprocessing
+package ch.fhnw.afpars.algorithm.base
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
@@ -6,7 +6,7 @@ import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
-class Erode : IPreprocessingAlgorithm {
+class Erode : IBaseAlgorithm {
 
     @AlgorithmParameter(name = "Erode")
     val erosionSize: Int

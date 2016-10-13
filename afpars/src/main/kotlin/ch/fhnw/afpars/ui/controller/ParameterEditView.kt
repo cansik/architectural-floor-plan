@@ -9,6 +9,7 @@ import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.control.Slider
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.lang.reflect.Field
@@ -49,6 +50,7 @@ class ParameterEditView {
 
     private fun runAlgorithm() {
         val result = algorithm.run(image)
+
         Platform.runLater {
             previewImage!!.newImage(result.image.toImage())
         }
@@ -60,6 +62,7 @@ class ParameterEditView {
         // controls
         val nameLabel = Label(annotation.name)
         val valueSlider = Slider()
+        val valueLabel = Label()
 
         valueSlider.min = annotation.minValue
         valueSlider.max = annotation.maxValue
@@ -71,6 +74,8 @@ class ParameterEditView {
             Double::class.java -> valueSlider.value = field.get(algorithm) as Double
         }
 
+        valueLabel.text = valueSlider.value.toString()
+
         valueSlider.valueProperty().addListener { observableValue, old, new ->
             run {
                 when (field.type) {
@@ -79,13 +84,16 @@ class ParameterEditView {
                     Double::class.java -> field.set(algorithm, new.toDouble())
                 }
 
+                // change value label
+                valueLabel.text = valueSlider.value.toString()
+
                 // run algorithm on change
                 runAlgorithm()
             }
         }
 
         // show controls
-        editControlBox!!.children.addAll(nameLabel, valueSlider)
+        editControlBox!!.children.add(HBox(nameLabel, valueSlider, valueLabel))
     }
 
     private fun getAlgorithmParameters(obj: IAlgorithm): List<Field> {

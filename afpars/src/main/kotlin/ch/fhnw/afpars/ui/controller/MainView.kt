@@ -1,7 +1,6 @@
 package ch.fhnw.afpars.ui.controller
 
-import ch.fhnw.afpars.algorithm.preprocessing.Dilate
-import ch.fhnw.afpars.algorithm.preprocessing.Erode
+import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.toImage
@@ -54,10 +53,7 @@ class MainView {
             println("running algorithm workflow...")
             workflow.run(Workflow(
                     arrayListOf(
-                            Dilate(8),
-                            Erode(8),
-                            Erode(25),
-                            Dilate(34)).toTypedArray()
+                            MorphologicalTransform()).toTypedArray()
             ), destination,
                     true)
         }

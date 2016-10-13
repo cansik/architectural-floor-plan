@@ -13,6 +13,6 @@
                           pickOnBounds="true" preserveRatio="true"
                           style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test"/>
         <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"/>
-        <VBox fx:id="editControlBox" layoutX="47.0" layoutY="226.0" prefHeight="145.0" prefWidth="427.0"/>
+        <VBox fx:id="editControlBox" layoutX="47.0" layoutY="300.0" prefHeight="145.0" prefWidth="427.0"/>
     </children>
 </AnchorPane>
