@@ -2,9 +2,9 @@ package ch.fhnw.afpars.algorithm.preprocessing
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.dilate
-import ch.fhnw.afpars.util.erode
-import ch.fhnw.afpars.util.threshold
+import org.opencv.core.Mat
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
 
 /**
  * Created by cansik on 13.10.16.
@@ -26,11 +26,32 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
     }
 
     override fun run(image: AFImage): AFImage {
-        return image
-                .threshold(treshold)
-                .dilate(openingSize)
-                .erode(openingSize)
-                .erode(closingSize)
-                .dilate(closingSize)
+        val img = image.clone()
+
+        threshold(img.image, treshold)
+        dilate(img.image, openingSize)
+        erode(img.image, openingSize)
+        erode(img.image, closingSize)
+        dilate(img.image, closingSize)
+
+        return img
+    }
+
+    fun erode(img: Mat, erosionSize: Int) {
+        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosionSize + 1.0, 2.0 * erosionSize + 1.0))
+        Imgproc.erode(img, img, element)
+    }
+
+    fun dilate(img: Mat, dilationSize: Int) {
+        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilationSize + 1.0, 2.0 * dilationSize + 1.0))
+        Imgproc.dilate(img, img, element)
+    }
+
+    fun threshold(img: Mat, treshold: Double, maxValue: Double, type: Int) {
+        Imgproc.threshold(img, img, treshold, maxValue, type)
+    }
+
+    fun threshold(img: Mat, treshold: Double) {
+        this.threshold(img, treshold, 255.0, Imgproc.THRESH_BINARY)
     }
 }

@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
+import ch.fhnw.afpars.algorithm.roomdetection.NikieRoomDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.toImage
@@ -24,8 +25,8 @@ class MainView {
         workflow.finished += {
             println("algorithm workflow finished!")
             // show result image with hough
-            val dest = drawHough(it.image)
-            imageViewResult!!.newImage(dest.toImage())
+            //val dest = drawHough(it.image)
+            imageViewResult!!.newImage(it.image.toImage())
         }
     }
 
@@ -53,7 +54,8 @@ class MainView {
             println("running algorithm workflow...")
             workflow.run(Workflow(
                     arrayListOf(
-                            MorphologicalTransform()).toTypedArray()
+                            MorphologicalTransform(),
+                            NikieRoomDetection()).toTypedArray()
             ), destination,
                     true)
         }
