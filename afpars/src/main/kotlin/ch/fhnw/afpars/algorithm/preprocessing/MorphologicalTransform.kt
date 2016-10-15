@@ -29,8 +29,12 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
         val img = image.clone()
 
         threshold(img.image, treshold)
+
+        // opening
         dilate(img.image, openingSize)
         erode(img.image, openingSize)
+
+        // closing
         erode(img.image, closingSize)
         dilate(img.image, closingSize)
 
