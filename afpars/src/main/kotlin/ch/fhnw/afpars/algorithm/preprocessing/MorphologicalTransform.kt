@@ -28,7 +28,7 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
         this.closingSize = closingSize
     }
 
-    override fun run(image: AFImage): AFImage {
+    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
 
         threshold(img.image, treshold)

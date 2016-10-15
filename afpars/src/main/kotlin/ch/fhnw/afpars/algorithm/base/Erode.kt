@@ -17,7 +17,7 @@ class Erode : IBaseAlgorithm {
         this.erosionSize = erosionSize
     }
 
-    override fun run(image: AFImage): AFImage {
+    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         return run(image, erosionSize)
     }
 

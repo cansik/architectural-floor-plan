@@ -4,14 +4,20 @@ import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.PreviewImageView
+import ch.fhnw.afpars.util.resize
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.Label
+import javafx.scene.control.ListCell
+import javafx.scene.control.ListView
 import javafx.scene.control.Slider
+import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import javafx.util.Callback
 import java.lang.reflect.Field
 import kotlin.properties.Delegates
 
@@ -24,6 +30,11 @@ class ParameterEditView {
 
     @FXML
     var editControlBox: VBox? = null
+
+    @FXML
+    var historyListView: ListView<AFImage>? = null
+
+    var historyImages = FXCollections.observableArrayList<AFImage>()
 
     var image: AFImage by Delegates.notNull()
 
@@ -43,6 +54,29 @@ class ParameterEditView {
         // create ui elements for fields
         fields.forEach { createFieldElement(it) }
 
+        historyListView!!.items = historyImages
+        historyListView!!.cellFactory = Callback { listView ->
+            object : ListCell<AFImage>() {
+                override fun updateItem(item: AFImage?, empty: Boolean) {
+                    if (item != null) {
+                        super.updateItem(item, empty)
+
+                        if (empty) {
+                            graphic = null
+                        } else {
+                            // true makes this load in background
+                            val imageView = ImageView(item.resize((historyListView!!.width * 0.75).toInt(), 0).image.toImage())
+                            val label = Label(item.name)
+                            graphic = VBox(label, imageView)
+                        }
+                    }
+                }
+            }
+        }
+        historyListView!!.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+            previewImage!!.newImage(newValue.image.toImage())
+        }
+
         runAlgorithm()
     }
 
@@ -52,9 +86,16 @@ class ParameterEditView {
     }
 
     private fun runAlgorithm() {
-        val result = algorithm.run(image)
+        val history = arrayListOf<AFImage>()
+        val result = algorithm.run(image, history)
 
         Platform.runLater {
+            // add history
+            historyImages.clear()
+            historyImages.addAll(history)
+            historyImages.add(result)
+            result.name = "Result"
+
             previewImage!!.newImage(result.image.toImage())
         }
     }

@@ -28,7 +28,7 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 26.0
 
-    override fun run(image: AFImage): AFImage {
+    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
 
         // distance transform
@@ -53,18 +53,23 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         Core.subtract(invertedColorMatrix, distTransform, distTransform)
 
         // watershed
-
-        //todo: Check if it is opencv3.1 bug: http://answers.opencv.org/question/64815/opencv-error-assertion-failed-in-watershed/
-
         //The first should be an 8-bit, 3-channel image, and the second should be a 32-bit single-channel image.
+        Imgproc.cvtColor(distTransform, distTransform, Imgproc.COLOR_GRAY2BGR)
+
         val mTrans = Mat(distTransform.rows(), distTransform.cols(), CvType.CV_8UC3)
         distTransform.convertTo(mTrans, CvType.CV_8UC3)
 
-        val mDist32 = Mat(markers.rows(), markers.cols(), CvType.CV_32SC1) // 32 bit signed 1 channel, use CV_32UC1 for unsigned
+        val mDist32 = Mat(markers.rows(), markers.cols(), CvType.CV_32SC1)
         markers.convertTo(mDist32, CvType.CV_32SC1, 1.0, 0.0)
 
         Imgproc.watershed(mTrans, mDist32)
 
-        return AFImage(distTransform)
+        // add history
+        history.add(AFImage(markers, "Markers"))
+        history.add(AFImage(mTrans, "mTrans"))
+        history.add(AFImage(distTransform, "DistTransform"))
+        history.add(AFImage(mask, "Mask"))
+
+        return AFImage(img.image)
     }
 }

@@ -17,7 +17,7 @@ class Dilate : IBaseAlgorithm {
         this.dilationSize = dilationSize
     }
 
-    override fun run(image: AFImage): AFImage {
+    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         System.out.println(dilationSize.toDouble())
         return run(image, dilationSize)
     }

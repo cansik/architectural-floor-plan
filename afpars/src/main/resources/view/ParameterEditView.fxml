@@ -2,17 +2,22 @@
 
 <?import ch.fhnw.afpars.ui.control.PreviewImageView?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.*?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ch.fhnw.afpars.ui.controller.ParameterEditView">
     <children>
-        <PreviewImageView id="test" fx:id="previewImage" fitHeight="211.0" fitWidth="420.0" layoutX="79.0"
-                          layoutY="25.0"
-                          pickOnBounds="true" preserveRatio="true"
-                          style="-fx-border-color: black; -fx-border-width: 1.0;" styleClass="test"/>
-        <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"/>
-        <VBox fx:id="editControlBox" layoutX="47.0" layoutY="300.0" prefHeight="145.0" prefWidth="427.0"/>
+        <PreviewImageView id="test" fx:id="previewImage" fitHeight="211.0" fitWidth="420.0" layoutX="166.0"
+                          layoutY="14.0" pickOnBounds="true" preserveRatio="true"
+                          AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="166.0" AnchorPane.rightAnchor="14.0"
+                          AnchorPane.topAnchor="14.0"/>
+        <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="39.0"/>
+        <VBox fx:id="editControlBox" layoutX="13.0" layoutY="270.0" prefHeight="141.0" prefWidth="486.0"
+              AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="101.0"/>
+        <ListView layoutX="14.0" fx:id="historyListView" layoutY="14.0" prefHeight="211.0" prefWidth="141.0"
+                  AnchorPane.bottomAnchor="175.0"
+                  AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="445.0" AnchorPane.topAnchor="14.0"/>
     </children>
 </AnchorPane>
