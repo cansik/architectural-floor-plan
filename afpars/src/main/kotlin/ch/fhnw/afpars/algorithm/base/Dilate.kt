@@ -7,6 +7,8 @@ import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
 class Dilate : IBaseAlgorithm {
+    override val name: String
+        get() = "Dilate"
 
     @AlgorithmParameter(name = "Dilation Size")
     var dilationSize: Int

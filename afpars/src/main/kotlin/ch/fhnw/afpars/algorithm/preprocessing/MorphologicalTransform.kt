@@ -10,6 +10,9 @@ import org.opencv.imgproc.Imgproc
  * Created by cansik on 13.10.16.
  */
 class MorphologicalTransform() : IPreprocessingAlgorithm {
+    override val name: String
+        get() = "Morphological Transform"
+
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 128.0
 
@@ -19,8 +22,8 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
     @AlgorithmParameter(name = "Closing")
     var closingSize = 34
 
-    constructor(treshold: Double, openingSize: Int, closingSize: Int) : this() {
-        this.treshold = treshold
+    constructor(threshold: Double, openingSize: Int, closingSize: Int) : this() {
+        this.treshold = threshold
         this.openingSize = openingSize
         this.closingSize = closingSize
     }

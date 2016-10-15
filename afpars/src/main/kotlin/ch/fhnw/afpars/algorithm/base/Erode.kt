@@ -7,6 +7,8 @@ import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
 class Erode : IBaseAlgorithm {
+    override val name: String
+        get() = "Erode"
 
     @AlgorithmParameter(name = "Erode")
     val erosionSize: Int

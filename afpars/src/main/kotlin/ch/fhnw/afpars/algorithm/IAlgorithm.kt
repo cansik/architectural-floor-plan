@@ -7,4 +7,7 @@ import ch.fhnw.afpars.model.AFImage
  */
 interface IAlgorithm {
     fun run(image: AFImage): AFImage
+
+    val name: String
+        get
 }

@@ -16,6 +16,16 @@ fun Mat.toImage(): Image {
     return Image(ByteArrayInputStream(byteMat.toArray()))
 }
 
+fun Mat.zeros(): Mat {
+    return Mat.zeros(this.rows(), this.cols(), this.type())
+}
+
+fun Mat.copy(): Mat {
+    val m = this.zeros()
+    this.copyTo(m)
+    return m
+}
+
 fun AFImage.resize(width: Int, height: Int): AFImage {
     assert(width > 0 || height > 0)
 

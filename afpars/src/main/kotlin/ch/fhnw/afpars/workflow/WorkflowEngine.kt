@@ -42,7 +42,7 @@ class WorkflowEngine {
 
         Platform.runLater {
             val stage = Stage()
-            stage.title = "Test"
+            stage.title = "Algorithm: ${algorithm.name}"
             stage.scene = Scene(root)
             stage.showAndWait()
             latch.countDown()
