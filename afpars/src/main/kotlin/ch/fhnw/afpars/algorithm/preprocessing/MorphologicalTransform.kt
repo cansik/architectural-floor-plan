@@ -26,13 +26,6 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
     }
 
     override fun run(image: AFImage): AFImage {
-        /*
-        var img = Dilate(openingSize).run(image)
-        img = Erode(openingSize).run(img)
-        img = Erode(closingSize).run(img)
-        return Dilate(closingSize).run(img)
-        */
-
         return image
                 .threshold(treshold)
                 .dilate(openingSize)

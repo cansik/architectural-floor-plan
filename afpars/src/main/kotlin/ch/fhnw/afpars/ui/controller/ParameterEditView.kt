@@ -35,6 +35,9 @@ class ParameterEditView {
         this.image = image
         this.algorithm = algorithm
 
+        // set image size
+        //this.image = this.image.resize(1000, 0)
+
         fields = getAlgorithmParameters(algorithm)
 
         // create ui elements for fields
