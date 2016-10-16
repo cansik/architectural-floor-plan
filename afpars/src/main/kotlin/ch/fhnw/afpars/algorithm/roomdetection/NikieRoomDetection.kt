@@ -1,14 +1,11 @@
 package ch.fhnw.afpars.algorithm.roomdetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
-import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.geodesicDilate
 import ch.fhnw.afpars.util.negate
 import ch.fhnw.afpars.util.zeros
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Scalar
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 /**
@@ -34,6 +31,8 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         val markers = img.image.zeros()
         val markersBefore = img.image.zeros()
         val invDistTransform = img.image.zeros()
+        val fg = img.image.zeros()
+        val bg = img.image.zeros()
 
         // distance transform
         Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_BGR2GRAY)
@@ -41,14 +40,22 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         Imgproc.distanceTransform(img.image, distTransform, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
 
         // find center of distance transform points
+        // todo: maybe better approach: Regional maxima of opening-closing by reconstruction (fgm)
         Core.subtract(distTransform, Scalar(differenceScalar), geodesicDistTransform)
         geodesicDistTransform.geodesicDilate(distTransform, geodesicDilateSize)
         Core.subtract(distTransform, geodesicDistTransform, markers)
-        MorphologicalTransform().threshold(markers, treshold)
+        //MorphologicalTransform().threshold(markers, treshold)
+
+        // foreground & background split
+        Imgproc.erode(markers, fg, Mat(), Point(-1.0, -1.0), 2)
+
+        Imgproc.dilate(markers, bg, Mat(), Point(-1.0, -1.0), 3)
+        Imgproc.threshold(bg, bg, 1.0, 128.0, Imgproc.THRESH_BINARY_INV)
+
+        Core.add(fg, bg, markers)
 
         // convert image formats for watershed
         distTransform.negate(invDistTransform)
-
         Imgproc.cvtColor(invDistTransform, invDistTransform, Imgproc.COLOR_GRAY2BGR)
         invDistTransform.convertTo(invDistTransform, CvType.CV_8UC3)
 
@@ -64,9 +71,11 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         history.add(AFImage(distTransform, "DistTransform"))
         history.add(AFImage(geodesicDistTransform, "Geodesic"))
         history.add(AFImage(markersBefore, "Markers before"))
+        history.add(AFImage(fg, "Foreground"))
+        history.add(AFImage(bg, "Background"))
         history.add(AFImage(invDistTransform, "Inverse DistT"))
         history.add(AFImage(markers, "Markers"))
 
-        return AFImage(img.image)
+        return AFImage(markers)
     }
 }
