@@ -2,6 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.roomdetection.NikieRoomDetection
+import ch.fhnw.afpars.algorithm.roomdetection.WatershedTest
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.toImage
@@ -19,11 +20,11 @@ class MainView {
     @FXML
     var imageViewResult: PreviewImageView? = null
 
-    val workflow = WorkflowEngine()
+    val workflowEngine = WorkflowEngine()
 
     init {
-        workflow.finished += {
-            println("algorithm workflow finished!")
+        workflowEngine.finished += {
+            println("algorithm workflowEngine finished!")
             // show result image with hough
             //val dest = drawHough(it.image)
             imageViewResult!!.newImage(it.image.toImage())
@@ -32,8 +33,26 @@ class MainView {
 
     fun testOpenCV_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-        val mat = Mat.eye(3, 3, CvType.CV_8UC1)
-        System.out.println("mat = " + mat.dump())
+
+        val fileChooser = FileChooser()
+        fileChooser.title = "Open image"
+        val file = fileChooser.showOpenDialog(null)
+        if (file != null) {
+            val source = AFImageReader().read(file.toPath())
+
+            imageViewOriginal!!.newImage(source.image.toImage())
+
+            val destination = source
+
+            println("running algorithm workflow...")
+
+            workflowEngine.run(Workflow(
+                    arrayListOf(
+                            WatershedTest()
+                    ).toTypedArray()
+            ), destination,
+                    true)
+        }
     }
 
     fun testImage_Clicked() {
@@ -52,12 +71,15 @@ class MainView {
             val destination = source
 
             println("running algorithm workflow...")
-            workflow.run(Workflow(
+
+            workflowEngine.run(Workflow(
                     arrayListOf(
                             MorphologicalTransform(),
-                            NikieRoomDetection()).toTypedArray()
+                            NikieRoomDetection()
+                    ).toTypedArray()
             ), destination,
                     true)
+
         }
     }
 

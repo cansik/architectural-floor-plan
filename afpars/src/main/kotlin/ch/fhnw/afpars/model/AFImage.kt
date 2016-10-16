@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.model
 
+import ch.fhnw.afpars.util.copy
 import org.opencv.core.Mat
 
 /**
@@ -18,7 +19,7 @@ class AFImage : Cloneable {
     }
 
     public override fun clone(): AFImage {
-        val img = AFImage(image.clone())
+        val img = AFImage(image.copy())
         return img
     }
 }

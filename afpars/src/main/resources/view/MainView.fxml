@@ -8,7 +8,7 @@
             fx:controller="ch.fhnw.afpars.ui.controller.MainView">
     <children>
         <Button layoutX="234.0" layoutY="516.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked"
-                text="Test OpenCV"/>
+                text="Watershed"/>
         <PreviewImageView id="test" fx:id="imageViewResult" fitHeight="465.0" fitWidth="465.0" layoutX="575.0"
                           layoutY="20.0"
                           pickOnBounds="true" preserveRatio="true"

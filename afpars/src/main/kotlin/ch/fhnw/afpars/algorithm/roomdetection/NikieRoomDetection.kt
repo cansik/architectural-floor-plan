@@ -3,12 +3,11 @@ package ch.fhnw.afpars.algorithm.roomdetection
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.geodesicDilate
+import ch.fhnw.afpars.util.negate
 import ch.fhnw.afpars.util.zeros
 import org.opencv.core.Core
 import org.opencv.core.CvType
-import org.opencv.core.Mat
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
@@ -20,55 +19,53 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         get() = "Nikie Room Detection"
 
     @AlgorithmParameter(name = "Difference Scalar")
-    var differenceScalar = 27.0
+    var differenceScalar = 70.0
 
     @AlgorithmParameter(name = "Geodesic Dilate")
-    var geodesicDilateSize = 13
+    var geodesicDilateSize = 88
 
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 26.0
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
+        val distTransform = img.image.zeros()
+        val geodesicDistTransform = img.image.zeros()
+        val markers = img.image.zeros()
+        val markersBefore = img.image.zeros()
+        val invDistTransform = img.image.zeros()
 
         // distance transform
         Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_BGR2GRAY)
-        Imgproc.distanceTransform(img.image, img.image, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
+        img.image.convertTo(img.image, CvType.CV_8UC1)
+        Imgproc.distanceTransform(img.image, distTransform, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
 
-        // find center of distance transform
-        val distTransform = img.image.copy()
-        val mask = img.image.copy()
-        var markers = img.image.copy()
-
-        Core.subtract(markers, Scalar(differenceScalar), markers)
-
-        markers = markers.geodesicDilate(mask, geodesicDilateSize)
-        Core.absdiff(markers, distTransform, markers)
-
-        // just for preview
+        // find center of distance transform points
+        Core.subtract(distTransform, Scalar(differenceScalar), geodesicDistTransform)
+        geodesicDistTransform.geodesicDilate(distTransform, geodesicDilateSize)
+        Core.subtract(distTransform, geodesicDistTransform, markers)
         MorphologicalTransform().threshold(markers, treshold)
 
-        // invert dist transform
-        val invertedColorMatrix = distTransform.zeros().setTo(Scalar(255.0))
-        Core.subtract(invertedColorMatrix, distTransform, distTransform)
+        // convert image formats for watershed
+        distTransform.negate(invDistTransform)
 
-        // watershed
-        //The first should be an 8-bit, 3-channel image, and the second should be a 32-bit single-channel image.
-        Imgproc.cvtColor(distTransform, distTransform, Imgproc.COLOR_GRAY2BGR)
+        Imgproc.cvtColor(invDistTransform, invDistTransform, Imgproc.COLOR_GRAY2BGR)
+        invDistTransform.convertTo(invDistTransform, CvType.CV_8UC3)
 
-        val mTrans = Mat(distTransform.rows(), distTransform.cols(), CvType.CV_8UC3)
-        distTransform.convertTo(mTrans, CvType.CV_8UC3)
+        markers.copyTo(markersBefore)
+        markers.convertTo(markers, CvType.CV_32S)
 
-        val mDist32 = Mat(markers.rows(), markers.cols(), CvType.CV_32SC1)
-        markers.convertTo(mDist32, CvType.CV_32SC1, 1.0, 0.0)
-
-        Imgproc.watershed(mTrans, mDist32)
+        // watershed with marker
+        Imgproc.watershed(invDistTransform, markers)
+        markers.convertTo(markers, CvType.CV_8U)
 
         // add history
-        history.add(AFImage(markers, "Markers"))
-        history.add(AFImage(mTrans, "mTrans"))
+        history.add(AFImage(image.image, "Input"))
         history.add(AFImage(distTransform, "DistTransform"))
-        history.add(AFImage(mask, "Mask"))
+        history.add(AFImage(geodesicDistTransform, "Geodesic"))
+        history.add(AFImage(markersBefore, "Markers before"))
+        history.add(AFImage(invDistTransform, "Inverse DistT"))
+        history.add(AFImage(markers, "Markers"))
 
         return AFImage(img.image)
     }

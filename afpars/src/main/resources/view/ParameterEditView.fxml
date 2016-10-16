@@ -9,15 +9,15 @@
             fx:controller="ch.fhnw.afpars.ui.controller.ParameterEditView">
     <children>
         <PreviewImageView id="test" fx:id="previewImage" fitHeight="211.0" fitWidth="420.0" layoutX="166.0"
-                          layoutY="14.0" pickOnBounds="true" preserveRatio="true"
+                          layoutY="14.0" AnchorPane.topAnchor="14.0"
                           AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="166.0" AnchorPane.rightAnchor="14.0"
-                          AnchorPane.topAnchor="14.0"/>
+        />
         <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
                 AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="39.0"/>
         <VBox fx:id="editControlBox" layoutX="13.0" layoutY="270.0" prefHeight="141.0" prefWidth="486.0"
               AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="101.0"/>
         <ListView layoutX="14.0" fx:id="historyListView" layoutY="14.0" prefHeight="211.0" prefWidth="141.0"
                   AnchorPane.bottomAnchor="175.0"
-                  AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="445.0" AnchorPane.topAnchor="14.0"/>
+                  AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0"/>
     </children>
 </AnchorPane>

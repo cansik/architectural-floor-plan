@@ -4,7 +4,6 @@ import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.PreviewImageView
-import ch.fhnw.afpars.util.resize
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
 import javafx.collections.FXCollections
@@ -65,7 +64,10 @@ class ParameterEditView {
                             graphic = null
                         } else {
                             // true makes this load in background
-                            val imageView = ImageView(item.resize((historyListView!!.width * 0.75).toInt(), 0).image.toImage())
+                            val imageView = ImageView(item.image.toImage())
+                            imageView.preserveRatioProperty().set(true)
+                            imageView.fitWidth = historyListView!!.width * 0.75
+
                             val label = Label(item.name)
                             graphic = VBox(label, imageView)
                         }
@@ -74,7 +76,8 @@ class ParameterEditView {
             }
         }
         historyListView!!.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
-            previewImage!!.newImage(newValue.image.toImage())
+            if (newValue != null)
+                previewImage!!.newImage(newValue.image.toImage())
         }
 
         runAlgorithm()
