@@ -113,6 +113,10 @@ class ParameterEditView {
 
         valueSlider.min = annotation.minValue
         valueSlider.max = annotation.maxValue
+        valueSlider.minorTickCount = 1
+        valueSlider.isSnapToTicks = true
+        valueSlider.majorTickUnit = annotation.majorTick
+        valueSlider.isShowTickLabels = true
 
         // set slider value
         when (field.type) {

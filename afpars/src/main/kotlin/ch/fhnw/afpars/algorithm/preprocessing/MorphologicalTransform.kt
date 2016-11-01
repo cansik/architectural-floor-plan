@@ -14,13 +14,13 @@ class MorphologicalTransform() : IPreprocessingAlgorithm {
         get() = "Morphological Transform"
 
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
-    var treshold = 128.0
+    var treshold = 200.0
 
-    @AlgorithmParameter(name = "Opening")
-    var openingSize = 8
+    @AlgorithmParameter(name = "Opening", minValue = 0.0, maxValue = 20.0)
+    var openingSize = 9
 
     @AlgorithmParameter(name = "Closing")
-    var closingSize = 34
+    var closingSize = 12
 
     constructor(threshold: Double, openingSize: Int, closingSize: Int) : this() {
         this.treshold = threshold

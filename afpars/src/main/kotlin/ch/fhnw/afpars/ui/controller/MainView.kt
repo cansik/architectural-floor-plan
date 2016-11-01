@@ -2,7 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.roomdetection.NikieRoomDetection
-import ch.fhnw.afpars.algorithm.roomdetection.WatershedTest
+import ch.fhnw.afpars.algorithm.roomdetection.RectangleRoomDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.toImage
@@ -48,12 +48,14 @@ class MainView {
 
             workflowEngine.run(Workflow(
                     arrayListOf(
-                            WatershedTest()
+                            MorphologicalTransform(),
+                            RectangleRoomDetection()
                     ).toTypedArray()
             ), destination,
                     true)
         }
     }
+
 
     fun testImage_Clicked() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
