@@ -51,9 +51,15 @@ fun Mat.geodesicDilate(mask: Mat, elementSize: Int, dest: Mat) {
     val img = this.clone()
     val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * elementSize + 1.0, 2.0 * elementSize + 1.0))
 
-    Imgproc.dilate(this, img, element)
-    Core.min(img, mask, img)
-    img.copyTo(dest)
+    var last = img.zeros()
+    val next = img.copy()
+    do {
+        last = next.copy()
+        Imgproc.dilate(last, next, element)
+        Core.min(next, mask, next)
+    } while (Core.norm(last, next) > 0.0001)
+
+    last.copyTo(dest)
 }
 
 fun Mat.geodesicErode(mask: Mat, elementSize: Int) {
