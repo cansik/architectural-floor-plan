@@ -16,10 +16,13 @@ apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile files('lib/opencv/opencv-310.jar')
+    compile 'com.beust:klaxon:0.24'
+
 }

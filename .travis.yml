@@ -1,0 +1,16 @@
+notifications:
+  email: false
+language: java
+jdk:
+  - oraclejdk8
+
+# command to build
+install:
+  - "cd afpars"
+  - "gradle assemble"
+
+# command to run tests
+script:
+  - "gradle check"
+
+after_success:
