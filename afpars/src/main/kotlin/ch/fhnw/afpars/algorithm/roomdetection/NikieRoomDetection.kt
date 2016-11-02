@@ -53,7 +53,7 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         val dist_8u: Mat = image.image.zeros(CvType.CV_8UC1)
 
         bindist.convertTo(dist_8u, CvType.CV_8UC1)
-        history.add(AFImage(dist_8u.copy(), "Distu8"))
+        history.add(AFImage(dist_8u.copy(), "Distu<8"))
         //Find total markers
         val contours = mutableListOf<MatOfPoint>()
         val hierarchy = img.image.zeros()
@@ -67,17 +67,22 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
 
         //Draw foreground markers
         for (cnt in contours) {
-            Imgproc.drawContours(markers1, mutableListOf(cnt), 0, Scalar.all((i + 1).toDouble()), 3)
+            if (i > 1) {
+                Imgproc.drawContours(markers1, mutableListOf(cnt), 0, Scalar.all((i + 1).toDouble()), Core.FILLED)
+            }
             i++;
         }
 
         //Draw background markers
         Imgproc.circle(markers1, Point(5.0, 5.0), 3, Scalar(255.0, 255.0, 255.0), -1)
-/*
+
+        //Invert
+        Imgproc.threshold(markers1, markers1, treshold, 255.0, Imgproc.THRESH_BINARY_INV)
+
         //watershed
         Imgproc.watershed(image.image, markers1)
         //markers1.convertTo(markers1, CvType.CV_8U)
-
+/*
         val mark = Mat.zeros(markers1.size(), CvType.CV_8UC1);
         markers1.convertTo(mark, CvType.CV_8UC1);
         Core.bitwise_not(mark, mark);
@@ -155,6 +160,6 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         history.add(AFImage(invDistTransform, "Inverse DistT"))
         history.add(AFImage(markers, "Markers"))
 
-        return AFImage(markers)
+        return AFImage(markers1)
     }
 }
