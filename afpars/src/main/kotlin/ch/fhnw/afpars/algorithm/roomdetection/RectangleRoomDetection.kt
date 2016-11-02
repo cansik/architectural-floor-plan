@@ -2,8 +2,8 @@ package ch.fhnw.afpars.algorithm.roomdetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.zeros
-import org.opencv.core.MatOfPoint
+import org.opencv.core.Mat
+import org.opencv.core.Point
 import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -24,15 +24,44 @@ class RectangleRoomDetection : IRoomDetectionAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
 
+        //Canny
         Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_BGR2GRAY)
-        //Imgproc.threshold(img.image, img.image, 128.0, 255.0, Imgproc.THRESH_BINARY)
-        //Imgproc.blur(img.image, img.image, Size(7.0, 7.0))
         Imgproc.GaussianBlur(img.image, img.image, Size(11.0, 11.0), 0.0, 0.0)
         val otsu_thresh_val = Imgproc.threshold(img.image, img.image, 0.0, 255.0, Imgproc.THRESH_OTSU);
-        System.out.println(otsu_thresh_val)
-        //Imgproc.threshold(img.image, img.image, 1.0, 128.0, Imgproc.THRESH_BINARY_INV)
         Imgproc.Canny(img.image, img.image, threshHold1, threshHold2, apertureSize, true)
-        var hierarchy = img.image.zeros()
+
+
+        //HoughTransformation
+        val lines = Mat()
+        //Imgproc.threshold(img.image, img.image, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
+        Imgproc.HoughLinesP(img.image, lines, 1.0, Math.PI / 180, 0)
+
+        //Weisse Mat()
+        val dest = Mat(Size(img.image.width().toDouble(), img.image.height().toDouble()), 0)
+        dest.setTo(Scalar(255.0, 255.0, 255.0))
+
+        //Linien einzeichnen
+        for (i in 0..lines.size().height.toInt() - 1) {
+            //Diese Methode funktioniert noch nicht
+
+            /*val rho = lines.get(i,0).get(0)
+            val theta = lines.get(i,0).get(1)
+            val a = Math.cos(theta)
+            val b = Math.sin(rho)
+            val x0 = a*rho
+            val y0 = b*rho
+            val pt1 = Point(Math.round(x0+1000*(-b)).toDouble(),Math.round(y0+100*(a)).toDouble())
+            val pt2 = Point(Math.round(x0-1000*(-b)).toDouble(),Math.round(y0-100*(a)).toDouble())*/
+
+            //Exakte Methode für Edge-Linien, hat evtl zu viele Linien
+            val line = lines.get(i, 0)
+            val pt1 = Point(line.get(0), line.get(1))
+            val pt2 = Point(line.get(2), line.get(3))
+            Imgproc.line(dest, pt1, pt2, Scalar(0.0, 0.0, 255.0), 5)
+        }
+
+        //findContours
+        /*var hierarchy = img.image.zeros()
         var contours = mutableListOf<MatOfPoint>()
         Imgproc.findContours(img.image, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE)
         var outimg = img.image.zeros()
@@ -43,6 +72,7 @@ class RectangleRoomDetection : IRoomDetectionAlgorithm {
 
         }
         history.add(AFImage(img.image, "Input"))
-        return AFImage(outimg);
+        return AFImage(outimg);*/
+        return AFImage(dest);
     }
 }
