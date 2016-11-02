@@ -14,7 +14,11 @@ fun Mat.toImage(): Image {
 }
 
 fun Mat.zeros(): Mat {
-    return Mat.zeros(this.rows(), this.cols(), this.type())
+    return this.zeros(this.type())
+}
+
+fun Mat.zeros(type: Int): Mat {
+    return Mat.zeros(this.rows(), this.cols(), type)
 }
 
 fun Mat.copy(): Mat {
