@@ -41,6 +41,8 @@ class ParameterEditView {
 
     var fields: List<Field> by Delegates.notNull()
 
+    var lastSelectedImage = 0
+
     fun initView(algorithm: IAlgorithm, image: AFImage) {
         this.image = image
         this.algorithm = algorithm
@@ -93,13 +95,17 @@ class ParameterEditView {
         val result = algorithm.run(image, history)
 
         Platform.runLater {
+            lastSelectedImage = historyListView!!.selectionModel.selectedIndex
+
             // add history
             historyImages.clear()
             historyImages.addAll(history)
             historyImages.add(result)
             result.name = "Result"
 
-            previewImage!!.newImage(result.image.toImage())
+            historyListView!!.scrollTo(lastSelectedImage)
+            historyListView!!.selectionModel.select(lastSelectedImage)
+            historyListView!!.focusModel.focus(lastSelectedImage)
         }
     }
 
