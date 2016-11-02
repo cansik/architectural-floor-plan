@@ -1,4 +1,4 @@
-# Architectural Floor Plan Analysis and Recognition System
+# Architectural Floor Plan Analysis and Recognition System [![Build Status](https://travis-ci.org/cansik/architectural-floor-plan.svg?branch=master)](https://travis-ci.org/cansik/architectural-floor-plan)
 AFPARS is an architectural floor plan analysis and recognition system to create extended plans for building services.
 
 ## Description
