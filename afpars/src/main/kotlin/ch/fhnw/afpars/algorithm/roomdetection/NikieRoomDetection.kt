@@ -4,6 +4,8 @@ import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import org.opencv.core.Core
+import org.opencv.core.CvType
+import org.opencv.core.MatOfPoint
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
@@ -70,6 +72,32 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
          */
         Imgproc.threshold(markers, foreground, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
 
+        /*
+        findContours
+         */
+        val contours = mutableListOf<MatOfPoint>()
+        val hierarchy = original.image.zeros()
+        Imgproc.findContours(foreground.copy(), contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        // Create the marker image for the watershed algorithm
+        val contmarkers = image.image.zeros(CvType.CV_32SC1)
+        contmarkers.setTo(Scalar(255.0))
+
+        var i = 0
+
+        //Draw foreground markers
+        for (cnt in contours) {
+            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((i + 200).toDouble()), Core.FILLED)
+            i++;
+        }
+
+        for (i in 0..background.height() - 1) {
+            for (j in 0..contmarkers.width() - 1) {
+                if (contmarkers.get(i, j)[0].equals(255.0)) {
+                    contmarkers.put(i, j, 0.0)
+                }
+            }
+        }
 
         /*
         Background
@@ -89,7 +117,7 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
          */
         for (i in 0..summedUp.height() - 1) {
             for (j in 0..summedUp.width() - 1) {
-                summedUp.put(i, j, foreground.get(i, j)[0] + background.get(i, j)[0])
+                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
             }
         }
 
@@ -261,6 +289,7 @@ class NikieRoomDetection : IRoomDetectionAlgorithm {
         history.add(AFImage(geodesicTransform, "Geodesictransformation"))
         history.add(AFImage(markers, "Markers"))
         history.add(AFImage(foreground, "Foreground"))
+        history.add(AFImage(contmarkers, "findContour"))
         history.add(AFImage(background, "Background"))
         history.add(AFImage(summedUp, "Summed Up"))
         history.add(AFImage(watershed, "Watershed"))
