@@ -1,6 +1,5 @@
 package ch.fhnw.afpars.util
 
-import ch.fhnw.afpars.model.AFImage
 import javafx.scene.image.Image
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -27,23 +26,22 @@ fun Mat.copy(): Mat {
     return m
 }
 
-fun AFImage.resize(width: Int, height: Int): AFImage {
+fun Mat.resize(width: Int, height: Int): Mat {
     assert(width > 0 || height > 0)
 
-    val result = this.clone()
     var w = width
     var h = height
 
     if (width == 0) {
-        w = ((height.toDouble() / this.image.height()) * this.image.width()).toInt()
+        w = ((height.toDouble() / this.height()) * this.width()).toInt()
     }
 
     if (height == 0) {
-        h = ((width.toDouble() / this.image.width()) * this.image.height()).toInt()
+        h = ((width.toDouble() / this.width()) * this.height()).toInt()
     }
 
-    result.image = Mat.zeros(h, w, this.image.type())
-    Imgproc.resize(this.image, result.image, result.image.size())
+    val result = Mat.zeros(h, w, this.type())
+    Imgproc.resize(this, result, result.size())
     return result
 }
 

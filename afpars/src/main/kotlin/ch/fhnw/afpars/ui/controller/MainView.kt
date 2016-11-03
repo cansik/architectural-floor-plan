@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.roomdetection.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.roomdetection.RectangleRoomDetection
@@ -25,6 +26,28 @@ class MainView {
         workflowEngine.finished += {
             println("algorithm workflowEngine finished!")
             imageViewResult!!.newImage(it.image.toImage())
+        }
+    }
+
+    fun testScaleClicked() {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+
+        val fileChooser = FileChooser()
+        fileChooser.title = "Open image"
+        val file = fileChooser.showOpenDialog(null)
+        if (file != null) {
+            val source = AFImageReader().read(file.toPath())
+
+            val destination = source
+
+            println("running scale test...")
+
+            workflowEngine.run(Workflow(
+                    arrayListOf(
+                            ScaleTest()
+                    ).toTypedArray()
+            ), destination,
+                    true)
         }
     }
 
