@@ -95,7 +95,7 @@ class ParameterEditView {
         val result = algorithm.run(image, history)
 
         Platform.runLater {
-            lastSelectedImage = historyListView!!.selectionModel.selectedIndex
+            lastSelectedImage = Math.max(0, historyListView!!.selectionModel.selectedIndex)
 
             // add history
             historyImages.clear()
