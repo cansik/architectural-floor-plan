@@ -9,6 +9,7 @@ import org.opencv.core.Mat
 class AFImage : Cloneable {
     var name: String
     var image: Mat
+    val attributes = mutableMapOf<String, Mat>()
 
     constructor(image: Mat) : this(image, "AF Image") {
     }
