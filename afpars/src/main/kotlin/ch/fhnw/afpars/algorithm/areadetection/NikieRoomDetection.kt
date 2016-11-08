@@ -1,4 +1,4 @@
-package ch.fhnw.afpars.algorithm.roomdetection
+package ch.fhnw.afpars.algorithm.areadetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Based on http://mathematica.stackexchange.com/a/19550/43125 by nikie
  */
-class NikieRoomDetection : IRoomDetectionAlgorithm {
+class NikieRoomDetection : IAreaDetectionAlgorithm {
     override val name: String
         get() = "Nikie Room Detection"
 

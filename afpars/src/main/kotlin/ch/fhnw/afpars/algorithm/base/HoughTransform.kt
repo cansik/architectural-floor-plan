@@ -2,7 +2,6 @@ package ch.fhnw.afpars.algorithm.base
 
 import ch.fhnw.afpars.model.AFImage
 import org.opencv.core.Mat
-import org.opencv.core.Point
 import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -33,6 +32,7 @@ class HoughTransform : IBaseAlgorithm {
         dest.setTo(Scalar(255.0, 255.0, 255.0))
 
         //Linien einzeichnen
+        /*
         for (i in 0..lines.size().height.toInt() - 1) {
             //Diese Methode funktioniert noch nicht
 
@@ -51,6 +51,7 @@ class HoughTransform : IBaseAlgorithm {
             val pt2 = Point(line.get(2), line.get(3))
             Imgproc.line(dest, pt1, pt2, Scalar(0.0, 0.0, 255.0), 3)
         }
+        */
 
         //Im moment wird eine Matrize mit allen Linien zurückgegeben.
         //Es könnte auch das ganze Bild zurückgegeben werden.

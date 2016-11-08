@@ -1,9 +1,9 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.algorithm.areadetection.NikieRoomDetection
+import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
-import ch.fhnw.afpars.algorithm.roomdetection.NikieRoomDetection
-import ch.fhnw.afpars.algorithm.roomdetection.RectangleRoomDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.toImage

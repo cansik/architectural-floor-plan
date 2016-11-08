@@ -1,4 +1,4 @@
-package ch.fhnw.afpars.algorithm.roomdetection
+package ch.fhnw.afpars.algorithm.areadetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
@@ -8,7 +8,7 @@ import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
-class RectangleRoomDetection : IRoomDetectionAlgorithm {
+class RectangleRoomDetection : IAreaDetectionAlgorithm {
     override val name: String
         get() = "Alex Test Algorithm"
 

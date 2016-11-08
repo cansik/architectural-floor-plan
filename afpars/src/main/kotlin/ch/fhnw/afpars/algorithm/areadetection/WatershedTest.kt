@@ -1,4 +1,4 @@
-package ch.fhnw.afpars.algorithm.roomdetection
+package ch.fhnw.afpars.algorithm.areadetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.model.AFImage
@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 16.10.16.
  */
-class WatershedTest : IRoomDetectionAlgorithm {
+class WatershedTest : IAreaDetectionAlgorithm {
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 10.0
 
@@ -29,7 +29,7 @@ class WatershedTest : IRoomDetectionAlgorithm {
 
         var res = Core.minMaxLoc(mRgba)
 
-       
+
 
         return AFImage(result)
     }
