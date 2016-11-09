@@ -11,6 +11,8 @@
                 text="Watershed"/>
         <Button layoutX="120.0" layoutY="516.0" mnemonicParsing="false" onAction="#testScaleClicked"
                 text="Scale Test"/>
+        <Button layoutX="350.0" layoutY="516.0" mnemonicParsing="false" onAction="#testDoorDetectionClicked"
+                text="Door Test"/>
         <PreviewImageView id="test" fx:id="imageViewResult" fitHeight="465.0" fitWidth="465.0" layoutX="575.0"
                           layoutY="20.0"
                           pickOnBounds="true" preserveRatio="true"
