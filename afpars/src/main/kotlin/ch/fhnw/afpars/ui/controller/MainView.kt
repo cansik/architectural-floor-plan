@@ -2,6 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.areadetection.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
+import ch.fhnw.afpars.algorithm.areadetection.VectorDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
@@ -45,6 +46,29 @@ class MainView {
             workflowEngine.run(Workflow(
                     arrayListOf(
                             ScaleTest()
+                    ).toTypedArray()
+            ), destination,
+                    true)
+        }
+    }
+
+    fun testDoorDetectionClicked() {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+
+        val fileChooser = FileChooser()
+        fileChooser.title = "Open image"
+        val file = fileChooser.showOpenDialog(null)
+        if (file != null) {
+            val source = AFImageReader().read(file.toPath())
+
+            val destination = source
+
+            println("running door test...")
+
+            workflowEngine.run(Workflow(
+                    arrayListOf(
+                            //MorphologicalTransform(),
+                            VectorDoorDetection()
                     ).toTypedArray()
             ), destination,
                     true)
