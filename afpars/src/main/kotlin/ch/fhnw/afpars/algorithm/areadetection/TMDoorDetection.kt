@@ -10,28 +10,8 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 08.11.16.
  */
-class VectorDoorDetection : IAreaDetectionAlgorithm {
+class TMDoorDetection : IAreaDetectionAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-
-        /*
-        val houghTransform = HoughTransform()
-        val houghImage = houghTransform.run(image)
-        val lines = houghImage.attributes["houghlines"]
-
-        val dest = Mat(Size(image.image.width().toDouble(), image.image.height().toDouble()), 0)
-        dest.setTo(Scalar(255.0, 255.0, 255.0))
-
-        for (i in 0..lines!!.size().height.toInt() - 1) {
-            //Exakte Methode für Edge-Linien, hat evtl zu viele Linien
-            val line = lines.get(i, 0)
-            val pt1 = Point(line[0], line[1])
-            val pt2 = Point(line[2], line[3])
-            Imgproc.line(dest, pt1, pt2, Scalar(0.0, 0.0, 255.0), 3)
-        }
-
-        history.add(AFImage(dest, "Hough"))
-        */
-
         val img = image.image
         val templ = Imgcodecs.imread("data/door.png")
         val match_method = Imgproc.TM_CCOEFF_NORMED

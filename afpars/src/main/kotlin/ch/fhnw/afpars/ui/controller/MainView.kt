@@ -2,7 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.areadetection.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
-import ch.fhnw.afpars.algorithm.areadetection.VectorDoorDetection
+import ch.fhnw.afpars.algorithm.areadetection.TMDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
@@ -68,7 +68,7 @@ class MainView {
             workflowEngine.run(Workflow(
                     arrayListOf(
                             //MorphologicalTransform(),
-                            VectorDoorDetection()
+                            TMDoorDetection()
                     ).toTypedArray()
             ), destination,
                     true)
