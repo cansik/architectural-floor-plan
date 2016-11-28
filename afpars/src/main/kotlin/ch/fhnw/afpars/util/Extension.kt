@@ -1,6 +1,8 @@
 package ch.fhnw.afpars.util
 
 import javafx.scene.image.Image
+import org.bytedeco.javacpp.Pointer
+import org.bytedeco.javacpp.opencv_core
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
@@ -84,4 +86,12 @@ fun Mat.negate() {
 fun Mat.negate(dest: Mat) {
     val invertedColorMatrix = this.zeros().setTo(Scalar(255.0))
     Core.subtract(invertedColorMatrix, this, dest)
+}
+
+fun Mat.convertToJavaCV():opencv_core.Mat{
+    val jcvmat = opencv_core.Mat()
+    val return_buff = ByteArray((this.total() * this.channels()) as Int)
+    this.get(0, 0, return_buff)
+    jcvmat.data().put(*return_buff)
+    return jcvmat
 }
