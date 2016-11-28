@@ -20,15 +20,17 @@ repositories {
     jcenter()
 }
 
+configurations {
+    all*.exclude group: 'org.bytedeco', module: 'javacpp-presets'
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile group: 'org.bytedeco', name: 'javacpp', version: '1.2.5'
-    compile group: 'org.bytedeco', name: 'javacv', version: '1.2'
-
 
     compile files('lib/opencv/opencv-310.jar')
-    compile 'com.beust:klaxon:0.24'
-
+    compile files('lib/javacv-bin/opencv.jar')
+    compile group: 'org.bytedeco', name: 'javacv', version: '1.2'
 }
+
 
 
