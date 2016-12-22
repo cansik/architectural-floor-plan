@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import ch.fhnw.afpars.ui.control.PreviewImageView?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
             prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ch.fhnw.afpars.ui.controller.MainView">
     <children>
+        <Button layoutX="450.0" layoutY="516.0" mnemonicParsing="false" onAction="#testCascadeClassifer"
+                text="CC Door Detection"/>
         <Button layoutX="234.0" layoutY="516.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked"
                 text="Watershed"/>
         <Button layoutX="120.0" layoutY="516.0" mnemonicParsing="false" onAction="#testScaleClicked"
