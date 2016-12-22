@@ -13,6 +13,10 @@ import org.opencv.objdetect.CascadeClassifier
  * Created by cansik on 22.12.16.
  */
 class CascadeClassifierDetector : IObjectDetectionAlgorithm {
+    companion object {
+        val CASCADE_ATTRIBUT = "cascadeareas"
+    }
+
     override val name: String
         get() = "Cascade Classifier Object Detector"
 
@@ -21,21 +25,22 @@ class CascadeClassifierDetector : IObjectDetectionAlgorithm {
 
         // Detect objects in the image.
         // MatOfRect is a special container class for Rect.
-        val faceDetections = MatOfRect()
+        val areas = MatOfRect()
         val result = image.image.copy()
 
-        faceDetector.detectMultiScale(image.image, faceDetections)
+        faceDetector.detectMultiScale(image.image, areas)
 
-        println("Detected ${faceDetections.toArray().size} objects")
+        println("Detected ${areas.toArray().size} objects")
 
         // Draw a bounding box around each face.
-        for (rect in faceDetections.toArray()) {
+        for (rect in areas.toArray()) {
             Imgproc.rectangle(result, Point(rect.x.toDouble(), rect.y.toDouble()),
                     Point(rect.x + rect.width.toDouble(), rect.y + rect.height.toDouble()), Scalar(0.0, 255.0, 0.0))
         }
 
         history.add(AFImage(result, "Marked Image"))
 
+        image.attributes.put(CASCADE_ATTRIBUT, areas)
         return image
     }
 }

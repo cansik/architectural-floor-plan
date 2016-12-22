@@ -5,6 +5,7 @@ import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
 import ch.fhnw.afpars.algorithm.areadetection.TMDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.objectdetection.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
@@ -46,7 +47,8 @@ class MainView {
 
             workflowEngine.run(Workflow(
                     arrayListOf(
-                            CascadeClassifierDetector()
+                            CascadeClassifierDetector(),
+                            ShapeDistanceMatching()
                     ).toTypedArray()
             ), destination,
                     true)
