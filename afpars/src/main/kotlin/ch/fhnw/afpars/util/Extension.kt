@@ -1,7 +1,6 @@
 package ch.fhnw.afpars.util
 
 import javafx.scene.image.Image
-import org.bytedeco.javacpp.Pointer
 import org.bytedeco.javacpp.opencv_core
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -88,10 +87,22 @@ fun Mat.negate(dest: Mat) {
     Core.subtract(invertedColorMatrix, this, dest)
 }
 
-fun Mat.convertToJavaCV():opencv_core.Mat{
+fun Mat.convertToJavaCV(): opencv_core.Mat {
     val jcvmat = opencv_core.Mat()
     val return_buff = ByteArray((this.total() * this.channels()) as Int)
     this.get(0, 0, return_buff)
     jcvmat.data().put(*return_buff)
     return jcvmat
+}
+
+fun MatOfPoint.approxPolyDP(epsilon: Double? = null): MatOfPoint {
+    val cont = MatOfPoint2f(this.to32FC2())
+    val approxDoorContour2f = MatOfPoint2f()
+
+    var eps = epsilon
+    if (eps == null)
+        eps = 0.01 * Imgproc.arcLength(cont, true)
+
+    Imgproc.approxPolyDP(cont, approxDoorContour2f, eps, true)
+    return MatOfPoint(approxDoorContour2f.to32S())
 }

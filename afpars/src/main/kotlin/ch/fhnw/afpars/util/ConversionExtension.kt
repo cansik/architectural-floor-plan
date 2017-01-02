@@ -36,3 +36,7 @@ fun Mat.to32SC1(): Mat {
 fun Mat.to32SC3(): Mat {
     return this.convert(CvType.CV_32SC3)
 }
+
+fun Mat.to32FC2(): Mat {
+    return this.convert(CvType.CV_32FC2)
+}
