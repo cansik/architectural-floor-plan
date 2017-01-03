@@ -5,6 +5,7 @@ import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
 import ch.fhnw.afpars.algorithm.areadetection.TMDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.objectdetection.OrbDetection
 import ch.fhnw.afpars.algorithm.objectdetection.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
@@ -32,6 +33,29 @@ class MainView {
         }
     }
 
+    fun testCCWithOrb() {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+
+        val fileChooser = FileChooser()
+        fileChooser.title = "Open image"
+        val file = fileChooser.showOpenDialog(null)
+        if (file != null) {
+            val source = AFImageReader().read(file.toPath())
+
+            val destination = source
+
+            println("running cascade classifier with orb test...")
+
+            workflowEngine.run(Workflow(
+                    arrayListOf(
+                            CascadeClassifierDetector(),
+                            OrbDetection()
+                    ).toTypedArray()
+            ), destination,
+                    true)
+        }
+    }
+
     fun testCascadeClassifer() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -43,7 +67,7 @@ class MainView {
 
             val destination = source
 
-            println("running cascade classifier test...")
+            println("running cascade classifier with shape distance test...")
 
             workflowEngine.run(Workflow(
                     arrayListOf(

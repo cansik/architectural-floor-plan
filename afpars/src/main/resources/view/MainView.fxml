@@ -7,8 +7,10 @@
             prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ch.fhnw.afpars.ui.controller.MainView">
     <children>
+        <Button layoutX="450.0" layoutY="600.0" mnemonicParsing="false" onAction="#testCCWithOrb"
+                text="CC Door ORB Detection"/>
         <Button layoutX="450.0" layoutY="516.0" mnemonicParsing="false" onAction="#testCascadeClassifer"
-                text="CC Door Detection"/>
+                text="CC Door ShapeMatching"/>
         <Button layoutX="234.0" layoutY="516.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked"
                 text="Watershed"/>
         <Button layoutX="120.0" layoutY="516.0" mnemonicParsing="false" onAction="#testScaleClicked"
