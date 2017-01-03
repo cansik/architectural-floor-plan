@@ -26,8 +26,14 @@ class CascadeClassifierDetector : IObjectDetectionAlgorithm {
     @AlgorithmParameter(name = "Erosion Size")
     val erosionSize: Double = 10.0
 
+    @AlgorithmParameter(name = "Scale Factor", minValue = 1.1, maxValue = 5.0)
+    val scaleFactor: Double = 1.1
+
+    @AlgorithmParameter(name = "Min Neighbors", minValue = 0.0, maxValue = 20.0)
+    val minNeighbors: Int = 3
+
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        val faceDetector = CascadeClassifier("cascade-files/cascade_thicken.xml")
+        val cascadeDetector = CascadeClassifier("cascade-files/cascade_thicken.xml")
 
         // morphological transform
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,
@@ -41,7 +47,7 @@ class CascadeClassifierDetector : IObjectDetectionAlgorithm {
         val areas = MatOfRect()
         val result = image.image.copy()
 
-        faceDetector.detectMultiScale(preparedImage, areas)
+        cascadeDetector.detectMultiScale(preparedImage, areas, scaleFactor, minNeighbors, 0, Size(0.0, 0.0), Size(0.0, 0.0))
 
         println("Detected ${areas.toArray().size} objects")
 

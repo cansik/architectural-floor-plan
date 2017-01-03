@@ -39,7 +39,7 @@ class ShapeDistanceMatching : IObjectDetectionAlgorithm {
         val doors = mutableListOf<Pair<Double, Mat>>()
 
         // process all segments
-        loop@ for (rect in areas.toArray().sortedByDescending(Rect::area).take(100)) {
+        loop@ for (rect in areas.toArray().sortedByDescending(Rect::area)) {
             val part = Mat(image.image, rect)
             val thresholdImage = part.zeros()
 
