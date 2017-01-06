@@ -33,7 +33,7 @@ class ShapeDistanceMatching : IObjectDetectionAlgorithm {
         val doorContour = doorContours[0].approxPolyDP()
         val doorArea = Imgproc.contourArea(doorContour)
 
-        Imgproc.drawContours(doorTemplate, listOf(doorContour), -1, Scalar(0.0, 0.0, 255.0))
+        Imgproc.drawContours(doorTemplate, listOf(doorContour), -1, Scalar(255.0, 0.0, 0.0))
         history.add(AFImage(doorTemplate, "Door Template"))
 
         val doors = mutableListOf<Pair<Double, Mat>>()
@@ -54,10 +54,6 @@ class ShapeDistanceMatching : IObjectDetectionAlgorithm {
 
             // skip all parts without contours
             if (contours.size == 0)
-                continue@loop
-
-            // skip all which have more then one contour (not recognisable)
-            if (contours.size > 1)
                 continue@loop
 
             // go through every contour and select the best matching

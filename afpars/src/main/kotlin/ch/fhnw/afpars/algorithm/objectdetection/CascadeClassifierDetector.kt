@@ -33,7 +33,7 @@ class CascadeClassifierDetector : IObjectDetectionAlgorithm {
     val minNeighbors: Int = 3
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        val cascadeDetector = CascadeClassifier("cascade-files/cascade_neg.xml")
+        val cascadeDetector = CascadeClassifier("cascade-files/cascade_600_1500.xml")
 
         // morphological transform
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,
