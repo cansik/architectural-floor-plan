@@ -9,7 +9,8 @@ import ch.fhnw.afpars.algorithm.objectdetection.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
-import ch.fhnw.afpars.util.opencv.SparseCloudAlgorithm
+import ch.fhnw.afpars.util.opencv.combinePoints
+import ch.fhnw.afpars.util.opencv.sparsePoints
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.workflow.Workflow
 import ch.fhnw.afpars.workflow.WorkflowEngine
@@ -47,8 +48,7 @@ class MainView {
         }
 
         // make sparse cloud
-        val sparseAlgo = SparseCloudAlgorithm()
-        val sparsePoints = sparseAlgo.combinePoints(sparseAlgo.sparsePoints(points, 30.0))
+        val sparsePoints = points.sparsePoints(30.0).combinePoints()
 
         for (p in sparsePoints)
             Imgproc.circle(image, p, 8, Scalar(0.0, 0.0, 255.0))
