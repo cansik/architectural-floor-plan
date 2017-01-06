@@ -1,18 +1,21 @@
 package ch.fhnw.afpars.algorithm.areadetection
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import javafx.stage.FileChooser
 import org.bytedeco.javacpp.opencv_core
 import org.bytedeco.javacpp.opencv_features2d
+import org.bytedeco.javacpp.opencv_objdetect
 import org.opencv.core.*
 import org.opencv.features2d.DescriptorExtractor
 import org.opencv.features2d.DescriptorMatcher
 import org.opencv.features2d.FeatureDetector
 import org.opencv.features2d.Features2d
 import org.opencv.imgproc.Imgproc
+import org.opencv.objdetect.CascadeClassifier
 import java.beans.FeatureDescriptor
 import java.io.File
 import java.nio.file.Path
@@ -42,6 +45,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         //Originalbild
         val original = image.clone()
+
         //Distanztransformatin
         val distTransform = original.image.zeros()
         //GeodesicTransform
@@ -53,10 +57,11 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         //Keypoints
         var drawkeypoints = original.clone().image
 
-        val file = File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\data\\door.png")
+        val file = File("C:\\Users\\AlexL\\OneDrive\\Bilder\\test.jpg")
         val door = AFImageReader().read(file.toPath())
+        var drawkeypoints1 = door.clone().image
 
-        val file1 = File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\data\\A_N1.png")
+        val file1 = File("D:\\FHNW\\Bachelor\\architectural-floor-plan\\afpars\\data\\A_N1.png")
         val basic = AFImageReader().read(file1.toPath())
 
         /*
@@ -93,7 +98,8 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat());
         Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled);
         val threshlow = 100
-        val threshhigh = 200
+        val threshhigh = 150
+        val points = mutableListOf<Point>()
         // Drawing a circle around corners
         for (j in 0..cornerdetnorm.rows() - 1) {
             var text = ""
@@ -102,7 +108,8 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
                 val point = cornerdetnorm.get(j, i)[0]
                 //if (point > threshlow) {
                 if (point > threshhigh) {
-                    //Imgproc.circle(cornerdetnormscaled, Point(i.toDouble(), j.toDouble()), 10, Scalar(0.0), 2, 8, 0);
+                    Imgproc.circle(cornerdetnormscaled, Point(i.toDouble(), j.toDouble()), 10, Scalar(0.0), 2, 8, 0);
+                    points.add(Point(i.toDouble(),j.toDouble()))
                 }
                 //}
             }
@@ -165,33 +172,67 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
 
         //val keypoints1 = MatOfKeyPoint()
         //val keypoints2 = MatOfKeyPoint()
-        val keypoints1 = opencv_core.KeyPointVector()
-        val descriptors1 = Mat()
-        val descriptors2 = Mat()
-        val detector = FeatureDetector.create(FeatureDetector.ORB)
+        /*        val keypoints1 = opencv_core.KeyPointVector()
+        val keypoints2 = opencv_core.KeyPointVector()
+        val descriptors1 = opencv_core.Mat()
+        val descriptors2 = opencv_core.Mat()*/
+        //val detector = FeatureDetector.create(FeatureDetector.ORB)
 
+        /*val fileyml= File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\src\\main\\resources\\parameters\\orb.yml")
+        detector.read(fileyml.absolutePath)
+        val extractor = DescriptorExtractor.create(DescriptorExtractor.ORB)
+*/
+/*        val orb = opencv_features2d.ORB.create(10000, 1.2f, 8, 31, 0, 2, 0, 31, 15)
+        val basicjcv = basic.image.convertToJavaCV()
+        orb.detect(basicjcv, keypoints1)
+        orb.compute(basicjcv, keypoints1, descriptors1)
+        Features2d.drawKeypoints(basic.image, keypoints1.convertToOpenCV(), drawkeypoints, Scalar(255.0, 0.0, 0.0), 0)
+
+        val doorjcv = door.image.convertToJavaCV()
+        val orb1 = opencv_features2d.ORB.create(10, 1.2f, 8, 0, 0, 2, 0, 31, 15)
+        orb1.detect(doorjcv, keypoints2)
+        orb1.compute(doorjcv, keypoints2, descriptors2)
+        Features2d.drawKeypoints(door.image, keypoints2.convertToOpenCV(), drawkeypoints1, Scalar(255.0, 0.0, 0.0), 0)*/
+/*
+        val keypoints3 = MatOfKeyPoint()
+        val keypoints4 = MatOfKeyPoint()
+
+        val descriptors3 = Mat()
+        val descriptors4 = Mat()
+
+        val detector = FeatureDetector.create(FeatureDetector.ORB)
         val fileyml= File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\src\\main\\resources\\parameters\\orb.yml")
         detector.read(fileyml.absolutePath)
         val extractor = DescriptorExtractor.create(DescriptorExtractor.ORB)
 
-        val javacvdet = opencv_features2d.ORB.create(500, 1.2f, 8, 31, 0, 2, 0, 31,15)
-        val basicjcv = basic.image.convertToJavaCV()
-        javacvdet.detect(basicjcv, keypoints1)
+        basic.image = basic.image.to8UC3()
+        door.image = door.image.to8UC3()
+        detector.detect(basic.image, keypoints3)
+        detector.detect(door.image, keypoints4)
 
-        //basic.image = basic.image.to8UC3()
-        //door.image = door.image.to8UC3()
-        //detector.detect(basic.image, keypoints1)
-        //detector.detect(door.image, keypoints2)
+        extractor.compute(basic.image, keypoints3, descriptors3)
+        extractor.compute(door.image, keypoints4, descriptors4)
 
-        /*extractor.compute(basic.image, keypoints1, descriptors1)
-        extractor.compute(door.image, keypoints2, descriptors2)
-        Features2d.drawKeypoints(basic.image,keypoints1,drawkeypoints, Scalar(255.0,0.0,0.0),0)
-        val matches = MatOfDMatch()*/
-        //val matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING)
+        Features2d.drawKeypoints(basic.image,keypoints3,drawkeypoints, Scalar(255.0,0.0,0.0),0)
+        val matches = MatOfDMatch()
+        val matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING)
 
+        matcher.match(descriptors3, descriptors4 ,matches)*/
+/*        val result = opencv_core.Mat()
+        val matchvec = opencv_core.DMatchVector()
+        opencv_features2d.BFMatcher().match(descriptors1, descriptors2, matchvec, result)
 
-        //matcher.match(descriptors1, descriptors2 ,matches)
+        //Traincascade
+        val cascade = CascadeClassifierDetector()
+        val options = MatOfRect()
+//        cascade.detectMultiScale(basic.image, options)
 
+*/
+        val haaralg = CascadeClassifierDetector()
+        haaralg.erosionSize = 2.0
+        haaralg.minNeighbors = 3
+        haaralg.scaleFactor = 1.1
+        val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(),"Haar"),history)
 
         var watershedoriginal = localoriginal.copy()
         Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
@@ -211,6 +252,8 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         history.add(AFImage(summedUp, "Summed Up"))
         history.add(AFImage(watershed, "Watershed"))
         history.add(AFImage(drawkeypoints, "Keypoints"))
-        return AFImage(markers)
+        history.add(AFImage(drawkeypoints1, "Keypoints"))
+        history.add(res)
+        return AFImage(watershed)
     }
 }

@@ -88,8 +88,8 @@ fun Mat.negate(dest: Mat) {
 }
 
 fun Mat.convertToJavaCV(): opencv_core.Mat {
-    val jcvmat = opencv_core.Mat()
-    val return_buff = ByteArray((this.total() * this.channels()) as Int)
+    val jcvmat = opencv_core.Mat(this.rows(),this.cols(),CvType.CV_8UC3)
+    val return_buff = ByteArray((this.total() * this.channels()).toInt())
     this.get(0, 0, return_buff)
     jcvmat.data().put(*return_buff)
     return jcvmat
@@ -105,4 +105,14 @@ fun MatOfPoint.approxPolyDP(epsilon: Double? = null): MatOfPoint {
 
     Imgproc.approxPolyDP(cont, approxDoorContour2f, eps, true)
     return MatOfPoint(approxDoorContour2f.to32S())
+}
+
+fun opencv_core.KeyPointVector.convertToOpenCV():MatOfKeyPoint{
+    val matofkp = MatOfKeyPoint()
+    val keyptlist = mutableListOf<KeyPoint>()
+    for(i in 0..this.size()){
+        keyptlist.add(KeyPoint(this.get(i).pt().x(),this.get(i).pt().y(),this.get(i).angle(),this.get(i).response(),this.get(i).octave().toFloat(),this.get(i).class_id()))
+    }
+    matofkp.fromList(keyptlist)
+    return matofkp
 }

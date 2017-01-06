@@ -24,13 +24,13 @@ class CascadeClassifierDetector : IObjectDetectionAlgorithm {
         get() = "Cascade Classifier Object Detector"
 
     @AlgorithmParameter(name = "Erosion Size")
-    val erosionSize: Double = 10.0
+    var erosionSize: Double = 10.0
 
     @AlgorithmParameter(name = "Scale Factor", minValue = 1.1, maxValue = 5.0)
-    val scaleFactor: Double = 1.1
+    var scaleFactor: Double = 1.1
 
     @AlgorithmParameter(name = "Min Neighbors", minValue = 0.0, maxValue = 20.0)
-    val minNeighbors: Int = 3
+    var minNeighbors: Int = 3
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val cascadeDetector = CascadeClassifier("cascade-files/cascade_600_1500.xml")
