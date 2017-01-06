@@ -5,17 +5,18 @@ import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
 import ch.fhnw.afpars.algorithm.areadetection.TMDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
-import ch.fhnw.afpars.algorithm.objectdetection.OrbDetection
 import ch.fhnw.afpars.algorithm.objectdetection.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
+import ch.fhnw.afpars.util.opencv.SparseCloudAlgorithm
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.workflow.Workflow
 import ch.fhnw.afpars.workflow.WorkflowEngine
 import javafx.fxml.FXML
 import javafx.stage.FileChooser
-import org.opencv.core.Core
+import org.opencv.core.*
+import org.opencv.imgproc.Imgproc
 
 class MainView {
     @FXML
@@ -33,27 +34,26 @@ class MainView {
         }
     }
 
-    fun testCCWithOrb() {
+    fun testSparsePoint() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-        val fileChooser = FileChooser()
-        fileChooser.title = "Open image"
-        val file = fileChooser.showOpenDialog(null)
-        if (file != null) {
-            val source = AFImageReader().read(file.toPath())
+        val image = Mat.zeros(500, 500, CvType.CV_8UC3)
+        val points = mutableListOf<Point>()
 
-            val destination = source
-
-            println("running cascade classifier with orb test...")
-
-            workflowEngine.run(Workflow(
-                    arrayListOf(
-                            CascadeClassifierDetector(),
-                            OrbDetection()
-                    ).toTypedArray()
-            ), destination,
-                    true)
+        for (i in 0..50) {
+            val p = Point(Math.random() * image.width(), Math.random() * image.height())
+            Imgproc.circle(image, p, 5, Scalar(0.0, 255.0, 0.0))
+            points.add(p)
         }
+
+        // make sparse cloud
+        val sparseAlgo = SparseCloudAlgorithm()
+        val sparsePoints = sparseAlgo.combinePoints(sparseAlgo.sparsePoints(points, 30.0))
+
+        for (p in sparsePoints)
+            Imgproc.circle(image, p, 8, Scalar(0.0, 0.0, 255.0))
+
+        imageViewOriginal!!.newImage(image.toImage())
     }
 
     fun testCascadeClassifer() {
