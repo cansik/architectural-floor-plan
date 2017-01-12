@@ -5,6 +5,8 @@ import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
+import ch.fhnw.afpars.util.opencv.combinePoints
+import ch.fhnw.afpars.util.opencv.sparsePoints
 import javafx.stage.FileChooser
 import org.bytedeco.javacpp.opencv_core
 import org.bytedeco.javacpp.opencv_features2d
@@ -33,6 +35,9 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
 
     @AlgorithmParameter(name = "Geodesic Dilate")
     var geodesicDilateSize = 88
+
+    @AlgorithmParameter(name = "Distance", minValue = 1.0, maxValue = 10.0)
+    var distance1 = 4
 
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 26.0
@@ -98,7 +103,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat());
         Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled);
         val threshlow = 100
-        val threshhigh = 150
+        val threshhigh = 170
         val points = mutableListOf<Point>()
         // Drawing a circle around corners
         for (j in 0..cornerdetnorm.rows() - 1) {
@@ -108,14 +113,17 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
                 val point = cornerdetnorm.get(j, i)[0]
                 //if (point > threshlow) {
                 if (point > threshhigh) {
-                    Imgproc.circle(cornerdetnormscaled, Point(i.toDouble(), j.toDouble()), 10, Scalar(0.0), 2, 8, 0);
-                    points.add(Point(i.toDouble(),j.toDouble()))
+                    //Imgproc.circle(cornerdetnormscaled, Point(i.toDouble(), j.toDouble()), 10, Scalar(0.0), 2, 8, 0);
+                    points.add(Point(i.toDouble(), j.toDouble()))
                 }
                 //}
             }
             //System.out.println(text + "Line: " + j + "; ")
         }
 
+        val sparsePoints = points.sparsePoints(distance1.toDouble()).combinePoints()
+        for (p in sparsePoints)
+            Imgproc.circle(cornerdetnormscaled, p, 8, Scalar(0.0, 0.0, 255.0))
         /*
         Invert markers
          */
@@ -136,7 +144,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
 
         //Draw foreground markers
         for (cnt in contours) {
-            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((i + 200).toDouble()), Core.FILLED)
+            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((/*i +*/ 200).toDouble()), Core.FILLED)
             i++;
         }
 
@@ -161,14 +169,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
             }
         }
 
-        /*
-        Kombination Background/Foreground
-         */
-        for (i in 0..summedUp.height() - 1) {
-            for (j in 0..summedUp.width() - 1) {
-                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
-            }
-        }
+
 
         //val keypoints1 = MatOfKeyPoint()
         //val keypoints2 = MatOfKeyPoint()
@@ -232,7 +233,62 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         haaralg.erosionSize = 2.0
         haaralg.minNeighbors = 3
         haaralg.scaleFactor = 1.1
-        val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(),"Haar"),history)
+        val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
+        val foundDoors: MatOfRect = res.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
+        val foundDoorsArray = foundDoors.toArray()
+
+        for (i in 0..foundDoors!!.rows() - 1) {
+            val door = foundDoorsArray[i]
+            val searchDistance = 10
+            val doorPoints = mutableListOf<Point>()
+            sparsePoints.forEach { point: Point ->
+                if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
+                    doorPoints.add(point)
+                    System.out.println("Door found X: " + point.x + " Y: " + point.y + "Iteration: " + i)
+                }
+            }
+
+            val angles = Array(doorPoints.size) { kotlin.arrayOfNulls<Double>(doorPoints.size) }
+            for (j in 0..doorPoints.size - 1) {
+                for (k in (j + 1)..doorPoints.size - 1) {
+                    angles[j][k] = angleToXAxis(doorPoints[j], doorPoints[k])
+                    angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
+                }
+            }
+
+            //angles.add(angleToXAxis(point1,point2))
+            val size = angles[0].size - 1
+            for (j in 0..size) {
+                for (k in (j + 1)..size) {
+                    for (innerJ in 0..size) {
+                        for (innerK in (innerJ + 1)..size) {
+                            if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
+                                if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
+                                    if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
+                                        System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
+                                        Imgproc.rectangle(background,doorPoints[j],doorPoints[innerK],Scalar(128.0,128.0,128.0),-1)
+                                    } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
+                                        System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
+                                        Imgproc.rectangle(background,doorPoints[j],doorPoints[innerK],Scalar(128.0,128.0,128.0),-1)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        /*
+        Kombination Background/Foreground
+         */
+        for (i in 0..summedUp.height() - 1) {
+            for (j in 0..summedUp.width() - 1) {
+                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
+            }
+        }
 
         var watershedoriginal = localoriginal.copy()
         Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
@@ -255,5 +311,10 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         history.add(AFImage(drawkeypoints1, "Keypoints"))
         history.add(res)
         return AFImage(watershed)
+    }
+
+    fun angleToXAxis(point1: Point, point2: Point): Double {
+        val delta = Point(point1.x - point2.x, point1.y - point2.y)
+        return -Math.atan(delta.y / delta.x)
     }
 }

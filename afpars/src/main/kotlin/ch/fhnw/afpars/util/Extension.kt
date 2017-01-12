@@ -116,3 +116,7 @@ fun opencv_core.KeyPointVector.convertToOpenCV():MatOfKeyPoint{
     matofkp.fromList(keyptlist)
     return matofkp
 }
+
+fun Double.isApproximate(value:Double, error:Double):Boolean{
+    return (Math.abs(Math.abs(this)-Math.abs(value))<error)
+}
