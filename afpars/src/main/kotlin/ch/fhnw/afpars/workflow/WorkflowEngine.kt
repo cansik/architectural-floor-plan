@@ -32,7 +32,7 @@ class WorkflowEngine {
         }
     }
 
-    private fun showEditView(algorithm: IAlgorithm, afImage: AFImage) {
+    public fun showEditView(algorithm: IAlgorithm, afImage: AFImage) {
         val latch = CountDownLatch(1)
 
         val fxmlLoader = FXMLLoader(javaClass.classLoader.getResource("view/ParameterEditView.fxml"))

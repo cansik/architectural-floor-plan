@@ -7,6 +7,7 @@ import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import ch.fhnw.afpars.util.opencv.combinePoints
 import ch.fhnw.afpars.util.opencv.sparsePoints
+import ch.fhnw.afpars.workflow.WorkflowEngine
 import javafx.stage.FileChooser
 import org.bytedeco.javacpp.opencv_core
 import org.bytedeco.javacpp.opencv_features2d
@@ -102,7 +103,6 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         Imgproc.cornerHarris(cornerdet, cornerdet, 3, 5, 0.04)
         Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat());
         Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled);
-        val threshlow = 100
         val threshhigh = 170
         val points = mutableListOf<Point>()
         // Drawing a circle around corners
@@ -170,69 +170,11 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         }
 
 
-
-        //val keypoints1 = MatOfKeyPoint()
-        //val keypoints2 = MatOfKeyPoint()
-        /*        val keypoints1 = opencv_core.KeyPointVector()
-        val keypoints2 = opencv_core.KeyPointVector()
-        val descriptors1 = opencv_core.Mat()
-        val descriptors2 = opencv_core.Mat()*/
-        //val detector = FeatureDetector.create(FeatureDetector.ORB)
-
-        /*val fileyml= File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\src\\main\\resources\\parameters\\orb.yml")
-        detector.read(fileyml.absolutePath)
-        val extractor = DescriptorExtractor.create(DescriptorExtractor.ORB)
-*/
-/*        val orb = opencv_features2d.ORB.create(10000, 1.2f, 8, 31, 0, 2, 0, 31, 15)
-        val basicjcv = basic.image.convertToJavaCV()
-        orb.detect(basicjcv, keypoints1)
-        orb.compute(basicjcv, keypoints1, descriptors1)
-        Features2d.drawKeypoints(basic.image, keypoints1.convertToOpenCV(), drawkeypoints, Scalar(255.0, 0.0, 0.0), 0)
-
-        val doorjcv = door.image.convertToJavaCV()
-        val orb1 = opencv_features2d.ORB.create(10, 1.2f, 8, 0, 0, 2, 0, 31, 15)
-        orb1.detect(doorjcv, keypoints2)
-        orb1.compute(doorjcv, keypoints2, descriptors2)
-        Features2d.drawKeypoints(door.image, keypoints2.convertToOpenCV(), drawkeypoints1, Scalar(255.0, 0.0, 0.0), 0)*/
-/*
-        val keypoints3 = MatOfKeyPoint()
-        val keypoints4 = MatOfKeyPoint()
-
-        val descriptors3 = Mat()
-        val descriptors4 = Mat()
-
-        val detector = FeatureDetector.create(FeatureDetector.ORB)
-        val fileyml= File("D:\\FHNW\\Semester7\\architectural-floor-plan\\afpars\\src\\main\\resources\\parameters\\orb.yml")
-        detector.read(fileyml.absolutePath)
-        val extractor = DescriptorExtractor.create(DescriptorExtractor.ORB)
-
-        basic.image = basic.image.to8UC3()
-        door.image = door.image.to8UC3()
-        detector.detect(basic.image, keypoints3)
-        detector.detect(door.image, keypoints4)
-
-        extractor.compute(basic.image, keypoints3, descriptors3)
-        extractor.compute(door.image, keypoints4, descriptors4)
-
-        Features2d.drawKeypoints(basic.image,keypoints3,drawkeypoints, Scalar(255.0,0.0,0.0),0)
-        val matches = MatOfDMatch()
-        val matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING)
-
-        matcher.match(descriptors3, descriptors4 ,matches)*/
-/*        val result = opencv_core.Mat()
-        val matchvec = opencv_core.DMatchVector()
-        opencv_features2d.BFMatcher().match(descriptors1, descriptors2, matchvec, result)
-
-        //Traincascade
-        val cascade = CascadeClassifierDetector()
-        val options = MatOfRect()
-//        cascade.detectMultiScale(basic.image, options)
-
-*/
         val haaralg = CascadeClassifierDetector()
         haaralg.erosionSize = 2.0
         haaralg.minNeighbors = 3
         haaralg.scaleFactor = 1.1
+        WorkflowEngine().showEditView(haaralg,AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
         val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
         val foundDoors: MatOfRect = res.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
@@ -255,27 +197,28 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
                     angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
                 }
             }
-
-            //angles.add(angleToXAxis(point1,point2))
-            val size = angles[0].size - 1
-            for (j in 0..size) {
-                for (k in (j + 1)..size) {
-                    for (innerJ in 0..size) {
-                        for (innerK in (innerJ + 1)..size) {
-                            if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
-                                if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
-                                    if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
-                                        System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                        Imgproc.rectangle(background,doorPoints[j],doorPoints[innerK],Scalar(128.0,128.0,128.0),-1)
-                                    } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
-                                        System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                        Imgproc.rectangle(background,doorPoints[j],doorPoints[innerK],Scalar(128.0,128.0,128.0),-1)
+            if(!angles.isEmpty()) {
+                //angles.add(angleToXAxis(point1,point2))
+                val size = angles[0].size - 1
+                for (j in 0..size) {
+                    for (k in (j + 1)..size) {
+                        for (innerJ in 0..size) {
+                            for (innerK in (innerJ + 1)..size) {
+                                if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
+                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
+                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
+                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
+                                            Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0, 128.0, 128.0), -1)
+                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
+                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
+                                            Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0, 128.0, 128.0), -1)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
             }
 
