@@ -1,13 +1,13 @@
 package ch.fhnw.afpars.io.reader
 
 import ch.fhnw.afpars.model.AFImage
-import java.nio.file.Path
 import org.opencv.imgcodecs.Imgcodecs
+import java.nio.file.Path
 
 /**
  * Created by Alexander on 11.10.2016.
  */
-class AFImageReader : IDataReader{
+class AFImageReader : IDataReader {
     companion object {
         val ORIGINAL_IMAGE = "originalimage"
     }
