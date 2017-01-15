@@ -6,11 +6,11 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Stage
 
-class Main : Application() {
+class Experiments : Application() {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
-        val root = FXMLLoader.load<Parent>(javaClass.classLoader.getResource("view/EditView.fxml"))
+        val root = FXMLLoader.load<Parent>(javaClass.classLoader.getResource("view/MainView.fxml"))
         primaryStage.title = "Architectural Floor Plan Analysis"
         primaryStage.scene = Scene(root)
         primaryStage.show()
