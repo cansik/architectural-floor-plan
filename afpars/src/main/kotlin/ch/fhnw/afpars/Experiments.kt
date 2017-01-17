@@ -20,7 +20,7 @@ class Experiments : Application() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            launch(Main::class.java)
+            launch(Experiments::class.java)
         }
     }
 }
