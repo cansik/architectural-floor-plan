@@ -1,5 +1,6 @@
-package ch.fhnw.afpars.algorithm.objectdetection
+package ch.fhnw.afpars.algorithm.structuralanalysis
 
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.opencv.SimpleFeatureMatcher
@@ -13,7 +14,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 03.01.17.
  */
-class OrbDetection : IObjectDetectionAlgorithm {
+class OrbDetection : IAlgorithm {
     override val name: String
         get() = "ORB Detection"
 

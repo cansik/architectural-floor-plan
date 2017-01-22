@@ -1,33 +1,23 @@
-package ch.fhnw.afpars.algorithm.areadetection
+package ch.fhnw.afpars.algorithm.semanticanalysis
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
-import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.IAlgorithm
+import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import ch.fhnw.afpars.util.opencv.combinePoints
 import ch.fhnw.afpars.util.opencv.sparsePoints
 import ch.fhnw.afpars.workflow.WorkflowEngine
-import javafx.stage.FileChooser
-import org.bytedeco.javacpp.opencv_core
-import org.bytedeco.javacpp.opencv_features2d
-import org.bytedeco.javacpp.opencv_objdetect
 import org.opencv.core.*
-import org.opencv.features2d.DescriptorExtractor
-import org.opencv.features2d.DescriptorMatcher
-import org.opencv.features2d.FeatureDetector
-import org.opencv.features2d.Features2d
 import org.opencv.imgproc.Imgproc
-import org.opencv.objdetect.CascadeClassifier
-import java.beans.FeatureDescriptor
 import java.io.File
-import java.nio.file.Path
 
 
 /**
  * Based on http://mathematica.stackexchange.com/a/19550/43125 by nikie
  */
-class NikieRoomDetection : IAreaDetectionAlgorithm {
+class NikieRoomDetection : IAlgorithm {
     override val name: String
         get() = "Nikie Room Detection"
 
@@ -174,7 +164,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
         haaralg.erosionSize = 2.0
         haaralg.minNeighbors = 3
         haaralg.scaleFactor = 1.1
-        WorkflowEngine().showEditView(haaralg,AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
+        WorkflowEngine().showEditView(haaralg, AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
         val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
         val foundDoors: MatOfRect = res.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
@@ -197,7 +187,7 @@ class NikieRoomDetection : IAreaDetectionAlgorithm {
                     angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
                 }
             }
-            if(!angles.isEmpty()) {
+            if (!angles.isEmpty()) {
                 //angles.add(angleToXAxis(point1,point2))
                 val size = angles[0].size - 1
                 for (j in 0..size) {

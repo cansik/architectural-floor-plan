@@ -1,6 +1,7 @@
-package ch.fhnw.afpars.algorithm.areadetection
+package ch.fhnw.afpars.algorithm.semanticanalysis
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.zeros
@@ -11,7 +12,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 16.10.16.
  */
-class WatershedTest : IAreaDetectionAlgorithm {
+class WatershedTest : IAlgorithm {
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 10.0
 

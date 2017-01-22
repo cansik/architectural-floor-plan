@@ -1,6 +1,7 @@
-package ch.fhnw.afpars.algorithm.preprocessing
+package ch.fhnw.afpars.algorithm.informationsegmentation
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import org.opencv.core.Mat
 import org.opencv.core.Size
@@ -9,7 +10,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 13.10.16.
  */
-class MorphologicalTransform() : IPreprocessingAlgorithm {
+class MorphologicalTransform() : IAlgorithm {
     override val name: String
         get() = "Morphological Transform"
 

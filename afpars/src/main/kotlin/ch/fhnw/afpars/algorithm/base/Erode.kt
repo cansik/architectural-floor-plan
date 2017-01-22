@@ -1,12 +1,13 @@
 package ch.fhnw.afpars.algorithm.base
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 
-class Erode : IBaseAlgorithm {
+class Erode : IAlgorithm {
     override val name: String
         get() = "Erode"
 

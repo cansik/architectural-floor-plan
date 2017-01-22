@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.algorithm.base
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.resize
@@ -10,7 +11,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 03.11.16.
  */
-class ScaleTest : IBaseAlgorithm {
+class ScaleTest : IAlgorithm {
     @AlgorithmParameter(name = "Erosion Size")
     val erosionSize: Double = 10.0
 

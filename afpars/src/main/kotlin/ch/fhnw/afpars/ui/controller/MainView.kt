@@ -1,12 +1,12 @@
 package ch.fhnw.afpars.ui.controller
 
-import ch.fhnw.afpars.algorithm.areadetection.NikieRoomDetection
-import ch.fhnw.afpars.algorithm.areadetection.RectangleRoomDetection
-import ch.fhnw.afpars.algorithm.areadetection.TMDoorDetection
 import ch.fhnw.afpars.algorithm.base.ScaleTest
-import ch.fhnw.afpars.algorithm.objectdetection.CascadeClassifierDetector
-import ch.fhnw.afpars.algorithm.objectdetection.ShapeDistanceMatching
-import ch.fhnw.afpars.algorithm.preprocessing.MorphologicalTransform
+import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
+import ch.fhnw.afpars.algorithm.informationsegmentation.RectangleRoomDetection
+import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
+import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
+import ch.fhnw.afpars.algorithm.structuralanalysis.TMDoorDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.opencv.combinePoints

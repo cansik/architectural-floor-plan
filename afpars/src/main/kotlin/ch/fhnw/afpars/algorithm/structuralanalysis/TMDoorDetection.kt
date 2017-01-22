@@ -1,5 +1,6 @@
-package ch.fhnw.afpars.algorithm.areadetection
+package ch.fhnw.afpars.algorithm.structuralanalysis
 
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.convert
 import ch.fhnw.afpars.util.zeros
@@ -10,7 +11,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 08.11.16.
  */
-class TMDoorDetection : IAreaDetectionAlgorithm {
+class TMDoorDetection : IAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.image
         val templ = Imgcodecs.imread("data/door.png")

@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.algorithm.base
 
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import org.opencv.core.Mat
 import org.opencv.core.Scalar
@@ -9,7 +10,7 @@ import org.opencv.imgproc.Imgproc
 /**
  * Created by cansik on 03.11.16.
  */
-class HoughTransform : IBaseAlgorithm {
+class HoughTransform : IAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
 
         var destination = image.image

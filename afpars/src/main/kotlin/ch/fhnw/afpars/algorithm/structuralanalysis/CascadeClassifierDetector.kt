@@ -1,6 +1,7 @@
-package ch.fhnw.afpars.algorithm.objectdetection
+package ch.fhnw.afpars.algorithm.structuralanalysis
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.zeros
@@ -15,7 +16,7 @@ import org.opencv.objdetect.CascadeClassifier
 /**
  * Created by cansik on 22.12.16.
  */
-class CascadeClassifierDetector : IObjectDetectionAlgorithm {
+class CascadeClassifierDetector : IAlgorithm {
     companion object {
         val CASCADE_ATTRIBUT = "cascadeareas"
     }
