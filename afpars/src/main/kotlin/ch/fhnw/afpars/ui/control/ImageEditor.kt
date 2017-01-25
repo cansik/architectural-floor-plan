@@ -7,6 +7,7 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 
 
 /**
@@ -21,11 +22,13 @@ class ImageEditor : Pane() {
 
     var zoomLevel = 0.0
 
+    val outputClip = Rectangle()
+
     init {
         children.add(canvas)
 
         val gc = canvas.graphicsContext2D
-        gc.fill = Color.YELLOW
+        gc.fill = Color.LIGHTGRAY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
 
         gc.fill = Color.CORNFLOWERBLUE
@@ -34,9 +37,19 @@ class ImageEditor : Pane() {
         gc.stroke = Color.GREENYELLOW
         gc.strokeRect(0.0, 0.0, canvas.width, canvas.height)
 
+        // setup resize
         widthProperty().addListener { o -> resize() }
         heightProperty().addListener { o -> resize() }
 
+        // setup clipping
+        clip = outputClip
+
+        layoutBoundsProperty().addListener({ ov, oldValue, newValue ->
+            outputClip.width = newValue.width
+            outputClip.height = newValue.height
+        })
+
+        // tool listeners
         canvas.setOnMouseClicked { event -> activeTool.onMouseClicked(this, event) }
     }
 
@@ -51,7 +64,6 @@ class ImageEditor : Pane() {
         val finalScale = scale + zoomLevel
 
         zoom(canvas, finalScale, layoutX, layoutY)
-        //canvas.clip = Rectangle(layoutX, layoutY, width, height)
     }
 
     /** Allow to zoom/scale any node with pivot at scene (x,y) coordinates.
