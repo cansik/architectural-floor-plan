@@ -2,9 +2,12 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.ui.control.ImageEditor
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
+import javafx.fxml.FXML
 import javafx.scene.Node
+import javafx.scene.layout.BorderPane
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
@@ -17,8 +20,19 @@ class EditView {
 
     val statusText = SimpleObjectProperty<String>("Status")
 
+    @FXML
+    var layoutPane: BorderPane? = null
+
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+    }
+
+    fun initCanvas(e: ActionEvent) {
+        val canvas = ImageEditor()
+        canvas.prefWidth(100.0)
+        canvas.prefWidth(100.0)
+
+        layoutPane!!.center = canvas
     }
 
     fun loadImageFromFile(e: ActionEvent) {

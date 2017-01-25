@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox
  * Created by cansik on 12.10.16.
  * Basic concept by James D https://gist.github.com/james-d/ce5ec1fd44ce6c64e81a
  */
-class PreviewImageView() : ImageView() {
+class PreviewImageView : ImageView() {
 
     private val MIN_PIXELS = 10
 
