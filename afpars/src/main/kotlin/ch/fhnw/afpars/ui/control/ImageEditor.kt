@@ -14,16 +14,19 @@ import javafx.scene.shape.Rectangle
  * Created by cansik on 25.01.17.
  */
 class ImageEditor : Pane() {
-    val canvas = Canvas(800.0, 500.0)
+    val canvas = Canvas(600.0, 400.0)
+    val outputClip = Rectangle()
 
     var activeTool = ViewTool()
 
+    // calculated value
     var scale = 1.0
 
-    var zoomLevel = 0.0
-
-    val outputClip = Rectangle()
-
+    // basic view controls
+    var zoomLevel = 0.5
+    var centerX = 0.0
+    var centerY = 0.0
+    
     init {
         children.add(canvas)
 
@@ -63,7 +66,7 @@ class ImageEditor : Pane() {
 
         val finalScale = scale + zoomLevel
 
-        zoom(canvas, finalScale, layoutX, layoutY)
+        zoom(canvas, finalScale, layoutX + centerX, layoutY + centerY)
     }
 
     /** Allow to zoom/scale any node with pivot at scene (x,y) coordinates.
