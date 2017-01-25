@@ -20,13 +20,16 @@ class ImageEditor : Pane() {
     var activeTool = ViewTool()
 
     // calculated value
-    var scale = 1.0
+    private var relationScale = 1.0
 
     // basic view controls
-    var zoomLevel = 0.5
+    var zoomScale = 0.0
     var centerX = 0.0
     var centerY = 0.0
-    
+
+    val scale: Double
+        get() = relationScale + zoomScale
+
     init {
         children.add(canvas)
 
@@ -57,19 +60,17 @@ class ImageEditor : Pane() {
     }
 
     fun resize() {
-        // calculate the scale
+        // calculate the relationScale
         if (width - canvas.width * scale > height - canvas.height * scale) {
-            scale = height / canvas.height
+            relationScale = height / canvas.height
         } else {
-            scale = width / canvas.width
+            relationScale = width / canvas.width
         }
 
-        val finalScale = scale + zoomLevel
-
-        zoom(canvas, finalScale, layoutX + centerX, layoutY + centerY)
+        zoom(canvas, scale, layoutX + centerX, layoutY + centerY)
     }
 
-    /** Allow to zoom/scale any node with pivot at scene (x,y) coordinates.
+    /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
 
      * @param node
      * *
@@ -84,7 +85,7 @@ class ImageEditor : Pane() {
         var scale = factor
 
 
-        // fix scale
+        // fix relationScale
         if (scale < 0.05) scale = 0.05
         if (scale > 50) scale = 50.0
 
