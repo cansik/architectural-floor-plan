@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.ui.control.tools
 
 import ch.fhnw.afpars.ui.control.ImageEditor
+import javafx.geometry.Point2D
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 
@@ -10,17 +11,24 @@ import javafx.scene.input.ScrollEvent
 class ViewTool : BaseEditorTool() {
     val scaleSpeed = 1.0 / 50.0
 
-    override fun onMouseClicked(editor: ImageEditor, event: MouseEvent) {
-        println("Mouse Clicked: ${event.x} | ${event.y}")
+    var dragStart = Point2D.ZERO!!
+
+    override fun onEditorMousePressed(imageEditor: ImageEditor, event: MouseEvent) {
+        dragStart = Point2D(event.x, event.y)
     }
 
-    override fun setOnScroll(editor: ImageEditor, event: ScrollEvent) {
-        print("ZoomScale: ${editor.zoomScale}")
-        println("\tDelta: ${event.deltaY * scaleSpeed}")
+    override fun onEditorMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {
+        val point = Point2D(event.x, event.y)
+        val delta = dragStart.subtract(point)
 
+        imageEditor.canvasTransformation = delta.multiply(-1.0)
+        imageEditor.resize()
 
+        dragStart = point
+    }
 
-        editor.zoomScale += event.deltaY * scaleSpeed
-        editor.resize()
+    override fun onEditorScroll(imageEditor: ImageEditor, event: ScrollEvent) {
+        imageEditor.zoomScale += event.deltaY * scaleSpeed
+        imageEditor.resize()
     }
 }

@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.ui.control
 
 import ch.fhnw.afpars.ui.control.tools.ViewTool
+import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.ScrollEvent
@@ -24,8 +25,7 @@ class ImageEditor : Pane() {
 
     // basic view controls
     var zoomScale = 0.0
-    var centerX = 0.0
-    var centerY = 0.0
+    var canvasTransformation = Point2D.ZERO!!
 
     val scale: Double
         get() = relationScale + zoomScale
@@ -56,8 +56,27 @@ class ImageEditor : Pane() {
         })
 
         // tool listeners
-        canvas.setOnMouseClicked { event -> activeTool.onMouseClicked(this, event) }
-        setOnScroll { event -> activeTool.setOnScroll(this, event) }
+        // canvas
+        canvas.setOnMouseClicked { event -> activeTool.onCanvasMouseClicked(this, event) }
+
+        canvas.setOnMousePressed { event -> activeTool.onCanvasMousePressed(this, event) }
+        canvas.setOnMouseReleased { event -> activeTool.onCanvasMouseReleased(this, event) }
+        canvas.setOnMouseDragged { event -> activeTool.onCanvasMouseDragged(this, event) }
+
+        canvas.setOnScroll { event -> activeTool.onCanvasScroll(this, event) }
+
+        canvas.setOnKeyPressed { event -> activeTool.onCanvasKeyPressed(this, event) }
+
+        // pane
+        setOnMouseClicked { event -> activeTool.onEditorMouseClicked(this, event) }
+
+        setOnMousePressed { event -> activeTool.onEditorMousePressed(this, event) }
+        setOnMouseReleased { event -> activeTool.onEditorMouseReleased(this, event) }
+        setOnMouseDragged { event -> activeTool.onEditorMouseDragged(this, event) }
+
+        setOnScroll { event -> activeTool.onEditorScroll(this, event) }
+
+        setOnKeyPressed { event -> activeTool.onEditorKeyPressed(this, event) }
     }
 
     fun resize() {
@@ -68,7 +87,10 @@ class ImageEditor : Pane() {
             relationScale = width / canvas.width
         }
 
-        zoom(canvas, scale, layoutX + centerX, layoutY + centerY)
+        zoom(canvas, scale, layoutX, layoutY)
+
+        canvas.translateX += canvasTransformation.x
+        canvas.translateY += canvasTransformation.y
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
