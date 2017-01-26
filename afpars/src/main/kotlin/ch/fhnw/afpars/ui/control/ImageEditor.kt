@@ -57,6 +57,7 @@ class ImageEditor : Pane() {
 
         // tool listeners
         canvas.setOnMouseClicked { event -> activeTool.onMouseClicked(this, event) }
+        setOnScroll { event -> activeTool.setOnScroll(this, event) }
     }
 
     fun resize() {
