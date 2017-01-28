@@ -1,6 +1,7 @@
-package ch.fhnw.afpars.ui.control.tools
+package ch.fhnw.afpars.ui.control.editor.tools
 
-import ch.fhnw.afpars.ui.control.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.ImageEditor
+import javafx.scene.Cursor
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
@@ -22,4 +23,7 @@ abstract class BaseEditorTool : IEditorTool {
     override fun onEditorMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onEditorScroll(imageEditor: ImageEditor, event: ScrollEvent) {}
     override fun onEditorKeyPressed(imageEditor: ImageEditor, event: KeyEvent) {}
+
+    override val cursor: Cursor
+        get() = Cursor.DEFAULT
 }

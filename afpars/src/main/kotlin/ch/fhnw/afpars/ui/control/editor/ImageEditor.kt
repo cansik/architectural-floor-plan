@@ -1,6 +1,6 @@
-package ch.fhnw.afpars.ui.control
+package ch.fhnw.afpars.ui.control.editor
 
-import ch.fhnw.afpars.ui.control.tools.ViewTool
+import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
@@ -55,6 +55,9 @@ class ImageEditor : Pane() {
             outputClip.height = newValue.height
         })
 
+        // set cursor
+        cursor = activeTool.cursor
+
         // tool listeners
         // canvas
         canvas.setOnMouseClicked { event -> activeTool.onCanvasMouseClicked(this, event) }
@@ -91,6 +94,10 @@ class ImageEditor : Pane() {
 
         canvas.translateX += canvasTransformation.x
         canvas.translateY += canvasTransformation.y
+    }
+
+    fun redraw() {
+
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.

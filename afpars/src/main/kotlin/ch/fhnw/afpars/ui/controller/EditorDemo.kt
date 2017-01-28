@@ -1,6 +1,6 @@
 package ch.fhnw.afpars.ui.controller
 
-import ch.fhnw.afpars.ui.control.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import javafx.fxml.FXML
 import org.opencv.core.Core
 

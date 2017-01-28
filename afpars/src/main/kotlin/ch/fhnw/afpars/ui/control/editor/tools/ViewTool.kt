@@ -1,7 +1,8 @@
-package ch.fhnw.afpars.ui.control.tools
+package ch.fhnw.afpars.ui.control.editor.tools
 
-import ch.fhnw.afpars.ui.control.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import javafx.geometry.Point2D
+import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 
@@ -12,6 +13,9 @@ class ViewTool : BaseEditorTool() {
     val scaleSpeed = 1.0 / 50.0
 
     var dragStart = Point2D.ZERO!!
+
+    override val cursor: Cursor
+        get() = Cursor.OPEN_HAND
 
     override fun onEditorMousePressed(imageEditor: ImageEditor, event: MouseEvent) {
         dragStart = Point2D(event.x, event.y)
@@ -28,7 +32,7 @@ class ViewTool : BaseEditorTool() {
     }
 
     override fun onEditorScroll(imageEditor: ImageEditor, event: ScrollEvent) {
-        imageEditor.zoomScale += event.deltaY * scaleSpeed
+        imageEditor.zoomScale += -1 * event.deltaY * scaleSpeed
         imageEditor.resize()
     }
 }

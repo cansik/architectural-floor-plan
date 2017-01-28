@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import ch.fhnw.afpars.ui.control.ImageEditor?>
+<?import ch.fhnw.afpars.ui.control.editor.ImageEditor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.*?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"

@@ -1,4 +1,4 @@
-package ch.fhnw.afpars.ui.control.tools
+package ch.fhnw.afpars.ui.control.editor.tools
 
 /**
  * Created by cansik on 25.01.17.
