@@ -71,4 +71,13 @@ class EditorDemo {
             editor!!.redraw()
         }
     }
+
+    fun exportImage(e: ActionEvent) {
+        val fileChooser = FileChooser()
+        fileChooser.title = "Export image"
+        val file = fileChooser.showSaveDialog(null)
+        if (file != null) {
+            
+        }
+    }
 }

@@ -22,16 +22,21 @@ class ViewTool : BaseEditorTool() {
     }
 
     override fun onEditorMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {
+        // drag
         val point = Point2D(event.x, event.y)
         val delta = dragStart.subtract(point)
 
         imageEditor.canvasTransformation = delta.multiply(-1.0)
-        imageEditor.resize()
-
         dragStart = point
+
+        imageEditor.resize()
     }
 
     override fun onEditorScroll(imageEditor: ImageEditor, event: ScrollEvent) {
+        // zoom point
+        imageEditor.zoomTransformation = Point2D(event.x, event.y)
+
+        // scale
         imageEditor.zoomScale += -1 * event.deltaY * scaleSpeed
         imageEditor.resize()
     }

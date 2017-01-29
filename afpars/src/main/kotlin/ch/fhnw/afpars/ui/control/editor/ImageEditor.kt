@@ -35,6 +35,7 @@ class ImageEditor : Pane() {
     // basic view controls
     var zoomScale = 0.0
     var canvasTransformation = Point2D.ZERO!!
+    var zoomTransformation = Point2D.ZERO!!
 
     val scale: Double
         get() = relationScale + zoomScale
@@ -79,6 +80,7 @@ class ImageEditor : Pane() {
         canvas.setOnMousePressed { event -> activeTool.onCanvasMousePressed(this, event) }
         canvas.setOnMouseReleased { event -> activeTool.onCanvasMouseReleased(this, event) }
         canvas.setOnMouseDragged { event -> activeTool.onCanvasMouseDragged(this, event) }
+        canvas.setOnMouseMoved { event -> activeTool.onCanvasMouseMoved(this, event) }
 
         canvas.setOnScroll { event -> activeTool.onCanvasScroll(this, event) }
 
@@ -90,6 +92,7 @@ class ImageEditor : Pane() {
         setOnMousePressed { event -> activeTool.onEditorMousePressed(this, event) }
         setOnMouseReleased { event -> activeTool.onEditorMouseReleased(this, event) }
         setOnMouseDragged { event -> activeTool.onEditorMouseDragged(this, event) }
+        setOnMouseMoved { event -> activeTool.onEditorMouseMoved(this, event) }
 
         setOnScroll { event -> activeTool.onEditorScroll(this, event) }
 
@@ -104,7 +107,7 @@ class ImageEditor : Pane() {
             relationScale = width / canvas.width
         }
 
-        zoom(canvas, scale, layoutX, layoutY)
+        zoom(canvas, scale, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
 
         canvas.translateX += canvasTransformation.x
         canvas.translateY += canvasTransformation.y
@@ -112,9 +115,7 @@ class ImageEditor : Pane() {
 
     fun resizeCanvas(width: Double, height: Double) {
         // reset transformation
-        zoom(canvas, 1.0, layoutX, layoutY)
-        canvas.translateX = 0.0
-        canvas.translateY = 0.0
+        resetZoom()
 
         // resize
         canvas.resize(width, height)
@@ -131,6 +132,16 @@ class ImageEditor : Pane() {
 
         // draw layers if they are visible
         layers.filter { it.visible }.forEach { drawLayer(it) }
+    }
+
+    fun resetZoom() {
+        canvasTransformation = Point2D.ZERO
+        zoomTransformation = Point2D.ZERO
+
+        canvas.translateX = 0.0
+        canvas.translateY = 0.0
+
+        zoom(canvas, 1.0, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
     }
 
     private fun drawLayer(layer: Layer) {

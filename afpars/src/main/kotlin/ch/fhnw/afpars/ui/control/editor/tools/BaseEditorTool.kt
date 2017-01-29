@@ -14,6 +14,7 @@ abstract class BaseEditorTool : IEditorTool {
     override fun onCanvasMousePressed(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onCanvasMouseReleased(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onCanvasMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {}
+    override fun onCanvasMouseMoved(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onCanvasScroll(imageEditor: ImageEditor, event: ScrollEvent) {}
     override fun onCanvasKeyPressed(imageEditor: ImageEditor, event: KeyEvent) {}
 
@@ -21,6 +22,7 @@ abstract class BaseEditorTool : IEditorTool {
     override fun onEditorMousePressed(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onEditorMouseReleased(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onEditorMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {}
+    override fun onEditorMouseMoved(imageEditor: ImageEditor, event: MouseEvent) {}
     override fun onEditorScroll(imageEditor: ImageEditor, event: ScrollEvent) {}
     override fun onEditorKeyPressed(imageEditor: ImageEditor, event: KeyEvent) {}
 

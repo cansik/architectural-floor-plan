@@ -18,6 +18,9 @@
                 AnchorPane.topAnchor="160.0" onAction="#ellipseToolClicked"/>
         <Button layoutX="10.0" layoutY="5.0" mnemonicParsing="false" text="Load Image" AnchorPane.leftAnchor="10.0"
                 AnchorPane.topAnchor="5.0" onAction="#loadImage"/>
+
+        <Button layoutX="10.0" layoutY="200.0" mnemonicParsing="false" text="Export" AnchorPane.leftAnchor="10.0"
+                AnchorPane.topAnchor="200.0" onAction="#exportImage"/>
         <ImageEditor fx:id="editor" layoutX="100.0" layoutY="31.0"
                      style="-fx-background-color: #696969;" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="100.0"
                      AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="31.0"/>
