@@ -285,7 +285,7 @@
 
 ### May 11, 2011
  * Removed `CvMat` object pooling in favor of more efficient `ThreadLocal` objects created by `CvMat.createThreadLocal()`
- * Changed `Marker.getCenter()` back to the centroid, because it has better noise averaging properties and gives in practice more accurate results than the actual center
+ * Changed `Marker.getLocation()` back to the centroid, because it has better noise averaging properties and gives in practice more accurate results than the actual anchor
  * Added hack to `OpenCVFrameGrabber.start()` to wait for `cvRetrieveFrame()` to return something else than `null` under Mac OS X
  * FFmpeg now works properly on Windows and Android (issue #63) with newer binaries
  * New `videoInputLib` wrapper and corresponding `VideoInputFrameGrabber` to capture using DirectShow, useful under Windows 7 where OpenCV and FFmpeg can fail to capture using Video for Windows (issue #58)
@@ -437,7 +437,7 @@
  * Added `MarkedPlane.getTotalWarp()` with a "useCenters" parameter
  * Changed default values of `MarkerDetector.binarizationKWhiteMarkers` to 1.0 and `ProjectorDevice.brightnessBackground` to 0.0
  * Fixed issue with image width and memory alignment in `MarkerDetector`
- * `Marker.getCenter()` now computes the actual physical center instead of the centroid
+ * `Marker.getLocation()` now computes the actual physical anchor instead of the centroid
  * `OpenCVFrameGrabber.getDeviceDescriptions()` now throws `UnsupportedOperationException`
  * Added support in `OpenCVFrameGrabber` to grab frames from video files
  * Added `ProjectiveDevice.getRectifyingHomography()` method

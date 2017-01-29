@@ -123,7 +123,12 @@ class ImageEditor : Pane() {
 
     private fun drawLayer(layer: Layer) {
         val gc = canvas.graphicsContext2D
-        layer.shapes.forEach { it.render(gc) }
+        layer.shapes.forEach {
+            gc.fill = it.fill
+            gc.stroke = it.stroke
+
+            it.render(gc)
+        }
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.

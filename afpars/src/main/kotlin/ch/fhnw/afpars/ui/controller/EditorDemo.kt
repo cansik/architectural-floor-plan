@@ -1,8 +1,8 @@
 package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
-import ch.fhnw.afpars.ui.control.editor.tools.EllipseTool
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
+import ch.fhnw.afpars.ui.control.editor.tools.OvalTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import javafx.event.ActionEvent
@@ -25,7 +25,7 @@ class EditorDemo {
     }
 
     fun ellipseToolClicked(e: ActionEvent) {
-        editor!!.activeTool = EllipseTool()
+        editor!!.activeTool = OvalTool()
     }
 
     fun lineToolClicked(e: ActionEvent) {

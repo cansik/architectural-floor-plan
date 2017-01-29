@@ -1,25 +1,25 @@
 package ch.fhnw.afpars.ui.control.editor.tools
 
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
-import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
+import ch.fhnw.afpars.ui.control.editor.shapes.OvalShape
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.input.MouseEvent
 
 /**
- * Created by cansik on 25.01.17.
+ * Created by cansik on 29.01.17.
  */
-class RectangleTool : BaseEditorTool() {
+class OvalTool : BaseEditorTool() {
     override val cursor: Cursor
         get() = Cursor.CROSSHAIR
 
     var dragStart = Point2D.ZERO!!
-    var current = RectangleShape()
+    var current = OvalShape()
 
     override fun onCanvasMousePressed(imageEditor: ImageEditor, event: MouseEvent) {
         dragStart = Point2D(event.x, event.y)
-        current = RectangleShape(dragStart, Dimension2D(0.0, 0.0))
+        current = OvalShape(dragStart, Dimension2D(0.0, 0.0))
         imageEditor.activeLayer.shapes.add(current)
         imageEditor.redraw()
     }
