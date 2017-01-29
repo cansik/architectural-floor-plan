@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.io.reader.AFImageReader
+import ch.fhnw.afpars.io.svg.SvgExporter
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.Layer
 import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
@@ -15,6 +16,7 @@ import javafx.geometry.Dimension2D
 import javafx.scene.paint.ImagePattern
 import javafx.stage.FileChooser
 import org.opencv.core.Core
+import java.nio.file.Files
 
 /**
  * Created by cansik on 15.01.17.
@@ -77,7 +79,11 @@ class EditorDemo {
         fileChooser.title = "Export image"
         val file = fileChooser.showSaveDialog(null)
         if (file != null) {
-            
+            val svg = SvgExporter.renderSvg(editor!!.canvas.width.toInt(),
+                    editor!!.canvas.height.toInt(),
+                    editor!!.activeLayer.shapes)
+
+            Files.write(file.toPath(), listOf(svg.svgDocument))
         }
     }
 }
