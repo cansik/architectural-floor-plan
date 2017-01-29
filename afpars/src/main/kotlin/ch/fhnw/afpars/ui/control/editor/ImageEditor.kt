@@ -5,7 +5,6 @@ import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.canvas.Canvas
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
@@ -17,7 +16,7 @@ import javafx.scene.shape.Rectangle
  * Created by cansik on 25.01.17.
  */
 class ImageEditor : Pane() {
-    val canvas = Canvas(600.0, 400.0)
+    var canvas = ResizableCanvas(600.0, 400.0)
     val outputClip = Rectangle()
 
     private val activeToolProperty = SimpleObjectProperty<IEditorTool>(ViewTool())
@@ -28,7 +27,7 @@ class ImageEditor : Pane() {
 
     val layers = mutableListOf<Layer>()
 
-    val activeLayer: Layer = Layer("Background")
+    var activeLayer: Layer = Layer("Background")
 
     // calculated value
     private var relationScale = 1.0
@@ -109,6 +108,19 @@ class ImageEditor : Pane() {
 
         canvas.translateX += canvasTransformation.x
         canvas.translateY += canvasTransformation.y
+    }
+
+    fun resizeCanvas(width: Double, height: Double) {
+        // reset transformation
+        zoom(canvas, 1.0, layoutX, layoutY)
+        canvas.translateX = 0.0
+        canvas.translateY = 0.0
+
+        // resize
+        canvas.resize(width, height)
+
+        // apply transformation
+        resize()
     }
 
     fun redraw() {
