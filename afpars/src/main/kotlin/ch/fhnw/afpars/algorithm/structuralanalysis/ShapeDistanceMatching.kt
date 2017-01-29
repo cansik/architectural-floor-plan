@@ -15,7 +15,7 @@ import java.util.*
  */
 class ShapeDistanceMatching : ch.fhnw.afpars.algorithm.IAlgorithm {
     override val name: String
-        get() = "Shape Distance Matching"
+        get() = "BaseShape Distance Matching"
 
     override fun run(image: ch.fhnw.afpars.model.AFImage, history: MutableList<ch.fhnw.afpars.model.AFImage>): ch.fhnw.afpars.model.AFImage {
         val areas = org.opencv.core.MatOfRect(image.attributes[ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector.Companion.CASCADE_ATTRIBUT])

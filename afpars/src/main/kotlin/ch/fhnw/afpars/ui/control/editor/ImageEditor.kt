@@ -1,6 +1,8 @@
 package ch.fhnw.afpars.ui.control.editor
 
+import ch.fhnw.afpars.ui.control.editor.tools.IEditorTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
@@ -18,7 +20,15 @@ class ImageEditor : Pane() {
     val canvas = Canvas(600.0, 400.0)
     val outputClip = Rectangle()
 
-    var activeTool = ViewTool()
+    private val activeToolProperty = SimpleObjectProperty<IEditorTool>(ViewTool())
+
+    var activeTool: IEditorTool
+        get() = activeToolProperty.value
+        set(value) = activeToolProperty.set(value)
+
+    val layers = mutableListOf<Layer>()
+
+    val activeLayer: Layer = Layer("Background")
 
     // calculated value
     private var relationScale = 1.0
@@ -33,6 +43,10 @@ class ImageEditor : Pane() {
     init {
         children.add(canvas)
 
+        // setup layer system
+        layers.add(activeLayer)
+
+        // draw default graphics
         val gc = canvas.graphicsContext2D
         gc.fill = Color.LIGHTGRAY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
@@ -57,6 +71,7 @@ class ImageEditor : Pane() {
 
         // set cursor
         cursor = activeTool.cursor
+        activeToolProperty.addListener { o -> cursor = activeTool.cursor }
 
         // tool listeners
         // canvas
@@ -97,7 +112,18 @@ class ImageEditor : Pane() {
     }
 
     fun redraw() {
+        val gc = canvas.graphicsContext2D
 
+        // clear canvas
+        gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
+
+        // draw layers if they are visible
+        layers.filter { it.visible }.forEach { drawLayer(it) }
+    }
+
+    private fun drawLayer(layer: Layer) {
+        val gc = canvas.graphicsContext2D
+        layer.shapes.forEach { it.render(gc) }
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
