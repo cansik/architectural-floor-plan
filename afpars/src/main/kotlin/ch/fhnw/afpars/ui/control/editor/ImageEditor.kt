@@ -138,6 +138,8 @@ class ImageEditor : Pane() {
         canvasTransformation = Point2D.ZERO
         zoomTransformation = Point2D.ZERO
 
+        zoomScale = 0.0
+
         canvas.translateX = 0.0
         canvas.translateY = 0.0
 

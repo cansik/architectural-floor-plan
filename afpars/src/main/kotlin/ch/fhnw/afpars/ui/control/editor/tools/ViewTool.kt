@@ -18,7 +18,10 @@ class ViewTool : BaseEditorTool() {
         get() = Cursor.OPEN_HAND
 
     override fun onEditorMousePressed(imageEditor: ImageEditor, event: MouseEvent) {
-        dragStart = Point2D(event.x, event.y)
+        if (event.clickCount == 2)
+            imageEditor.resetZoom()
+        else
+            dragStart = Point2D(event.x, event.y)
     }
 
     override fun onEditorMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {
