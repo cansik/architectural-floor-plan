@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ch.fhnw.afpars.ui.controller.EditView" fx:id="layoutPane">
+            fx:controller="ch.fhnw.afpars.ui.controller.MainView" fx:id="layoutPane" stylesheets="style/main.css">
     <top>
         <AnchorPane prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #333333;"
                     BorderPane.alignment="CENTER">
@@ -33,8 +33,8 @@
     <left>
         <FlowPane hgap="5.0" prefHeight="300.0" prefWidth="100.0" vgap="5.0" BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" text="Arrow"/>
-                <Button mnemonicParsing="false" text="Hand"/>
+                <Button id="arrowButton" styleClass="toolButton" mnemonicParsing="false"/>
+                <Button id="lineButton" styleClass="toolButton" mnemonicParsing="false"/>
             </children>
             <BorderPane.margin>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -49,10 +49,10 @@
             </children>
         </FlowPane>
     </bottom>
-    <anchor>
+    <center>
         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"
                    BorderPane.alignment="CENTER"/>
-    </anchor>
+    </center>
     <right>
         <ScrollPane prefHeight="300.0" prefWidth="170.0" BorderPane.alignment="CENTER">
             <content>

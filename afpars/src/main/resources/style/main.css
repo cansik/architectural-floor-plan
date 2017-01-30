@@ -1,0 +1,15 @@
+.toolButton {
+    -fx-background-size: 75% 75%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+}
+
+#lineButton {
+    -fx-background-image: url("../images/line.png");
+}
+
+#arrowButton {
+    -fx-background-image: url("../images/navigate.png");
+}
