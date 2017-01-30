@@ -32,7 +32,6 @@ open class OvalShape() : BaseShape() {
         super.renderToMat(m)
 
         //todo: implement ellipse drawing in opencv
-
         //Imgproc.ellipse(m, location.toCvPoint(), size.toCvSize(), fill.toCvScalar())
     }
 }

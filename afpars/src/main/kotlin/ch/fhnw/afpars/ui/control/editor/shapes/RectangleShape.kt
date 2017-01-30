@@ -33,6 +33,10 @@ class RectangleShape() : BaseShape() {
 
     override fun renderToMat(m: Mat) {
         super.renderToMat(m)
-        Imgproc.rectangle(m, location.toCvPoint(), (location.add(Point2D(size.width, size.height))).toCvPoint(), fill.toCvScalar())
+        Imgproc.rectangle(m,
+                location.toCvPoint(),
+                (location.add(Point2D(size.width, size.height))).toCvPoint(),
+                fill.toCvScalar(),
+                -1)
     }
 }

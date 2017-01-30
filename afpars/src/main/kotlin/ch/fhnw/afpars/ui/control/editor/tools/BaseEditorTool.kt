@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.ui.control.editor.tools
 
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -28,4 +29,14 @@ abstract class BaseEditorTool : IEditorTool {
 
     override val cursor: Cursor
         get() = Cursor.DEFAULT
+
+    internal fun sortPoints(a: Point2D, b: Point2D): Pair<Point2D, Point2D> {
+        val x1 = if (a.x < b.x) a.x else b.x
+        val x2 = if (a.x > b.x) a.x else b.x
+
+        val y1 = if (a.y < b.y) a.y else b.y
+        val y2 = if (a.y > b.y) a.y else b.y
+
+        return Pair(Point2D(x1, y1), Point2D(x2, y2))
+    }
 }

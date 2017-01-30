@@ -25,7 +25,9 @@ class RectangleTool : BaseEditorTool() {
     }
 
     override fun onCanvasMouseDragged(imageEditor: ImageEditor, event: MouseEvent) {
-        current.size = Dimension2D(Math.abs(dragStart.x - event.x), Math.abs(dragStart.y - event.y))
+        val points = sortPoints(dragStart, Point2D(event.x, event.y))
+        current.size = Dimension2D(points.second.x - points.first.x, points.second.y - points.first.y)
+        current.location = points.first
         imageEditor.redraw()
     }
 
