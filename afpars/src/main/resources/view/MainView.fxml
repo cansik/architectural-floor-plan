@@ -16,12 +16,12 @@
                 <FlowPane hgap="5.0" layoutY="-2.0" prefHeight="60.0" prefWidth="350.0" vgap="5.0"
                           AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
-                        <Button mnemonicParsing="false" text="Load" onAction="#loadImageFromFile">
+                        <Button mnemonicParsing="false" text="Load File" onAction="#loadImageFromFile">
                             <FlowPane.margin>
                                 <Insets/>
                             </FlowPane.margin>
                         </Button>
-                        <Button mnemonicParsing="false" text="Process" onAction="#initCanvas"/>
+                        <Button mnemonicParsing="false" text="Load Clipboard" onAction="#loadImageFromClipBoard"/>
                     </children>
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
