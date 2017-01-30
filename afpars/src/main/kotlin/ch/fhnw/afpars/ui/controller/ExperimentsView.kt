@@ -19,7 +19,7 @@ import javafx.stage.FileChooser
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
-class MainView {
+class ExperimentsView {
     @FXML
     var imageViewOriginal: PreviewImageView? = null
 
