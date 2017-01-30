@@ -2,7 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.ui.control.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML

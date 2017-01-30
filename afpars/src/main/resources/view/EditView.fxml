@@ -49,10 +49,10 @@
             </children>
         </FlowPane>
     </bottom>
-    <center>
+    <anchor>
         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"
                    BorderPane.alignment="CENTER"/>
-    </center>
+    </anchor>
     <right>
         <ScrollPane prefHeight="300.0" prefWidth="170.0" BorderPane.alignment="CENTER">
             <content>

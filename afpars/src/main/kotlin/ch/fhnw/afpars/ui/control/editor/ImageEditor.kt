@@ -1,9 +1,10 @@
-package ch.fhnw.afpars.ui.control
+package ch.fhnw.afpars.ui.control.editor
 
-import ch.fhnw.afpars.ui.control.tools.ViewTool
+import ch.fhnw.afpars.ui.control.editor.tools.IEditorTool
+import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.canvas.Canvas
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
@@ -15,10 +16,18 @@ import javafx.scene.shape.Rectangle
  * Created by cansik on 25.01.17.
  */
 class ImageEditor : Pane() {
-    val canvas = Canvas(600.0, 400.0)
+    var canvas = ResizableCanvas(600.0, 400.0)
     val outputClip = Rectangle()
 
-    var activeTool = ViewTool()
+    private val activeToolProperty = SimpleObjectProperty<IEditorTool>(ViewTool())
+
+    var activeTool: IEditorTool
+        get() = activeToolProperty.value
+        set(value) = activeToolProperty.set(value)
+
+    val layers = mutableListOf<Layer>()
+
+    var activeLayer: Layer = Layer("Background")
 
     // calculated value
     private var relationScale = 1.0
@@ -26,6 +35,7 @@ class ImageEditor : Pane() {
     // basic view controls
     var zoomScale = 0.0
     var canvasTransformation = Point2D.ZERO!!
+    var zoomTransformation = Point2D.ZERO!!
 
     val scale: Double
         get() = relationScale + zoomScale
@@ -33,6 +43,10 @@ class ImageEditor : Pane() {
     init {
         children.add(canvas)
 
+        // setup layer system
+        layers.add(activeLayer)
+
+        // draw default graphics
         val gc = canvas.graphicsContext2D
         gc.fill = Color.LIGHTGRAY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
@@ -55,6 +69,10 @@ class ImageEditor : Pane() {
             outputClip.height = newValue.height
         })
 
+        // set cursor
+        cursor = activeTool.cursor
+        activeToolProperty.addListener { o -> cursor = activeTool.cursor }
+
         // tool listeners
         // canvas
         canvas.setOnMouseClicked { event -> activeTool.onCanvasMouseClicked(this, event) }
@@ -62,6 +80,7 @@ class ImageEditor : Pane() {
         canvas.setOnMousePressed { event -> activeTool.onCanvasMousePressed(this, event) }
         canvas.setOnMouseReleased { event -> activeTool.onCanvasMouseReleased(this, event) }
         canvas.setOnMouseDragged { event -> activeTool.onCanvasMouseDragged(this, event) }
+        canvas.setOnMouseMoved { event -> activeTool.onCanvasMouseMoved(this, event) }
 
         canvas.setOnScroll { event -> activeTool.onCanvasScroll(this, event) }
 
@@ -73,6 +92,7 @@ class ImageEditor : Pane() {
         setOnMousePressed { event -> activeTool.onEditorMousePressed(this, event) }
         setOnMouseReleased { event -> activeTool.onEditorMouseReleased(this, event) }
         setOnMouseDragged { event -> activeTool.onEditorMouseDragged(this, event) }
+        setOnMouseMoved { event -> activeTool.onEditorMouseMoved(this, event) }
 
         setOnScroll { event -> activeTool.onEditorScroll(this, event) }
 
@@ -87,10 +107,53 @@ class ImageEditor : Pane() {
             relationScale = width / canvas.width
         }
 
-        zoom(canvas, scale, layoutX, layoutY)
+        zoom(canvas, scale, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
 
         canvas.translateX += canvasTransformation.x
         canvas.translateY += canvasTransformation.y
+    }
+
+    fun resizeCanvas(width: Double, height: Double) {
+        // reset transformation
+        resetZoom()
+
+        // resize
+        canvas.resize(width, height)
+
+        // apply transformation
+        resize()
+    }
+
+    fun redraw() {
+        val gc = canvas.graphicsContext2D
+
+        // clear canvas
+        gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
+
+        // draw layers if they are visible
+        layers.filter { it.visible }.forEach { drawLayer(it) }
+    }
+
+    fun resetZoom() {
+        canvasTransformation = Point2D.ZERO
+        zoomTransformation = Point2D.ZERO
+
+        zoomScale = 0.0
+
+        canvas.translateX = 0.0
+        canvas.translateY = 0.0
+
+        zoom(canvas, 1.0, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
+    }
+
+    private fun drawLayer(layer: Layer) {
+        val gc = canvas.graphicsContext2D
+        layer.shapes.forEach {
+            gc.fill = it.fill
+            gc.stroke = it.stroke
+
+            it.render(gc)
+        }
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
