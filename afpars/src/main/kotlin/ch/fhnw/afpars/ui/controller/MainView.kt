@@ -15,7 +15,7 @@ import org.opencv.core.Core
 /**
  * Created by cansik on 15.01.17.
  */
-class EditView {
+class MainView {
     val image = SimpleObjectProperty<AFImage>()
 
     val statusText = SimpleObjectProperty<String>("Status")
