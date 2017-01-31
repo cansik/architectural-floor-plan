@@ -1,14 +1,18 @@
 package ch.fhnw.afpars.ui.control.editor
 
+import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.ui.control.editor.tools.IEditorTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import javafx.beans.property.SimpleObjectProperty
+import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
+import javafx.scene.image.Image
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
 
 
@@ -37,6 +41,9 @@ class ImageEditor : Pane() {
     var canvasTransformation = Point2D.ZERO!!
     var zoomTransformation = Point2D.ZERO!!
 
+    var minimumZoom = 1.0
+    var maximumZoom = 50.0
+
     val scale: Double
         get() = relationScale + zoomScale
 
@@ -45,6 +52,9 @@ class ImageEditor : Pane() {
 
         // setup layer system
         layers.add(activeLayer)
+
+        // make background gray
+        style = "-fx-background-color: #696969;"
 
         // draw default graphics
         val gc = canvas.graphicsContext2D
@@ -156,6 +166,27 @@ class ImageEditor : Pane() {
         }
     }
 
+    fun displayImage(image: Image) {
+        resizeCanvas(image.width, image.height)
+
+        // set layer
+        val imageLayer = Layer("Image")
+        val drawLayer = Layer("Draw")
+
+        val imageRect = RectangleShape()
+        imageRect.size = Dimension2D(image.width, image.height)
+        imageRect.noStroke()
+        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
+
+        imageLayer.shapes.add(imageRect)
+
+        layers.clear()
+        layers.add(imageLayer)
+        layers.add(drawLayer)
+        activeLayer = drawLayer
+        redraw()
+    }
+
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
 
      * @param node
@@ -172,8 +203,8 @@ class ImageEditor : Pane() {
 
 
         // fix relationScale
-        if (scale < 0.05) scale = 0.05
-        if (scale > 50) scale = 50.0
+        if (scale < minimumZoom) scale = minimumZoom
+        if (scale > maximumZoom) scale = maximumZoom
 
 
         node.scaleX = scale

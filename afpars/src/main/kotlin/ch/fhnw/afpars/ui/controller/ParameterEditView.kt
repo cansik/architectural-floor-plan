@@ -3,7 +3,7 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.ui.control.PreviewImageView
+import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
 import javafx.collections.FXCollections
@@ -25,7 +25,7 @@ import kotlin.properties.Delegates
  */
 class ParameterEditView {
     @FXML
-    var previewImage: PreviewImageView? = null
+    var previewImage: ImageEditor? = null
 
     @FXML
     var editControlBox: VBox? = null
@@ -79,7 +79,7 @@ class ParameterEditView {
         }
         historyListView!!.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
             if (newValue != null)
-                previewImage!!.newImage(newValue.image.toImage())
+                previewImage!!.displayImage(newValue.image.toImage())
         }
 
         runAlgorithm()

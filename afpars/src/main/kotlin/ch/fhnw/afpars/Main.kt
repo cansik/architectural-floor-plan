@@ -2,6 +2,7 @@ package ch.fhnw.afpars
 
 import ch.fhnw.afpars.ui.controller.MainView
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -19,9 +20,15 @@ class Main : Application() {
 
         primaryStage.title = "Architectural Floor Plan Analysis"
         primaryStage.scene = Scene(root)
+
+
         primaryStage.setOnShown { controller.setupView() }
+        primaryStage.setOnCloseRequest {
+            Platform.exit()
+            System.exit(0)
+        }
+
         primaryStage.show()
-        System.out.println()
     }
 
     companion object {

@@ -1,21 +1,20 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
-import ch.fhnw.afpars.ui.control.editor.Layer
-import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
+import ch.fhnw.afpars.workflow.Workflow
+import ch.fhnw.afpars.workflow.WorkflowEngine
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
-import javafx.geometry.Dimension2D
 import javafx.scene.Node
-import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.layout.BorderPane
-import javafx.scene.paint.ImagePattern
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
@@ -31,13 +30,34 @@ class MainView {
 
     val canvas = ImageEditor()
 
+    var workflowEngine = WorkflowEngine()
+
+    val defaultWorkflow = Workflow(
+            arrayListOf(
+                    CascadeClassifierDetector(),
+                    ShapeDistanceMatching()
+            ).toTypedArray())
+
     @FXML
     var layoutPane: BorderPane? = null
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-        image.addListener { o -> displayImage(image.value.image.toImage()) }
+        image.addListener { o -> canvas.displayImage(image.value.image.toImage()) }
+
+        workflowEngine.finished += {
+            println("workflow finished!")
+            image.set(it)
+        }
+
+        workflowEngine.stepDone += {
+            val algorithm = it.first
+            val img = it.second
+
+            println("${algorithm.name} finished!")
+            image.set(img)
+        }
     }
 
     fun setupView() {
@@ -48,25 +68,14 @@ class MainView {
         layoutPane!!.center = canvas
     }
 
-    fun displayImage(image: Image) {
-        canvas.resizeCanvas(image.width, image.height)
+    fun runWorkflow(e: ActionEvent) {
+        workflowEngine.run(defaultWorkflow, image.value, true, true)
+    }
 
-        // set layer
-        val imageLayer = Layer("Image")
-        val drawLayer = Layer("Draw")
+    fun nextStep(e: ActionEvent) {
+        workflowEngine.nextStep()
 
-        val imageRect = RectangleShape()
-        imageRect.size = Dimension2D(image.width, image.height)
-        imageRect.noStroke()
-        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
-
-        imageLayer.shapes.add(imageRect)
-
-        canvas.layers.clear()
-        canvas.layers.add(imageLayer)
-        canvas.layers.add(drawLayer)
-        canvas.activeLayer = drawLayer
-        canvas.redraw()
+        //todo: bake & set image
     }
 
     fun loadImageFromClipBoard(e: ActionEvent) {

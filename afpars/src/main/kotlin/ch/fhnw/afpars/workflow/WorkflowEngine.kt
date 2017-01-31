@@ -17,8 +17,15 @@ import kotlin.concurrent.thread
  */
 class WorkflowEngine {
     val finished = Event<AFImage>()
+    val stepDone = Event<Pair<IAlgorithm, AFImage>>()
 
-    fun run(workflow: Workflow, afImage: AFImage, editParameters: Boolean) {
+    private var stepLatch = CountDownLatch(1)
+
+    fun nextStep() {
+        stepLatch.countDown()
+    }
+
+    fun run(workflow: Workflow, afImage: AFImage, editParameters: Boolean = false, waitAfterStep: Boolean = false) {
         thread {
             var image = afImage
             for (alg in workflow.algorithms) {
@@ -27,12 +34,18 @@ class WorkflowEngine {
                     showEditView(alg, image)
 
                 image = alg.run(image)
+
+                if (waitAfterStep) {
+                    stepLatch = CountDownLatch(1)
+                    stepDone(Pair(alg, image))
+                    stepLatch.await()
+                }
             }
             finished(image)
         }
     }
 
-    public fun showEditView(algorithm: IAlgorithm, afImage: AFImage) {
+    fun showEditView(algorithm: IAlgorithm, afImage: AFImage) {
         val latch = CountDownLatch(1)
 
         val fxmlLoader = FXMLLoader(javaClass.classLoader.getResource("view/ParameterEditView.fxml"))
