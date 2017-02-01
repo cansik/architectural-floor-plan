@@ -13,6 +13,9 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Node
+import javafx.scene.control.CheckBoxTreeItem
+import javafx.scene.control.TreeView
+import javafx.scene.control.cell.CheckBoxTreeCell
 import javafx.scene.input.Clipboard
 import javafx.scene.layout.BorderPane
 import javafx.stage.FileChooser
@@ -41,6 +44,9 @@ class MainView {
     @FXML
     var layoutPane: BorderPane? = null
 
+    @FXML
+    var layerTreeView: TreeView<String>? = null
+
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -66,6 +72,8 @@ class MainView {
         canvas.prefWidth(100.0)
 
         layoutPane!!.center = canvas
+
+        updateUI()
     }
 
     fun runWorkflow(e: ActionEvent) {
@@ -78,10 +86,51 @@ class MainView {
         //todo: bake & set image
     }
 
+    fun updateLayers() {
+        val rootItem = CheckBoxTreeItem("layers")
+        rootItem.isExpanded = true
+
+        layerTreeView!!.isShowRoot = false
+        layerTreeView!!.isEditable = true
+        layerTreeView!!.cellFactory = CheckBoxTreeCell.forTreeView()
+
+        for (layer in canvas.layers.reversed()) {
+            var layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
+            layerItem.isSelected = layer.visible
+            layerItem.selectedProperty().addListener { o ->
+                run {
+                    layer.visible = layerItem.isSelected
+                    canvas.redraw()
+                }
+            }
+            rootItem.children.add(layerItem)
+
+            for (shape in layer.shapes) {
+                var shapeItem = CheckBoxTreeItem("$shape")
+                shapeItem.isSelected = layer.visible
+                shapeItem.selectedProperty().addListener { o ->
+                    run {
+                        shape.visible = shapeItem.isSelected
+                        canvas.redraw()
+                    }
+                }
+
+                layerItem.children.add(shapeItem)
+            }
+        }
+
+        layerTreeView!!.root = rootItem
+    }
+
+    fun updateUI() {
+        updateLayers()
+    }
+
     fun loadImageFromClipBoard(e: ActionEvent) {
         val cb = Clipboard.getSystemClipboard()
         if (cb.hasImage()) {
             image.set(AFImage(cb.image.toMat()))
+            updateUI()
         }
     }
 
@@ -102,6 +151,7 @@ class MainView {
         if (result != null) {
             image.set(AFImageReader().read(result.toPath()))
             statusText.set("image ${result.name} loaded!")
+            updateUI()
         }
     }
 }

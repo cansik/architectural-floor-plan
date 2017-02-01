@@ -11,7 +11,6 @@ import javafx.scene.image.Image
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
 import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
 
@@ -55,17 +54,6 @@ class ImageEditor : Pane() {
 
         // make background gray
         style = "-fx-background-color: #696969;"
-
-        // draw default graphics
-        val gc = canvas.graphicsContext2D
-        gc.fill = Color.LIGHTGRAY
-        gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
-
-        gc.fill = Color.CORNFLOWERBLUE
-        gc.fillOval(10.0, 60.0, 500.0, 500.0)
-
-        gc.stroke = Color.GREENYELLOW
-        gc.strokeRect(0.0, 0.0, canvas.width, canvas.height)
 
         // setup resize
         widthProperty().addListener { o -> resize() }
@@ -158,7 +146,7 @@ class ImageEditor : Pane() {
 
     private fun drawLayer(layer: Layer) {
         val gc = canvas.graphicsContext2D
-        layer.shapes.forEach {
+        layer.shapes.filter { it.visible }.forEach {
             gc.fill = it.fill
             gc.stroke = it.stroke
 

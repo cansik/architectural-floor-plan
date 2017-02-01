@@ -135,3 +135,5 @@ fun Image.toMat(): Mat {
     mat.put(0, 0, buffer)
     return mat
 }
+
+fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)

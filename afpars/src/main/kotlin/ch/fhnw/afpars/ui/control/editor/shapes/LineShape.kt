@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.control.editor.shapes
 
+import ch.fhnw.afpars.util.format
 import ch.fhnw.afpars.util.toCvPoint
 import ch.fhnw.afpars.util.toCvScalar
 import javafx.geometry.Point2D
@@ -32,5 +33,9 @@ class LineShape() : BaseShape() {
     override fun renderToMat(m: Mat) {
         super.renderToMat(m)
         Imgproc.line(m, point1.toCvPoint(), point2.toCvPoint(), stroke.toCvScalar(), strokeWeight.toInt())
+    }
+
+    override fun toString(): String {
+        return "Line (${point1.x.format(1)} | ${point1.y.format(1)}, ${point2.x.format(1)} | ${point2.y.format(1)})"
     }
 }

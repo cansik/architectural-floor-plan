@@ -17,7 +17,7 @@ abstract class BaseShape : ISvgRenderable, IMatRenderable {
     var fill: Paint = Color.WHITE!!
     var stroke: Paint = Color.BLACK!!
     var strokeWeight = 1.0
-
+    var visible = true
 
     fun noFill() {
         fill = Color.TRANSPARENT
@@ -44,5 +44,9 @@ abstract class BaseShape : ISvgRenderable, IMatRenderable {
 
     override fun renderToMat(m: Mat) {
 
+    }
+
+    override fun toString(): String {
+        return "BaseShape"
     }
 }

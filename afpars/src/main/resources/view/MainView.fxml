@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -35,7 +35,7 @@
         </AnchorPane>
     </top>
     <left>
-        <FlowPane hgap="5.0" prefHeight="300.0" prefWidth="100.0" vgap="5.0" BorderPane.alignment="CENTER">
+        <FlowPane hgap="5.0" prefHeight="471.0" prefWidth="80.0" vgap="5.0" BorderPane.alignment="CENTER">
             <children>
                 <Button id="arrowButton" mnemonicParsing="false" styleClass="toolButton" />
                 <Button id="lineButton" mnemonicParsing="false" styleClass="toolButton" />
@@ -55,11 +55,15 @@
     <center>
         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
     </center>
-    <right>
-        <ScrollPane prefHeight="300.0" prefWidth="170.0" BorderPane.alignment="CENTER">
-            <content>
-                <VBox prefHeight="363.0" prefWidth="153.0" />
-            </content>
-        </ScrollPane>
-    </right>
+   <right>
+      <VBox prefHeight="481.0" prefWidth="220.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Layers">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </VBox.margin></Label>
+            <TreeView fx:id="layerTreeView" prefHeight="200.0" prefWidth="200.0" />
+         </children>
+      </VBox>
+   </right>
 </BorderPane>
