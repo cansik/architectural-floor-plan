@@ -2,6 +2,7 @@ package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
+import ch.fhnw.afpars.io.opencv.MatRender
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
@@ -84,13 +85,14 @@ class MainView {
     }
 
     fun runWorkflow(e: ActionEvent) {
+        MatRender.render(image.value.image, canvas.activeLayer.shapes)
         workflowEngine.run(defaultWorkflow, image.value, true, true)
     }
 
     fun nextStep(e: ActionEvent) {
-        workflowEngine.nextStep()
-
         //todo: bake & set image
+        MatRender.render(workflowEngine.currentImage.image, canvas.activeLayer.shapes)
+        workflowEngine.nextStep()
     }
 
     fun updateLayers() {
