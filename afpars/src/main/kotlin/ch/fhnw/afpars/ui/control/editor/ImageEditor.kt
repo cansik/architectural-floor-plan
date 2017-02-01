@@ -1,5 +1,7 @@
 package ch.fhnw.afpars.ui.control.editor
 
+import ch.fhnw.afpars.event.Event
+import ch.fhnw.afpars.ui.control.editor.shapes.BaseShape
 import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.ui.control.editor.tools.IEditorTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
@@ -42,6 +44,8 @@ class ImageEditor : Pane() {
 
     var minimumZoom = 1.0
     var maximumZoom = 50.0
+
+    val onShapeAdded = Event<Layer>()
 
     val scale: Double
         get() = relationScale + zoomScale
@@ -130,6 +134,11 @@ class ImageEditor : Pane() {
 
         // draw layers if they are visible
         layers.filter { it.visible }.forEach { drawLayer(it) }
+    }
+
+    fun addShape(shape: BaseShape) {
+        activeLayer.shapes.add(shape)
+        onShapeAdded(activeLayer)
     }
 
     fun resetZoom() {

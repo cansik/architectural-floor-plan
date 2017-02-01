@@ -22,6 +22,7 @@ import javafx.scene.control.TreeView
 import javafx.scene.control.cell.CheckBoxTreeCell
 import javafx.scene.input.Clipboard
 import javafx.scene.layout.BorderPane
+import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
@@ -76,6 +77,8 @@ class MainView {
         canvas.prefWidth(100.0)
 
         layoutPane!!.center = canvas
+
+        canvas.onShapeAdded += { updateUI() }
 
         updateUI()
     }
@@ -163,9 +166,24 @@ class MainView {
         when ((e.source as Button).id) {
             "arrowButton" -> canvas.activeTool = ViewTool()
             "rulerButton" -> canvas.activeTool = ViewTool()
-            "lineButton" -> canvas.activeTool = LineTool()
-            "rectButton" -> canvas.activeTool = RectangleTool()
-            "eraseButton" -> canvas.activeTool = RectangleTool()
+            "lineButton" -> {
+                val tool = LineTool()
+                tool.defaultStroke = Color.BLACK
+                tool.defaultStrokeWeight = 2.0
+                canvas.activeTool = tool
+            }
+            "rectButton" -> {
+                val tool = RectangleTool()
+                tool.defaultFill = Color.BLACK
+                tool.defaultStroke = Color.TRANSPARENT
+                canvas.activeTool = tool
+            }
+            "eraseButton" -> {
+                val tool = RectangleTool()
+                tool.defaultFill = Color.WHITE
+                tool.defaultStroke = Color.TRANSPARENT
+                canvas.activeTool = tool
+            }
         }
     }
 }
