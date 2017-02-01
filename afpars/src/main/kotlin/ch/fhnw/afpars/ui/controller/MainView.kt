@@ -5,6 +5,9 @@ import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.tools.LineTool
+import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
+import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
 import ch.fhnw.afpars.workflow.Workflow
@@ -13,6 +16,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Node
+import javafx.scene.control.Button
 import javafx.scene.control.CheckBoxTreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.control.cell.CheckBoxTreeCell
@@ -152,6 +156,16 @@ class MainView {
             image.set(AFImageReader().read(result.toPath()))
             statusText.set("image ${result.name} loaded!")
             updateUI()
+        }
+    }
+
+    fun toolChanged(e: ActionEvent) {
+        when ((e.source as Button).id) {
+            "arrowButton" -> canvas.activeTool = ViewTool()
+            "rulerButton" -> canvas.activeTool = ViewTool()
+            "lineButton" -> canvas.activeTool = LineTool()
+            "rectButton" -> canvas.activeTool = RectangleTool()
+            "eraseButton" -> canvas.activeTool = RectangleTool()
         }
     }
 }
