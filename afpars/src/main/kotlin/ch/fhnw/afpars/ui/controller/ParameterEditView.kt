@@ -3,6 +3,7 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.ui.control.RelationNumberField
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
@@ -113,9 +114,16 @@ class ParameterEditView {
         val annotation = field.getAnnotation(AlgorithmParameter::class.java)
 
         // controls
-        val nameLabel = Label(annotation.name)
+        val nameLabel = Label("${annotation.name}:")
+        nameLabel.prefWidth = 100.0
+
         val valueSlider = Slider()
-        val valueLabel = Label()
+        valueSlider.prefWidth = 150.0
+
+        val inputField = RelationNumberField(0.0, annotation.minValue, annotation.maxValue)
+        inputField.prefWidth = 100.0
+
+        valueSlider.valueProperty().bindBidirectional(inputField.valueProperty())
 
         valueSlider.min = annotation.minValue
         valueSlider.max = annotation.maxValue
@@ -131,8 +139,6 @@ class ParameterEditView {
             Double::class.java -> valueSlider.value = field.get(algorithm) as Double
         }
 
-        valueLabel.text = valueSlider.value.toString()
-
         valueSlider.valueProperty().addListener { observableValue, old, new ->
             run {
                 when (field.type) {
@@ -141,16 +147,15 @@ class ParameterEditView {
                     Double::class.java -> field.set(algorithm, new.toDouble())
                 }
 
-                // change value label
-                valueLabel.text = valueSlider.value.toString()
-
                 // run algorithm on change
                 runAlgorithm()
             }
         }
 
         // show controls
-        editControlBox!!.children.add(HBox(nameLabel, valueSlider, valueLabel))
+        val box = HBox(nameLabel, valueSlider, inputField)
+        box.spacing = 10.0
+        editControlBox!!.children.add(box)
     }
 
     private fun getAlgorithmParameters(obj: IAlgorithm): List<Field> {
