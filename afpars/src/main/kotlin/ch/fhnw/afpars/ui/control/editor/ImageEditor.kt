@@ -1,14 +1,19 @@
 package ch.fhnw.afpars.ui.control.editor
 
+import ch.fhnw.afpars.event.Event
+import ch.fhnw.afpars.ui.control.editor.shapes.BaseShape
+import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.ui.control.editor.tools.IEditorTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import javafx.beans.property.SimpleObjectProperty
+import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.Node
+import javafx.scene.image.Image
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
+import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
 
 
@@ -37,6 +42,11 @@ class ImageEditor : Pane() {
     var canvasTransformation = Point2D.ZERO!!
     var zoomTransformation = Point2D.ZERO!!
 
+    var minimumZoom = 1.0
+    var maximumZoom = 50.0
+
+    val onShapeAdded = Event<Layer>()
+
     val scale: Double
         get() = relationScale + zoomScale
 
@@ -46,16 +56,8 @@ class ImageEditor : Pane() {
         // setup layer system
         layers.add(activeLayer)
 
-        // draw default graphics
-        val gc = canvas.graphicsContext2D
-        gc.fill = Color.LIGHTGRAY
-        gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
-
-        gc.fill = Color.CORNFLOWERBLUE
-        gc.fillOval(10.0, 60.0, 500.0, 500.0)
-
-        gc.stroke = Color.GREENYELLOW
-        gc.strokeRect(0.0, 0.0, canvas.width, canvas.height)
+        // make background gray
+        style = "-fx-background-color: #696969;"
 
         // setup resize
         widthProperty().addListener { o -> resize() }
@@ -134,6 +136,11 @@ class ImageEditor : Pane() {
         layers.filter { it.visible }.forEach { drawLayer(it) }
     }
 
+    fun addShape(shape: BaseShape) {
+        activeLayer.shapes.add(shape)
+        onShapeAdded(activeLayer)
+    }
+
     fun resetZoom() {
         canvasTransformation = Point2D.ZERO
         zoomTransformation = Point2D.ZERO
@@ -148,12 +155,33 @@ class ImageEditor : Pane() {
 
     private fun drawLayer(layer: Layer) {
         val gc = canvas.graphicsContext2D
-        layer.shapes.forEach {
+        layer.shapes.filter { it.visible }.forEach {
             gc.fill = it.fill
             gc.stroke = it.stroke
 
             it.render(gc)
         }
+    }
+
+    fun displayImage(image: Image) {
+        resizeCanvas(image.width, image.height)
+
+        // set layer
+        val imageLayer = Layer("Image")
+        val drawLayer = Layer("Draw")
+
+        val imageRect = RectangleShape()
+        imageRect.size = Dimension2D(image.width, image.height)
+        imageRect.noStroke()
+        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
+
+        imageLayer.shapes.add(imageRect)
+
+        layers.clear()
+        layers.add(imageLayer)
+        layers.add(drawLayer)
+        activeLayer = drawLayer
+        redraw()
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
@@ -172,8 +200,8 @@ class ImageEditor : Pane() {
 
 
         // fix relationScale
-        if (scale < 0.05) scale = 0.05
-        if (scale > 50) scale = 50.0
+        if (scale < minimumZoom) scale = minimumZoom
+        if (scale > maximumZoom) scale = maximumZoom
 
 
         node.scaleX = scale

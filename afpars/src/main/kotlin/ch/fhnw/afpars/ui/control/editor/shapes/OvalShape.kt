@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.control.editor.shapes
 
+import ch.fhnw.afpars.util.format
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
@@ -33,5 +34,9 @@ open class OvalShape() : BaseShape() {
 
         //todo: implement ellipse drawing in opencv
         //Imgproc.ellipse(m, location.toCvPoint(), size.toCvSize(), fill.toCvScalar())
+    }
+
+    override fun toString(): String {
+        return "Oval (${location.x.format(1)} | ${location.y.format(1)}, w: ${size.width.format(1)}, h: ${size.height.format(1)})"
     }
 }

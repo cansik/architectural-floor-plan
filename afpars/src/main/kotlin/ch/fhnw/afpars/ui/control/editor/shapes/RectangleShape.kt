@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.control.editor.shapes
 
+import ch.fhnw.afpars.util.format
 import ch.fhnw.afpars.util.toCvPoint
 import ch.fhnw.afpars.util.toCvScalar
 import javafx.geometry.Dimension2D
@@ -38,5 +39,9 @@ class RectangleShape() : BaseShape() {
                 (location.add(Point2D(size.width, size.height))).toCvPoint(),
                 fill.toCvScalar(),
                 -1)
+    }
+
+    override fun toString(): String {
+        return "Rect (${location.x.format(1)} | ${location.y.format(1)}, w: ${size.width.format(1)}, h: ${size.height.format(1)})"
     }
 }

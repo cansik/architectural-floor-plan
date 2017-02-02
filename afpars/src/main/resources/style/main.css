@@ -6,10 +6,22 @@
     -fx-min-height: 32;
 }
 
+#arrowButton {
+    -fx-background-image: url("../images/navigate.png");
+}
+
 #lineButton {
     -fx-background-image: url("../images/line.png");
 }
 
-#arrowButton {
-    -fx-background-image: url("../images/navigate.png");
+#rectButton {
+    -fx-background-image: url("../images/rect.png");
+}
+
+#eraseButton {
+    -fx-background-image: url("../images/eraser.png");
+}
+
+#rulerButton {
+    -fx-background-image: url("../images/ruler.png");
 }

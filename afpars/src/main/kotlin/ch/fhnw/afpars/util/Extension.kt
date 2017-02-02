@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.util
 
 import javafx.scene.image.Image
+import javafx.scene.image.WritablePixelFormat
 import org.bytedeco.javacpp.opencv_core
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -88,7 +89,7 @@ fun Mat.negate(dest: Mat) {
 }
 
 fun Mat.convertToJavaCV(): opencv_core.Mat {
-    val jcvmat = opencv_core.Mat(this.rows(),this.cols(),CvType.CV_8UC3)
+    val jcvmat = opencv_core.Mat(this.rows(), this.cols(), CvType.CV_8UC3)
     val return_buff = ByteArray((this.total() * this.channels()).toInt())
     this.get(0, 0, return_buff)
     jcvmat.data().put(*return_buff)
@@ -107,16 +108,32 @@ fun MatOfPoint.approxPolyDP(epsilon: Double? = null): MatOfPoint {
     return MatOfPoint(approxDoorContour2f.to32S())
 }
 
-fun opencv_core.KeyPointVector.convertToOpenCV():MatOfKeyPoint{
+fun opencv_core.KeyPointVector.convertToOpenCV(): MatOfKeyPoint {
     val matofkp = MatOfKeyPoint()
     val keyptlist = mutableListOf<KeyPoint>()
-    for(i in 0..this.size()){
-        keyptlist.add(KeyPoint(this.get(i).pt().x(),this.get(i).pt().y(),this.get(i).angle(),this.get(i).response(),this.get(i).octave().toFloat(),this.get(i).class_id()))
+    for (i in 0..this.size()) {
+        keyptlist.add(KeyPoint(this.get(i).pt().x(), this.get(i).pt().y(), this.get(i).angle(), this.get(i).response(), this.get(i).octave().toFloat(), this.get(i).class_id()))
     }
     matofkp.fromList(keyptlist)
     return matofkp
 }
 
-fun Double.isApproximate(value:Double, error:Double):Boolean{
-    return (Math.abs(Math.abs(this)-Math.abs(value))<error)
+fun Double.isApproximate(value: Double, error: Double): Boolean {
+    return (Math.abs(Math.abs(this) - Math.abs(value)) < error)
 }
+
+fun Image.toMat(): Mat {
+    val width = this.width.toInt()
+    val height = this.height.toInt()
+    val buffer = ByteArray(width * height * 4)
+
+    val reader = this.pixelReader
+    val format = WritablePixelFormat.getByteBgraInstance()
+    reader.getPixels(0, 0, width, height, format, buffer, 0, width * 4)
+
+    val mat = Mat(height, width, CvType.CV_8UC4)
+    mat.put(0, 0, buffer)
+    return mat
+}
+
+fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)
