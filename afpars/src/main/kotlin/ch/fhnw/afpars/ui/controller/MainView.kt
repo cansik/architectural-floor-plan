@@ -8,6 +8,7 @@ import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
+import ch.fhnw.afpars.ui.control.editor.Layer
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
@@ -68,12 +69,15 @@ class MainView {
     var cancelWorkflowButton: Button? = null
 
     @FXML
-    var breadCrumpLabel: Label? = null
+    var breadCrumbLabel: Label? = null
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-        image.addListener { o -> canvas.displayImage(image.value.image.toImage()) }
+        image.addListener {
+            o ->
+            imageUpdated()
+        }
 
         workflowEngine.finished += {
             println("workflow finished!")
@@ -89,6 +93,7 @@ class MainView {
 
             println("${algorithm.name} finished!")
             image.set(img)
+            imageUpdated()
         }
     }
 
@@ -103,13 +108,30 @@ class MainView {
 
         // setup buttons
         runWorkflowButton!!.managedProperty().bind(runWorkflowButton!!.visibleProperty())
-        breadCrumpLabel!!.managedProperty().bind(breadCrumpLabel!!.visibleProperty())
+        breadCrumbLabel!!.managedProperty().bind(breadCrumbLabel!!.visibleProperty())
         nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
         cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
 
         setWorkflowStopMode()
 
         updateUI()
+    }
+
+    fun imageUpdated() {
+        Platform.runLater({
+            val afImage = image.value
+            canvas.displayImage(afImage.image.toImage())
+
+            // show layers
+            for ((name, shapes) in afImage.layers) {
+                val layer = Layer(name)
+                layer.shapes.addAll(shapes)
+                canvas.layers.add(1, layer)
+            }
+
+            updateLayers()
+            canvas.redraw()
+        })
     }
 
     fun runWorkflow(e: ActionEvent) {
@@ -126,7 +148,6 @@ class MainView {
     }
 
     fun nextStep(e: ActionEvent) {
-        //todo: bake & set image
         MatRender.render(workflowEngine.currentImage.image, canvas.activeLayer.shapes)
         workflowEngine.nextStep()
     }
@@ -140,7 +161,7 @@ class MainView {
         layerTreeView!!.cellFactory = CheckBoxTreeCell.forTreeView()
 
         for (layer in canvas.layers.reversed()) {
-            var layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
+            val layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
             layerItem.isSelected = layer.visible
             layerItem.selectedProperty().addListener { o ->
                 run {
@@ -151,7 +172,7 @@ class MainView {
             rootItem.children.add(layerItem)
 
             for (shape in layer.shapes) {
-                var shapeItem = CheckBoxTreeItem("$shape")
+                val shapeItem = CheckBoxTreeItem("$shape")
                 shapeItem.isSelected = layer.visible
                 shapeItem.selectedProperty().addListener { o ->
                     run {
@@ -263,7 +284,7 @@ class MainView {
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
         Platform.runLater({
-            breadCrumpLabel!!.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
+            breadCrumbLabel!!.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
         })
     }
 
@@ -271,7 +292,7 @@ class MainView {
         Platform.runLater({
             runWorkflowButton!!.isVisible = false
 
-            breadCrumpLabel!!.isVisible = true
+            breadCrumbLabel!!.isVisible = true
             nextStepButton!!.isVisible = true
             cancelWorkflowButton!!.isVisible = true
         })
@@ -281,7 +302,7 @@ class MainView {
         Platform.runLater({
             runWorkflowButton!!.isVisible = true
 
-            breadCrumpLabel!!.isVisible = false
+            breadCrumbLabel!!.isVisible = false
             nextStepButton!!.isVisible = false
             cancelWorkflowButton!!.isVisible = false
 

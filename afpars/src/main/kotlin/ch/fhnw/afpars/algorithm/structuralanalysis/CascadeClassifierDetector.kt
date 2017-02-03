@@ -3,8 +3,12 @@ package ch.fhnw.afpars.algorithm.structuralanalysis
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.zeros
+import javafx.geometry.Dimension2D
+import javafx.geometry.Point2D
+import javafx.scene.paint.Color
 import org.opencv.core.MatOfRect
 import org.opencv.core.Point
 import org.opencv.core.Scalar
@@ -62,6 +66,18 @@ class CascadeClassifierDetector : IAlgorithm {
         history.add(AFImage(result, "Marked Image"))
 
         image.attributes.put(CASCADE_ATTRIBUT, areas)
+
+        // add output shapes
+        image.addLayer("doors", *areas.toArray()
+                .map { rect ->
+                    val s = RectangleShape(
+                            location = Point2D(rect.x.toDouble(), rect.y.toDouble()),
+                            size = Dimension2D(rect.width.toDouble(), rect.height.toDouble()))
+                    s.fill = Color(0.0, 1.0, 0.0, 0.5)
+                    s.stroke = Color(0.0, 1.0, 0.0, 1.0)
+                    s
+                }.toTypedArray())
+
         return image
     }
 }
