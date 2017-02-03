@@ -10,6 +10,7 @@ import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
+import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
@@ -48,6 +49,8 @@ class MainView {
                     CascadeClassifierDetector(),
                     ShapeDistanceMatching()
             ).toTypedArray())
+
+    val rulerTool = RulerTool()
 
     @FXML
     var layoutPane: BorderPane? = null
@@ -200,7 +203,7 @@ class MainView {
     fun toolChanged(e: ActionEvent) {
         when ((e.source as Button).id) {
             "arrowButton" -> canvas.activeTool = ViewTool()
-            "rulerButton" -> canvas.activeTool = ViewTool()
+            "rulerButton" -> canvas.activeTool = rulerTool
             "lineButton" -> {
                 val tool = LineTool()
                 tool.defaultStroke = Color.BLACK

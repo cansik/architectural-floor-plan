@@ -11,7 +11,7 @@ import javafx.scene.paint.Paint
 /**
  * Created by cansik on 25.01.17.
  */
-class LineTool : BaseEditorTool() {
+open class LineTool : BaseEditorTool() {
     var dragStart = Point2D.ZERO!!
     var current = LineShape()
 
