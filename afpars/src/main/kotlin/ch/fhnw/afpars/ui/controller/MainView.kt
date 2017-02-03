@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.controller
 
+import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.io.opencv.MatRender
@@ -13,12 +14,14 @@ import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
 import ch.fhnw.afpars.workflow.Workflow
 import ch.fhnw.afpars.workflow.WorkflowEngine
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBoxTreeItem
+import javafx.scene.control.Label
 import javafx.scene.control.TreeView
 import javafx.scene.control.cell.CheckBoxTreeCell
 import javafx.scene.input.Clipboard
@@ -53,6 +56,18 @@ class MainView {
     @FXML
     var layerTreeView: TreeView<String>? = null
 
+    @FXML
+    var runWorkflowButton: Button? = null
+
+    @FXML
+    var nextStepButton: Button? = null
+
+    @FXML
+    var cancelWorkflowButton: Button? = null
+
+    @FXML
+    var breadCrumpLabel: Label? = null
+
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -61,11 +76,14 @@ class MainView {
         workflowEngine.finished += {
             println("workflow finished!")
             image.set(it)
+            setWorkflowStopMode()
         }
 
         workflowEngine.stepDone += {
             val algorithm = it.first
             val img = it.second
+
+            updateBreadCrump(defaultWorkflow.algorithms[defaultWorkflow.algorithms.indexOfFirst { it == algorithm } + 1])
 
             println("${algorithm.name} finished!")
             image.set(img)
@@ -81,10 +99,26 @@ class MainView {
 
         canvas.onShapeAdded += { updateUI() }
 
+        // setup buttons
+        runWorkflowButton!!.managedProperty().bind(runWorkflowButton!!.visibleProperty())
+        breadCrumpLabel!!.managedProperty().bind(breadCrumpLabel!!.visibleProperty())
+        nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
+        cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
+
+        setWorkflowStopMode()
+
         updateUI()
     }
 
     fun runWorkflow(e: ActionEvent) {
+        if (canvas.layers.size < 2) {
+            println("Please load a picture first!")
+            return
+        }
+
+        setWorkflowRunningMode()
+        updateBreadCrump(defaultWorkflow.algorithms.first())
+
         MatRender.render(image.value.image, canvas.activeLayer.shapes)
         workflowEngine.run(defaultWorkflow, image.value, true, true)
     }
@@ -187,5 +221,41 @@ class MainView {
                 canvas.activeTool = tool
             }
         }
+    }
+
+    fun cancelWorkflow(e: ActionEvent) {
+        workflowEngine.cancelRequested = true
+        workflowEngine.nextStep()
+    }
+
+    fun exportLayer(e: ActionEvent) {
+
+    }
+
+    private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
+        Platform.runLater({
+            breadCrumpLabel!!.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
+        })
+    }
+
+    private fun setWorkflowRunningMode() {
+        Platform.runLater({
+            runWorkflowButton!!.isVisible = false
+
+            breadCrumpLabel!!.isVisible = true
+            nextStepButton!!.isVisible = true
+            cancelWorkflowButton!!.isVisible = true
+        })
+    }
+
+    private fun setWorkflowStopMode() {
+        Platform.runLater({
+            runWorkflowButton!!.isVisible = true
+
+            breadCrumpLabel!!.isVisible = false
+            nextStepButton!!.isVisible = false
+            cancelWorkflowButton!!.isVisible = false
+
+        })
     }
 }

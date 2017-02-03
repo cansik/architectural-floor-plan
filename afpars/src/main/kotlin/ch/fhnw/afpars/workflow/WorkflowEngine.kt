@@ -24,6 +24,8 @@ class WorkflowEngine {
 
     private var stepLatch = CountDownLatch(1)
 
+    var cancelRequested = false
+
     fun nextStep() {
         stepLatch.countDown()
     }
@@ -31,17 +33,22 @@ class WorkflowEngine {
     fun run(workflow: Workflow, afImage: AFImage, editParameters: Boolean = false, waitAfterStep: Boolean = false) {
         thread {
             currentImage = afImage
-            for (alg in workflow.algorithms) {
+            loop@ for (alg in workflow.algorithms) {
 
                 if (editParameters)
                     showEditView(alg, currentImage)
 
                 currentImage = alg.run(currentImage)
 
-                if (waitAfterStep) {
+                if (waitAfterStep && workflow.algorithms.last() != alg) {
                     stepLatch = CountDownLatch(1)
                     stepDone(Pair(alg, currentImage))
                     stepLatch.await()
+                }
+
+                if (cancelRequested) {
+                    cancelRequested = false
+                    break@loop
                 }
             }
             finished(currentImage)
