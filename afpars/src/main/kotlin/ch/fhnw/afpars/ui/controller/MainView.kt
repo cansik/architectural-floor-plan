@@ -5,6 +5,7 @@ import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.io.opencv.MatRender
 import ch.fhnw.afpars.io.reader.AFImageReader
+import ch.fhnw.afpars.io.svg.SvgRender
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
@@ -19,10 +20,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBoxTreeItem
-import javafx.scene.control.Label
-import javafx.scene.control.TreeView
+import javafx.scene.control.*
 import javafx.scene.control.cell.CheckBoxTreeCell
 import javafx.scene.input.Clipboard
 import javafx.scene.layout.BorderPane
@@ -30,6 +28,7 @@ import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
+import java.nio.file.Files
 
 
 /**
@@ -229,7 +228,34 @@ class MainView {
     }
 
     fun exportLayer(e: ActionEvent) {
+        val stage = (e.source as Node).scene.window as Stage
 
+        // show selection dialog
+        val dialog = ChoiceDialog(canvas.layers.first().name, canvas.layers.map { it.name })
+        dialog.title = "Layer Export"
+        dialog.headerText = "Export a layer from the canvas as svg image."
+        dialog.contentText = "Choose the layer to export:"
+
+        val result = dialog.showAndWait()
+
+        result.ifPresent({ layerName ->
+            val layer = canvas.layers.single { it.name == layerName }
+            val fileChooser = FileChooser()
+            fileChooser.initialFileName = "${layerName.toLowerCase()}.svg"
+            fileChooser.title = "Export layer \"$layerName\" as svg"
+            fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Vector Graphic", "*.svg"))
+
+            val file = fileChooser.showSaveDialog(stage)
+
+            if (file != null) {
+                val svg = SvgRender.render(
+                        canvas.canvas.width.toInt(),
+                        canvas.canvas.height.toInt(),
+                        layer.shapes)
+
+                Files.write(file.toPath(), listOf(svg.svgDocument))
+            }
+        })
     }
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
