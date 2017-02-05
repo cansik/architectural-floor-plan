@@ -2,6 +2,7 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
+import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
@@ -43,7 +44,7 @@ class NikieRoomDetection : IAlgorithm {
      */
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         //Originalbild
-        val original = image.clone()
+        val original = AFImage(image.attributes.get(MorphologicalTransform.MORPH)!!)
 
         //Distanztransformatin
         val distTransform = original.image.zeros()
@@ -162,14 +163,16 @@ class NikieRoomDetection : IAlgorithm {
             }
         }
 
-
+/*
         val haaralg = CascadeClassifierDetector()
         haaralg.erosionSize = 2.0
         haaralg.minNeighbors = 3
         haaralg.scaleFactor = 1.1
         WorkflowEngine().showEditView(haaralg, AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
         val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
-        val foundDoors: MatOfRect = res.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
+*/
+        //Neu
+        val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
 
         for (i in 0..foundDoors!!.rows() - 1) {
@@ -250,7 +253,7 @@ class NikieRoomDetection : IAlgorithm {
         history.add(AFImage(watershed, "Watershed"))
         history.add(AFImage(drawkeypoints, "Keypoints"))
         history.add(AFImage(drawkeypoints1, "Keypoints"))
-        history.add(res)
+        //history.add(res)
         return AFImage(watershed)
     }
 

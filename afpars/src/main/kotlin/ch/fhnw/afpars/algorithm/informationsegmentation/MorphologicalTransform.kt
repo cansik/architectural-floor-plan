@@ -11,6 +11,10 @@ import org.opencv.imgproc.Imgproc
  * Created by cansik on 13.10.16.
  */
 class MorphologicalTransform() : IAlgorithm {
+    companion object {
+        val MORPH = "MorphTransform"
+    }
+
     override val name: String
         get() = "Morphological Transform"
 
@@ -41,8 +45,9 @@ class MorphologicalTransform() : IAlgorithm {
         // closing
         erode(img.image, closingSize)
         dilate(img.image, closingSize)
-
-        return img
+        image.attributes.put(MORPH,img.image)
+        history.add(img)
+        return image
     }
 
     fun erode(img: Mat, erosionSize: Int) {

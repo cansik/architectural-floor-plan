@@ -170,6 +170,7 @@ class ExperimentsView {
             workflowEngine.run(Workflow(
                     arrayListOf(
                             MorphologicalTransform(),
+                            CascadeClassifierDetector(),
                             NikieRoomDetection()
                     ).toTypedArray()
             ), destination,
