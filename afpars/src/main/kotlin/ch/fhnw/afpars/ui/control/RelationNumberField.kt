@@ -21,6 +21,8 @@ import javafx.util.Duration
 import javafx.util.StringConverter
 import javafx.util.converter.DoubleStringConverter
 import javafx.util.converter.NumberStringConverter
+import java.text.NumberFormat
+import java.util.*
 
 /**
  * Created by cansik on 06.01.17.
@@ -67,7 +69,7 @@ class RelationNumberField @JvmOverloads constructor(value: Double = 0.0, minimum
         minimumLabel = Label()
 
         formatter = TextFormatter(DoubleStringConverter())
-        converter = NumberStringConverter()
+        converter = NumberStringConverter(NumberFormat.getInstance(Locale.ENGLISH))
 
         initializeNumberField()
         initializeControls()
