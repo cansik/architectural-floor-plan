@@ -25,13 +25,16 @@ class NikieRoomDetection : IAlgorithm {
     var differenceScalar = 70.0
 
     @AlgorithmParameter(name = "Geodesic Dilate")
-    var geodesicDilateSize = 88
+    var geodesicDilateSize = 60
 
     @AlgorithmParameter(name = "Distance", minValue = 1.0, maxValue = 10.0)
-    var distance1 = 4
+    var distance1 = 2
 
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 26.0
+
+    @AlgorithmParameter(name = "Searchdistance", minValue = 0.0, maxValue = 100.0)
+    var searchDistance = 10.0
 
 
     /*
@@ -171,7 +174,7 @@ class NikieRoomDetection : IAlgorithm {
 
         for (i in 0..foundDoors!!.rows() - 1) {
             val door = foundDoorsArray[i]
-            val searchDistance = 10
+            //val searchDistance = 10
             val doorPoints = mutableListOf<Point>()
             sparsePoints.forEach { point: Point ->
                 if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
@@ -187,13 +190,19 @@ class NikieRoomDetection : IAlgorithm {
                     angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
                 }
             }
+
+
+            //Neu
             if (!angles.isEmpty()) {
                 //angles.add(angleToXAxis(point1,point2))
                 val size = angles[0].size - 1
                 for (j in 0..size) {
                     for (k in (j + 1)..size) {
-                        for (innerJ in 0..size) {
-                            for (innerK in (innerJ + 1)..size) {
+                        outerloop@for (innerJ in j+1..size) {
+                            if(innerJ==k) continue@outerloop
+                            innerloop@for (innerK in (innerJ + 1)..size) {
+                                if (innerK ==k) continue@innerloop
+                                System.out.println("J: " +j+" K: " +k+" iJ: " +innerJ+" iK: " +innerK);
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
                                     if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
                                         if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
@@ -211,7 +220,6 @@ class NikieRoomDetection : IAlgorithm {
                     }
                 }
             }
-
         }
 
         /*
