@@ -3,6 +3,7 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.base.ScaleTest
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.informationsegmentation.RectangleRoomDetection
+import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
 import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
@@ -171,7 +172,8 @@ class ExperimentsView {
                     arrayListOf(
                             MorphologicalTransform(),
                             CascadeClassifierDetector(),
-                            NikieRoomDetection()
+                            NikieRoomDetection(),
+                            ConnectedComponentDetection()
                     ).toTypedArray()
             ), destination,
                     true)

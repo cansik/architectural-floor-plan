@@ -42,7 +42,7 @@ class ImageEditor : Pane() {
     var canvasTransformation = Point2D.ZERO!!
     var zoomTransformation = Point2D.ZERO!!
 
-    var minimumZoom = 1.0
+    var minimumZoom = 0.5
     var maximumZoom = 50.0
 
     val onShapeAdded = Event<Layer>()
@@ -198,11 +198,9 @@ class ImageEditor : Pane() {
         val oldScale = node.scaleX
         var scale = factor
 
-
         // fix relationScale
         if (scale < minimumZoom) scale = minimumZoom
         if (scale > maximumZoom) scale = maximumZoom
-
 
         node.scaleX = scale
         node.scaleY = scale

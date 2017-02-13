@@ -9,7 +9,6 @@ import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import ch.fhnw.afpars.util.opencv.combinePoints
 import ch.fhnw.afpars.util.opencv.sparsePoints
-import ch.fhnw.afpars.workflow.WorkflowEngine
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.io.File
@@ -43,6 +42,9 @@ class NikieRoomDetection : IAlgorithm {
     Eingabetyp ist 32SC1
      */
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
+        val watch = Stopwatch()
+        watch.start()
+
         //Originalbild
         val original = AFImage(image.attributes.get(MorphologicalTransform.MORPH)!!)
 
@@ -69,6 +71,7 @@ class NikieRoomDetection : IAlgorithm {
         Geht vom Originalbild aus, rückgabe ist das Bild "distTransform"
         Konvertiert das Bild zu 8UC1
          */
+        println("${watch.elapsed().toTimeStamp()}\nDistanztransform")
         var localoriginal = original.image.zeros()
         Imgproc.cvtColor(original.image, localoriginal, Imgproc.COLOR_BGR2GRAY)
         Imgproc.distanceTransform(localoriginal, distTransform, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
@@ -82,6 +85,7 @@ class NikieRoomDetection : IAlgorithm {
         /*
         GeodesicDilation
          */
+        println("${watch.elapsed().toTimeStamp()}\nGeodesicDilation")
         val darkerDistTransform = original.image.zeros()
         Core.subtract(distTransform, Scalar(differenceScalar), darkerDistTransform)
         darkerDistTransform.geodesicDilate(distTransform, geodesicDilateSize, geodesicTransform)
@@ -90,13 +94,18 @@ class NikieRoomDetection : IAlgorithm {
         /*
        Cornerdetection
         */
+        println("${watch.elapsed().toTimeStamp()}\nCornerdetection")
         var cornerdet = localoriginal.copy()
         val cornerdetnorm = cornerdet.zeros()
         val cornerdetnormscaled = cornerdet.zeros()
         //cornerdet = cornerdet.to32SC1()
+
+        // sharpen image before corner detect
+        //cornerdet.sharpen(1.9)
+
         Imgproc.cornerHarris(cornerdet, cornerdet, 3, 5, 0.04)
-        Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat());
-        Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled);
+        Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
+        Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled)
         val threshhigh = 170
         val points = mutableListOf<Point>()
         // Drawing a circle around corners
@@ -115,7 +124,13 @@ class NikieRoomDetection : IAlgorithm {
             //System.out.println(text + "Line: " + j + "; ")
         }
 
+        println("found ${points.size} corners!")
+
+        println("${watch.elapsed().toTimeStamp()}\nSparsing Points")
         val sparsePoints = points.sparsePoints(distance1.toDouble()).combinePoints()
+
+        println("sparsed point cloud to ${sparsePoints.size} points!")
+
         for (p in sparsePoints)
             Imgproc.circle(cornerdetnormscaled, p, 8, Scalar(0.0, 0.0, 255.0))
         /*
@@ -126,6 +141,7 @@ class NikieRoomDetection : IAlgorithm {
         /*
         findContours
          */
+        println("${watch.elapsed().toTimeStamp()}\nprepare watershed")
         val contours = mutableListOf<MatOfPoint>()
         val hierarchy = original.image.zeros()
         Imgproc.findContours(foreground.copy(), contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
@@ -139,7 +155,7 @@ class NikieRoomDetection : IAlgorithm {
         //Draw foreground markers
         for (cnt in contours) {
             Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((/*i +*/ 200).toDouble()), Core.FILLED)
-            i++;
+            i++
         }
 
         for (i in 0..background.height() - 1) {
@@ -172,13 +188,14 @@ class NikieRoomDetection : IAlgorithm {
         val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
 */
         //Neu
+        println("${watch.elapsed().toTimeStamp()}\nClose doors")
         val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
         var watershedoriginal = localoriginal.copy()
         Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
         watershedoriginal = watershedoriginal.to8UC3()
 
-        for (i in 0..foundDoors!!.rows() - 1) {
+        for (i in 0..foundDoors.rows() - 1) {
             val door = foundDoorsArray[i]
             //val searchDistance = 10
             val doorPoints = mutableListOf<Point>()
@@ -204,11 +221,11 @@ class NikieRoomDetection : IAlgorithm {
                 val size = angles[0].size - 1
                 for (j in 0..size) {
                     for (k in (j + 1)..size) {
-                        outerloop@for (innerJ in j+1..size) {
-                            if(innerJ==k) continue@outerloop
-                            innerloop@for (innerK in (innerJ + 1)..size) {
-                                if (innerK ==k) continue@innerloop
-                                System.out.println("J: " +j+" K: " +k+" iJ: " +innerJ+" iK: " +innerK);
+                        outerloop@ for (innerJ in j + 1..size) {
+                            if (innerJ == k) continue@outerloop
+                            innerloop@ for (innerK in (innerJ + 1)..size) {
+                                if (innerK == k) continue@innerloop
+                                System.out.println("J: " + j + " K: " + k + " iJ: " + innerJ + " iK: " + innerK)
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
                                     if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
                                         if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
@@ -242,7 +259,9 @@ class NikieRoomDetection : IAlgorithm {
         var watershedoriginal = localoriginal.copy()
         Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
         watershedoriginal = watershedoriginal.to8UC3()
-*/        val watershed = summedUp.to32S()
+*/
+        println("${watch.elapsed().toTimeStamp()}\nwatersheding")
+        val watershed = summedUp.to32S()
 
         Imgproc.watershed(watershedoriginal, watershed)
 
@@ -258,6 +277,9 @@ class NikieRoomDetection : IAlgorithm {
         history.add(AFImage(watershed, "Watershed"))
         history.add(AFImage(drawkeypoints, "Keypoints"))
         history.add(AFImage(drawkeypoints1, "Keypoints"))
+
+        println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
+
         //history.add(res)
         return AFImage(watershed)
     }
