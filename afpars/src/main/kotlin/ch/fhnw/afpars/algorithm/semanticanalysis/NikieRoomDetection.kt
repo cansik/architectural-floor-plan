@@ -174,6 +174,9 @@ class NikieRoomDetection : IAlgorithm {
         //Neu
         val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
+        var watershedoriginal = localoriginal.copy()
+        Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
+        watershedoriginal = watershedoriginal.to8UC3()
 
         for (i in 0..foundDoors!!.rows() - 1) {
             val door = foundDoorsArray[i]
@@ -210,10 +213,12 @@ class NikieRoomDetection : IAlgorithm {
                                     if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
                                         if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
                                             System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                            Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0, 128.0, 128.0), -1)
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
+                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
                                         } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
                                             System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                            Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0, 128.0, 128.0), -1)
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
+                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
                                         }
                                     }
                                 }
@@ -233,11 +238,11 @@ class NikieRoomDetection : IAlgorithm {
                 summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
             }
         }
-
+/*
         var watershedoriginal = localoriginal.copy()
         Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
         watershedoriginal = watershedoriginal.to8UC3()
-        val watershed = summedUp.to32S()
+*/        val watershed = summedUp.to32S()
 
         Imgproc.watershed(watershedoriginal, watershed)
 
