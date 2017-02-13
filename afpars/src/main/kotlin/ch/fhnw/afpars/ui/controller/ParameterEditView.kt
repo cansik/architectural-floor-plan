@@ -44,6 +44,8 @@ class ParameterEditView {
 
     var lastSelectedImage = 0
 
+    var result: AFImage by Delegates.notNull()
+
     fun initView(algorithm: IAlgorithm, image: AFImage) {
         this.image = image
         this.algorithm = algorithm
@@ -79,8 +81,10 @@ class ParameterEditView {
             }
         }
         historyListView!!.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
-            if (newValue != null)
+            if (newValue != null) {
+                previewImage!!.resetZoom()
                 previewImage!!.displayImage(newValue.image.toImage())
+            }
         }
 
         runAlgorithm()
@@ -94,6 +98,9 @@ class ParameterEditView {
     private fun runAlgorithm() {
         val history = arrayListOf<AFImage>()
         val result = algorithm.run(image, history)
+
+        // save result
+        this.result = result
 
         Platform.runLater {
             lastSelectedImage = Math.max(0, historyListView!!.selectionModel.selectedIndex)
