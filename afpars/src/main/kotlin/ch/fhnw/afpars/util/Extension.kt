@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.util
 
+import ch.fhnw.afpars.util.opencv.cc.ConnectedComponentsResult
 import javafx.scene.image.Image
 import javafx.scene.image.WritablePixelFormat
 import org.bytedeco.javacpp.opencv_core
@@ -7,6 +8,7 @@ import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import java.io.ByteArrayInputStream
+
 
 fun Mat.toImage(): Image {
     val byteMat = MatOfByte()
@@ -47,6 +49,14 @@ fun Mat.resize(width: Int, height: Int): Mat {
     return result
 }
 
+fun Mat.gray() {
+    Imgproc.cvtColor(this, this, Imgproc.COLOR_BGR2GRAY)
+}
+
+fun Mat.threshold(thresh: Double, maxval: Double = 255.0, type: Int = Imgproc.THRESH_BINARY) {
+    Imgproc.threshold(this, this, thresh, maxval, type)
+}
+
 fun Mat.geodesicDilate(mask: Mat, elementSize: Int) {
     this.geodesicDilate(mask, elementSize, this)
 }
@@ -81,6 +91,15 @@ fun Mat.geodesicErode(mask: Mat, elementSize: Int, dest: Mat) {
 
 fun Mat.negate() {
     this.negate(this)
+}
+
+fun Mat.sharpen(sigmaX: Double = 3.0) {
+    this.sharpen(this, sigmaX)
+}
+
+fun Mat.sharpen(dest: Mat, sigmaX: Double = 3.0) {
+    Imgproc.GaussianBlur(this, dest, Size(0.0, 0.0), sigmaX)
+    Core.addWeighted(dest, 1.5, dest, -0.5, 0.0, dest)
 }
 
 fun Mat.negate(dest: Mat) {
@@ -137,3 +156,32 @@ fun Image.toMat(): Mat {
 }
 
 fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)
+
+fun Mat.connectedComponents(connectivity: Int = 8, ltype: Int = CvType.CV_32S): Mat {
+    val labeled = this.zeros()
+    Imgproc.connectedComponents(this, labeled, connectivity, ltype)
+    return labeled
+}
+
+fun Mat.connectedComponentsWithStats(connectivity: Int = 8, ltype: Int = CvType.CV_32S): ConnectedComponentsResult {
+    val labeled = this.zeros()
+    val rectComponents = Mat()
+    val centComponents = Mat()
+
+    Imgproc.connectedComponentsWithStats(this, labeled, rectComponents, centComponents)
+    return ConnectedComponentsResult(labeled, rectComponents, centComponents)
+}
+
+fun Mat.getRegionMask(regionLabel: Int): Mat {
+    val labeledMask = this.zeros(CvType.CV_8U)
+    Core.inRange(this, Scalar(regionLabel.toDouble()), Scalar(regionLabel.toDouble()), labeledMask)
+    return labeledMask
+}
+
+fun Long.toTimeStamp(): String {
+    val second = this / 1000 % 60
+    val minute = this / (1000 * 60) % 60
+    val hour = this / (1000 * 60 * 60) % 24
+
+    return String.format("%02d:%02d:%02d:%d", hour, minute, second, this)
+}
