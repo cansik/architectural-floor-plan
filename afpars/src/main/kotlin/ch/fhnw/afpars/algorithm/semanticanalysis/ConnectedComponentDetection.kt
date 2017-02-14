@@ -5,7 +5,9 @@ import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import org.opencv.core.Core
+import org.opencv.core.CvType
 import org.opencv.core.Scalar
+import org.opencv.imgproc.Imgproc
 
 /**
  * Created by cansik on 13.02.17.
@@ -33,22 +35,34 @@ class ConnectedComponentDetection : IAlgorithm {
 
         components.filter { it.label != 0 }.forEach {
             val labeledMask = nativeComponents.labeled.getRegionMask(it.label)
-            labeledMask.replaceColor(Scalar(255.0), Scalar(55.0 + (200 / (components.size - 1) * it.label)))
 
+            labeledMask.replaceColor(Scalar(255.0), Scalar(55.0 + (200 / (components.size - 1) * it.label)))
             Core.add(mask, labeledMask, mask)
             labeledMask.release()
         }
 
-        //mask.threshold(1.0)
+        // create color image
+        val colorMap = gray.zeros(CvType.CV_8UC3)
+        Imgproc.applyColorMap(mask, colorMap, 2)
 
         // find contours
+        val contours = mask.findContours()
+        contours.drawContours(colorMap, color = Scalar(255.0, 255.0, 255.0))
 
+        println("found ${contours.contours.size} contours")
+
+        // show length
+        contours.contours.forEachIndexed { i, contour ->
+            println("Contour $i: ${contour.nativeContour.size()} -> On Border: ${contour.isOnBorder(gray, 10.0)}")
+        }
 
         history.add(AFImage(gray, "Gray"))
         history.add(AFImage(mask, "Mask"))
+        history.add(AFImage(colorMap, "ColorMap"))
 
         // cleanup
         nativeComponents.release()
+        contours.release()
 
         return image
     }

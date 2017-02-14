@@ -4,14 +4,12 @@ import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
-import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.*
 import ch.fhnw.afpars.util.opencv.combinePoints
 import ch.fhnw.afpars.util.opencv.sparsePoints
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-import java.io.File
 
 
 /**
