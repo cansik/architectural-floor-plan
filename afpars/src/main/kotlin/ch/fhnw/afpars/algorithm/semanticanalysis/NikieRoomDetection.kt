@@ -56,25 +56,14 @@ class NikieRoomDetection : IAlgorithm {
         val markers = original.image.zeros()
         //Foreground
         val foreground = original.image.zeros()
-        //Keypoints
-        var drawkeypoints = original.clone().image
 
-        val file = File("C:\\Users\\AlexL\\OneDrive\\Bilder\\test.jpg")
-        val door = AFImageReader().read(file.toPath())
-        var drawkeypoints1 = door.clone().image
-
-        val file1 = File("D:\\FHNW\\Bachelor\\architectural-floor-plan\\afpars\\data\\A_N1.png")
-        val basic = AFImageReader().read(file1.toPath())
 
         /*
         Distanztranformation
         Geht vom Originalbild aus, rückgabe ist das Bild "distTransform"
         Konvertiert das Bild zu 8UC1
          */
-        println("${watch.elapsed().toTimeStamp()}\nDistanztransform")
-        var localoriginal = original.image.zeros()
-        Imgproc.cvtColor(original.image, localoriginal, Imgproc.COLOR_BGR2GRAY)
-        Imgproc.distanceTransform(localoriginal, distTransform, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
+        var localoriginal = distanceTransform(distTransform, original, watch)
 
         //Background
         val background = localoriginal.copy()
@@ -85,15 +74,161 @@ class NikieRoomDetection : IAlgorithm {
         /*
         GeodesicDilation
          */
-        println("${watch.elapsed().toTimeStamp()}\nGeodesicDilation")
-        val darkerDistTransform = original.image.zeros()
-        Core.subtract(distTransform, Scalar(differenceScalar), darkerDistTransform)
-        darkerDistTransform.geodesicDilate(distTransform, geodesicDilateSize, geodesicTransform)
-        Core.compare(distTransform, geodesicTransform, markers, Core.CMP_LE)
+        geodesicDilation(distTransform, geodesicTransform, markers, original, watch)
 
         /*
        Cornerdetection
         */
+        val triple = cornerDetection(localoriginal, watch)
+        var cornerdet = triple.first
+        val cornerdetnormscaled = triple.second
+        val sparsePoints = triple.third
+
+        /*Invert markers*/
+        Imgproc.threshold(markers, foreground, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
+
+        /*
+        findContours
+         */
+        println("${watch.elapsed().toTimeStamp()}\nprepare watershed")
+        val contours = mutableListOf<MatOfPoint>()
+        val hierarchy = original.image.zeros()
+        Imgproc.findContours(foreground.copy(), contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        // Create the marker image for the watershed algorithm
+        val contmarkers = image.image.zeros(CvType.CV_32SC1)
+        contmarkers.setTo(Scalar(255.0))
+
+        //Draw foreground markers
+        drawForeground(contmarkers, contours)
+
+        /*
+        Background
+         */
+        drawBackground(background)
+
+        var watershedoriginal = localoriginal.copy()
+        Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
+        watershedoriginal = watershedoriginal.to8UC3()
+
+        /*Close doors */
+        doorClosing(image, sparsePoints, watch, watershedoriginal)
+
+        /*
+        Kombination Background/Foreground
+         */
+        for (i in 0..summedUp.height() - 1) {
+            for (j in 0..summedUp.width() - 1) {
+                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
+            }
+        }
+
+        println("${watch.elapsed().toTimeStamp()}\nwatersheding")
+        val watershed = summedUp.to32S()
+
+        Imgproc.watershed(watershedoriginal, watershed)
+
+        history.add(AFImage(cornerdet, "Cornerdet"))
+        history.add(AFImage(cornerdetnormscaled, "CornerdetScaled"))
+        history.add(AFImage(distTransform, "Distanztransformation"))
+        history.add(AFImage(geodesicTransform, "Geodesictransformation"))
+        history.add(AFImage(markers, "Markers"))
+        history.add(AFImage(foreground, "Foreground"))
+        history.add(AFImage(contmarkers, "findContour"))
+        history.add(AFImage(background, "Background"))
+        history.add(AFImage(summedUp, "Summed Up"))
+        history.add(AFImage(watershed, "Watershed"))
+
+        println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
+        return AFImage(watershed)
+    }
+
+    private fun distanceTransform(distTransform: Mat, original: AFImage, watch: Stopwatch): Mat {
+        println("${watch.elapsed().toTimeStamp()}\nDistanztransform")
+        var localoriginal = original.image.zeros()
+        Imgproc.cvtColor(original.image, localoriginal, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.distanceTransform(localoriginal, distTransform, Imgproc.CV_DIST_L2, Imgproc.CV_DIST_MASK_PRECISE)
+        return localoriginal
+    }
+
+    private fun doorClosing(image: AFImage, sparsePoints: MutableList<Point>, watch: Stopwatch, watershedoriginal: Mat) {
+        println("${watch.elapsed().toTimeStamp()}\nClose doors")
+        val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
+        val foundDoorsArray = foundDoors.toArray()
+
+        for (i in 0..foundDoors.rows() - 1) {
+            val door = foundDoorsArray[i]
+            val doorPoints = mutableListOf<Point>()
+            sparsePoints.forEach { point: Point ->
+                if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
+                    doorPoints.add(point)
+                }
+            }
+
+            val angles = Array(doorPoints.size) { arrayOfNulls<Double>(doorPoints.size) }
+            for (j in 0..doorPoints.size - 1) {
+                for (k in (j + 1)..doorPoints.size - 1) {
+                    angles[j][k] = angleToXAxis(doorPoints[j], doorPoints[k])
+                    angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
+                }
+            }
+
+
+            //Neu
+            if (!angles.isEmpty()) {
+                val size = angles[0].size - 1
+                for (j in 0..size) {
+                    for (k in (j + 1)..size) {
+                        outerloop@ for (innerJ in j + 1..size) {
+                            if (innerJ == k) continue@outerloop
+                            innerloop@ for (innerK in (innerJ + 1)..size) {
+                                if (innerK == k) continue@innerloop
+                                System.out.println("J: " + j + " K: " + k + " iJ: " + innerJ + " iK: " + innerK)
+                                if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
+                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
+                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
+                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    private fun drawBackground(background: Mat) {
+        for (i in 0..background.height() - 1) {
+            for (j in 0..background.width() - 1) {
+                if (background.get(i, j)[0].equals(0.0)) {
+                    background.put(i, j, 128.0)
+                } else if (background.get(i, j)[0].equals(255.0)) {
+                    background.put(i, j, 0.0)
+                }
+            }
+        }
+    }
+
+    private fun drawForeground(contmarkers: Mat, contours: MutableList<MatOfPoint>) {
+        for (cnt in contours) {
+            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((200).toDouble()), Core.FILLED)
+        }
+
+        for (i in 0..contmarkers.height() - 1) {
+            for (j in 0..contmarkers.width() - 1) {
+                if (contmarkers.get(i, j)[0].equals(255.0)) {
+                    contmarkers.put(i, j, 0.0)
+                }
+            }
+        }
+    }
+
+    private fun cornerDetection(localoriginal: Mat, watch: Stopwatch): Triple<Mat, Mat, MutableList<Point>> {
         println("${watch.elapsed().toTimeStamp()}\nCornerdetection")
         var cornerdet = localoriginal.copy()
         val cornerdetnorm = cornerdet.zeros()
@@ -114,14 +249,10 @@ class NikieRoomDetection : IAlgorithm {
             for (i in 0..cornerdetnorm.cols() - 1) {
                 text += cornerdetnormscaled.get(j, i)[0].toInt().toString() + " "
                 val point = cornerdetnorm.get(j, i)[0]
-                //if (point > threshlow) {
                 if (point > threshhigh) {
-                    //Imgproc.circle(cornerdetnormscaled, Point(i.toDouble(), j.toDouble()), 10, Scalar(0.0), 2, 8, 0);
                     points.add(Point(i.toDouble(), j.toDouble()))
                 }
-                //}
             }
-            //System.out.println(text + "Line: " + j + "; ")
         }
 
         println("found ${points.size} corners!")
@@ -133,155 +264,15 @@ class NikieRoomDetection : IAlgorithm {
 
         for (p in sparsePoints)
             Imgproc.circle(cornerdetnormscaled, p, 8, Scalar(0.0, 0.0, 255.0))
-        /*
-        Invert markers
-         */
-        Imgproc.threshold(markers, foreground, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
+        return Triple(cornerdet, cornerdetnormscaled, sparsePoints)
+    }
 
-        /*
-        findContours
-         */
-        println("${watch.elapsed().toTimeStamp()}\nprepare watershed")
-        val contours = mutableListOf<MatOfPoint>()
-        val hierarchy = original.image.zeros()
-        Imgproc.findContours(foreground.copy(), contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
-
-        // Create the marker image for the watershed algorithm
-        val contmarkers = image.image.zeros(CvType.CV_32SC1)
-        contmarkers.setTo(Scalar(255.0))
-
-        var i = 0
-
-        //Draw foreground markers
-        for (cnt in contours) {
-            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((/*i +*/ 200).toDouble()), Core.FILLED)
-            i++
-        }
-
-        for (i in 0..background.height() - 1) {
-            for (j in 0..contmarkers.width() - 1) {
-                if (contmarkers.get(i, j)[0].equals(255.0)) {
-                    contmarkers.put(i, j, 0.0)
-                }
-            }
-        }
-
-        /*
-        Background
-         */
-        for (i in 0..background.height() - 1) {
-            for (j in 0..background.width() - 1) {
-                if (background.get(i, j)[0].equals(0.0)) {
-                    background.put(i, j, 128.0)
-                } else if (background.get(i, j)[0].equals(255.0)) {
-                    background.put(i, j, 0.0)
-                }
-            }
-        }
-
-/*
-        val haaralg = CascadeClassifierDetector()
-        haaralg.erosionSize = 2.0
-        haaralg.minNeighbors = 3
-        haaralg.scaleFactor = 1.1
-        WorkflowEngine().showEditView(haaralg, AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
-        val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
-*/
-        //Neu
-        println("${watch.elapsed().toTimeStamp()}\nClose doors")
-        val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
-        val foundDoorsArray = foundDoors.toArray()
-        var watershedoriginal = localoriginal.copy()
-        Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
-        watershedoriginal = watershedoriginal.to8UC3()
-
-        for (i in 0..foundDoors.rows() - 1) {
-            val door = foundDoorsArray[i]
-            //val searchDistance = 10
-            val doorPoints = mutableListOf<Point>()
-            sparsePoints.forEach { point: Point ->
-                if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
-                    doorPoints.add(point)
-                    System.out.println("Door found X: " + point.x + " Y: " + point.y + "Iteration: " + i)
-                }
-            }
-
-            val angles = Array(doorPoints.size) { kotlin.arrayOfNulls<Double>(doorPoints.size) }
-            for (j in 0..doorPoints.size - 1) {
-                for (k in (j + 1)..doorPoints.size - 1) {
-                    angles[j][k] = angleToXAxis(doorPoints[j], doorPoints[k])
-                    angles[k][j] = angleToXAxis(doorPoints[j], doorPoints[k])
-                }
-            }
-
-
-            //Neu
-            if (!angles.isEmpty()) {
-                //angles.add(angleToXAxis(point1,point2))
-                val size = angles[0].size - 1
-                for (j in 0..size) {
-                    for (k in (j + 1)..size) {
-                        outerloop@ for (innerJ in j + 1..size) {
-                            if (innerJ == k) continue@outerloop
-                            innerloop@ for (innerK in (innerJ + 1)..size) {
-                                if (innerK == k) continue@innerloop
-                                System.out.println("J: " + j + " K: " + k + " iJ: " + innerJ + " iK: " + innerK)
-                                if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
-                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
-                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
-                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
-                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
-                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
-                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
-                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-        /*
-        Kombination Background/Foreground
-         */
-        for (i in 0..summedUp.height() - 1) {
-            for (j in 0..summedUp.width() - 1) {
-                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
-            }
-        }
-/*
-        var watershedoriginal = localoriginal.copy()
-        Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
-        watershedoriginal = watershedoriginal.to8UC3()
-*/
-        println("${watch.elapsed().toTimeStamp()}\nwatersheding")
-        val watershed = summedUp.to32S()
-
-        Imgproc.watershed(watershedoriginal, watershed)
-
-        history.add(AFImage(cornerdet, "Cornerdet"))
-        history.add(AFImage(cornerdetnormscaled, "CornerdetScaled"))
-        history.add(AFImage(distTransform, "Distanztransformation"))
-        history.add(AFImage(geodesicTransform, "Geodesictransformation"))
-        history.add(AFImage(markers, "Markers"))
-        history.add(AFImage(foreground, "Foreground"))
-        history.add(AFImage(contmarkers, "findContour"))
-        history.add(AFImage(background, "Background"))
-        history.add(AFImage(summedUp, "Summed Up"))
-        history.add(AFImage(watershed, "Watershed"))
-        history.add(AFImage(drawkeypoints, "Keypoints"))
-        history.add(AFImage(drawkeypoints1, "Keypoints"))
-
-        println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
-
-        //history.add(res)
-        return AFImage(watershed)
+    private fun geodesicDilation(distTransform: Mat, geodesicTransform: Mat, markers: Mat, original: AFImage, watch: Stopwatch) {
+        println("${watch.elapsed().toTimeStamp()}\nGeodesicDilation")
+        val darkerDistTransform = original.image.zeros()
+        Core.subtract(distTransform, Scalar(differenceScalar), darkerDistTransform)
+        darkerDistTransform.geodesicDilate(distTransform, geodesicDilateSize, geodesicTransform)
+        Core.compare(distTransform, geodesicTransform, markers, Core.CMP_LE)
     }
 
     fun angleToXAxis(point1: Point, point2: Point): Double {
