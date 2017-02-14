@@ -16,6 +16,38 @@ import org.opencv.imgproc.Imgproc
  * Based on http://mathematica.stackexchange.com/a/19550/43125 by nikie
  */
 class NikieRoomDetection : IAlgorithm {
+    companion object {
+        //Colors
+        val BLACK = 0.0
+        val GRAY = 128.0
+        val LIGHTGRAY = 200.0
+        val WHITE = 255.0
+
+        //Threshold
+        val THRESHOLD = GRAY
+        val MAXVAL = WHITE
+
+        //Angles
+        val DOORCLOSINGANGLE = 2 * Math.PI / 180
+
+        //Normalize
+        val ALPHA = BLACK
+        val BETA = WHITE
+
+        //Harris corner
+        val BLOCKSIZE = 3
+        val KSIZE = 5
+        val K = 0.04
+
+        val CORNERMIN = 170
+
+        //Sparse points
+        val RADIUS = 8
+
+        //Door detection
+        val ADDDETECTRATIO = 0.5
+    }
+
     override val name: String
         get() = "Nikie Room Detection"
 
@@ -83,7 +115,7 @@ class NikieRoomDetection : IAlgorithm {
         val sparsePoints = triple.third
 
         /*Invert markers*/
-        Imgproc.threshold(markers, foreground, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
+        Imgproc.threshold(markers, foreground, THRESHOLD, MAXVAL, Imgproc.THRESH_BINARY_INV)
 
         /*
         findContours
@@ -95,7 +127,7 @@ class NikieRoomDetection : IAlgorithm {
 
         // Create the marker image for the watershed algorithm
         val contmarkers = image.image.zeros(CvType.CV_32SC1)
-        contmarkers.setTo(Scalar(255.0))
+        contmarkers.setTo(Scalar(WHITE))
 
         //Draw foreground markers
         drawForeground(contmarkers, contours)
@@ -115,11 +147,7 @@ class NikieRoomDetection : IAlgorithm {
         /*
         Kombination Background/Foreground
          */
-        for (i in 0..summedUp.height() - 1) {
-            for (j in 0..summedUp.width() - 1) {
-                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
-            }
-        }
+        createFGBG(background, contmarkers, summedUp)
 
         println("${watch.elapsed().toTimeStamp()}\nwatersheding")
         val watershed = summedUp.to32S()
@@ -141,6 +169,14 @@ class NikieRoomDetection : IAlgorithm {
         return AFImage(watershed)
     }
 
+    private fun createFGBG(background: Mat, contmarkers: Mat, summedUp: Mat) {
+        for (i in 0..summedUp.height() - 1) {
+            for (j in 0..summedUp.width() - 1) {
+                summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
+            }
+        }
+    }
+
     private fun distanceTransform(distTransform: Mat, original: AFImage, watch: Stopwatch): Mat {
         println("${watch.elapsed().toTimeStamp()}\nDistanztransform")
         var localoriginal = original.image.zeros()
@@ -158,7 +194,7 @@ class NikieRoomDetection : IAlgorithm {
             val door = foundDoorsArray[i]
             val doorPoints = mutableListOf<Point>()
             sparsePoints.forEach { point: Point ->
-                if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
+                if (point.x < door.x + door.width + (door.width* ADDDETECTRATIO) && point.x > door.x - (door.width* ADDDETECTRATIO) && point.y < door.y + door.height + (door.height* ADDDETECTRATIO) && point.y > door.y - (door.height* ADDDETECTRATIO)) {
                     doorPoints.add(point)
                 }
             }
@@ -183,11 +219,11 @@ class NikieRoomDetection : IAlgorithm {
                                 if (innerK == k) continue@innerloop
                                 System.out.println("J: " + j + " K: " + k + " iJ: " + innerJ + " iK: " + innerK)
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
-                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
-                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
-                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
+                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, DOORCLOSINGANGLE)) {
+                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, DOORCLOSINGANGLE)) {
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
+                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, DOORCLOSINGANGLE)) {
+                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
                                         }
                                     }
                                 }
@@ -203,10 +239,10 @@ class NikieRoomDetection : IAlgorithm {
     private fun drawBackground(background: Mat) {
         for (i in 0..background.height() - 1) {
             for (j in 0..background.width() - 1) {
-                if (background.get(i, j)[0].equals(0.0)) {
-                    background.put(i, j, 128.0)
-                } else if (background.get(i, j)[0].equals(255.0)) {
-                    background.put(i, j, 0.0)
+                if (background.get(i, j)[0].equals(BLACK)) {
+                    background.put(i, j, GRAY)
+                } else if (background.get(i, j)[0].equals(WHITE)) {
+                    background.put(i, j, BLACK)
                 }
             }
         }
@@ -214,13 +250,13 @@ class NikieRoomDetection : IAlgorithm {
 
     private fun drawForeground(contmarkers: Mat, contours: MutableList<MatOfPoint>) {
         for (cnt in contours) {
-            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all((200).toDouble()), Core.FILLED)
+            Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all(LIGHTGRAY), Core.FILLED)
         }
 
         for (i in 0..contmarkers.height() - 1) {
             for (j in 0..contmarkers.width() - 1) {
-                if (contmarkers.get(i, j)[0].equals(255.0)) {
-                    contmarkers.put(i, j, 0.0)
+                if (contmarkers.get(i, j)[0].equals(WHITE)) {
+                    contmarkers.put(i, j, BLACK)
                 }
             }
         }
@@ -231,15 +267,11 @@ class NikieRoomDetection : IAlgorithm {
         var cornerdet = localoriginal.copy()
         val cornerdetnorm = cornerdet.zeros()
         val cornerdetnormscaled = cornerdet.zeros()
-        //cornerdet = cornerdet.to32SC1()
 
-        // sharpen image before corner detect
-        //cornerdet.sharpen(1.9)
-
-        Imgproc.cornerHarris(cornerdet, cornerdet, 3, 5, 0.04)
-        Core.normalize(cornerdet, cornerdetnorm, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
+        Imgproc.cornerHarris(cornerdet, cornerdet, BLOCKSIZE, KSIZE, K)
+        Core.normalize(cornerdet, cornerdetnorm, ALPHA, BETA, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
         Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled)
-        val threshhigh = 170
+        val threshhigh = CORNERMIN
         val points = mutableListOf<Point>()
         // Drawing a circle around corners
         for (j in 0..cornerdetnorm.rows() - 1) {
@@ -261,7 +293,7 @@ class NikieRoomDetection : IAlgorithm {
         println("sparsed point cloud to ${sparsePoints.size} points!")
 
         for (p in sparsePoints)
-            Imgproc.circle(cornerdetnormscaled, p, 8, Scalar(0.0, 0.0, 255.0))
+            Imgproc.circle(cornerdetnormscaled, p, RADIUS, Scalar(BLACK, BLACK, WHITE))
         return Triple(cornerdet, cornerdetnormscaled, sparsePoints)
     }
 
