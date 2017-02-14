@@ -1,6 +1,7 @@
 package ch.fhnw.afpars.util
 
 import ch.fhnw.afpars.util.opencv.cc.ConnectedComponentsResult
+import ch.fhnw.afpars.util.opencv.contour.ContourResult
 import javafx.scene.image.Image
 import javafx.scene.image.WritablePixelFormat
 import org.bytedeco.javacpp.opencv_core
@@ -127,6 +128,21 @@ fun MatOfPoint.approxPolyDP(epsilon: Double? = null): MatOfPoint {
     return MatOfPoint(approxDoorContour2f.to32S())
 }
 
+fun MatOfPoint.convexHull(clockwise: Boolean = false): MatOfInt {
+    val result = MatOfInt()
+    Imgproc.convexHull(this, result, clockwise)
+    return result
+}
+
+fun Mat.findContours(method: Int = Imgproc.CHAIN_APPROX_SIMPLE): ContourResult {
+    val nativeContours = mutableListOf<MatOfPoint>()
+    val hierarchy = Mat()
+
+    Imgproc.findContours(this.copy(), nativeContours, hierarchy, Imgproc.RETR_TREE, method)
+
+    return ContourResult(nativeContours, hierarchy)
+}
+
 fun opencv_core.KeyPointVector.convertToOpenCV(): MatOfKeyPoint {
     val matofkp = MatOfKeyPoint()
     val keyptlist = mutableListOf<KeyPoint>()
@@ -201,4 +217,10 @@ fun Mat.replaceColor(oldColor: Scalar, newColor: Scalar, dest: Mat) {
 
     Core.inRange(this, oldColor, oldColor, mask)
     ncimage.copyTo(dest, mask)
+}
+
+fun MatOfPoint.toMatOfPoint2f(): MatOfPoint2f {
+    val dst = MatOfPoint2f()
+    this.convertTo(dst, CvType.CV_32F)
+    return dst
 }

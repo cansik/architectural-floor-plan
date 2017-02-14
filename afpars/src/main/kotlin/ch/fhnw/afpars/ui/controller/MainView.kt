@@ -86,6 +86,7 @@ class MainView {
         workflowEngine.finished += {
             println("workflow finished!")
             image.set(it)
+            imageUpdated()
             setWorkflowStopMode()
         }
 
