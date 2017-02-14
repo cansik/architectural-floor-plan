@@ -179,14 +179,6 @@ class NikieRoomDetection : IAlgorithm {
             }
         }
 
-/*
-        val haaralg = CascadeClassifierDetector()
-        haaralg.erosionSize = 2.0
-        haaralg.minNeighbors = 3
-        haaralg.scaleFactor = 1.1
-        WorkflowEngine().showEditView(haaralg, AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"))
-        val res = haaralg.run(AFImage(image.attributes.get(AFImageReader.ORIGINAL_IMAGE)!!.copy(), "Haar"), history)
-*/
         //Neu
         println("${watch.elapsed().toTimeStamp()}\nClose doors")
         val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
@@ -197,12 +189,10 @@ class NikieRoomDetection : IAlgorithm {
 
         for (i in 0..foundDoors.rows() - 1) {
             val door = foundDoorsArray[i]
-            //val searchDistance = 10
             val doorPoints = mutableListOf<Point>()
             sparsePoints.forEach { point: Point ->
                 if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
                     doorPoints.add(point)
-                    System.out.println("Door found X: " + point.x + " Y: " + point.y + "Iteration: " + i)
                 }
             }
 
@@ -217,7 +207,6 @@ class NikieRoomDetection : IAlgorithm {
 
             //Neu
             if (!angles.isEmpty()) {
-                //angles.add(angleToXAxis(point1,point2))
                 val size = angles[0].size - 1
                 for (j in 0..size) {
                     for (k in (j + 1)..size) {
@@ -229,13 +218,9 @@ class NikieRoomDetection : IAlgorithm {
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
                                     if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, 2 * Math.PI / 180)) {
                                         if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, 2 * Math.PI / 180)) {
-                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
                                             Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
-                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
                                         } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, 2 * Math.PI / 180)) {
-                                            System.out.println("Door rly found j: " + j + " k: " + k + " ij: " + innerJ + " ik: " + innerK)
                                             Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(0.0), -1)
-                                            //Imgproc.rectangle(background, doorPoints[j], doorPoints[innerK], Scalar(128.0), -1)
                                         }
                                     }
                                 }
@@ -255,11 +240,7 @@ class NikieRoomDetection : IAlgorithm {
                 summedUp.put(i, j, contmarkers.get(i, j)[0] + background.get(i, j)[0])
             }
         }
-/*
-        var watershedoriginal = localoriginal.copy()
-        Imgproc.cvtColor(localoriginal, watershedoriginal, Imgproc.COLOR_GRAY2BGR)
-        watershedoriginal = watershedoriginal.to8UC3()
-*/
+
         println("${watch.elapsed().toTimeStamp()}\nwatersheding")
         val watershed = summedUp.to32S()
 
@@ -279,8 +260,6 @@ class NikieRoomDetection : IAlgorithm {
         history.add(AFImage(drawkeypoints1, "Keypoints"))
 
         println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
-
-        //history.add(res)
         return AFImage(watershed)
     }
 
