@@ -17,6 +17,9 @@ class ConnectedComponentDetection : IAlgorithm {
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 128.0
 
+    @AlgorithmParameter(name = "Border Approx", minValue = 0.0, maxValue = 255.0)
+    var borderApprox = 10.0
+
     override val name: String
         get() = "Connected Component Detection"
 
@@ -51,10 +54,11 @@ class ConnectedComponentDetection : IAlgorithm {
 
         println("found ${contours.contours.size} contours")
 
-        // show length
-        contours.contours.forEachIndexed { i, contour ->
-            println("Contour $i: ${contour.nativeContour.size()} -> On Border: ${contour.isOnBorder(gray, 10.0)}")
-        }
+        // remove contours which touch the image border
+        contours.contours.removeAll { it.isOnBorder(gray, borderApprox) }
+
+        // create output
+        
 
         history.add(AFImage(gray, "Gray"))
         history.add(AFImage(mask, "Mask"))

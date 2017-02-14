@@ -48,9 +48,9 @@ class Contour(val nativeContour: MatOfPoint) {
         return boxPoints
     }
 
-    fun isOnBorder(image : Mat, approxDelta: Double = 0.0)
+    fun isOnBorder(image : Mat, approxDelta: Double = 0.0) : Boolean
     {
-        isOnBorder(approxDelta,
+        return isOnBorder(approxDelta,
                 approxDelta,
                 image.width().toDouble() - approxDelta,
                 image.height().toDouble() - approxDelta)
