@@ -239,15 +239,8 @@ class NikieRoomDetection : IAlgorithm {
     }
 
     private fun drawBackground(background: Mat) {
-        for (i in 0..background.height() - 1) {
-            for (j in 0..background.width() - 1) {
-                if (background.get(i, j)[0].equals(BLACK)) {
-                    background.put(i, j, GRAY)
-                } else if (background.get(i, j)[0].equals(WHITE)) {
-                    background.put(i, j, BLACK)
-                }
-            }
-        }
+        background.replaceColor(Scalar(BLACK), Scalar(GRAY))
+        background.replaceColor(Scalar(WHITE), Scalar(BLACK))
     }
 
     private fun drawForeground(contmarkers: Mat, contours: MutableList<MatOfPoint>) {
@@ -255,13 +248,8 @@ class NikieRoomDetection : IAlgorithm {
             Imgproc.drawContours(contmarkers, mutableListOf(cnt), 0, Scalar.all(LIGHTGRAY), Core.FILLED)
         }
 
-        for (i in 0..contmarkers.height() - 1) {
-            for (j in 0..contmarkers.width() - 1) {
-                if (contmarkers.get(i, j)[0].equals(WHITE)) {
-                    contmarkers.put(i, j, BLACK)
-                }
-            }
-        }
+        contmarkers.replaceColor(Scalar(WHITE), Scalar(BLACK))
+
     }
 
     private fun cornerDetection(localoriginal: Mat, watch: Stopwatch): Triple<Mat, Mat, MutableList<Point>> {
