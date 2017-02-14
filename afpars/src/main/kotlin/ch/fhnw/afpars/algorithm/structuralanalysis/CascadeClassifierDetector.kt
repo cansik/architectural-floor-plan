@@ -28,13 +28,13 @@ class CascadeClassifierDetector : IAlgorithm {
     override val name: String
         get() = "Cascade Classifier Object Detector"
 
-    @AlgorithmParameter(name = "Erosion Size")
+    @AlgorithmParameter(name = "Erosion Size",minValue = 1.0)
     var erosionSize: Double = 10.0
 
     @AlgorithmParameter(name = "Scale Factor", minValue = 1.1, maxValue = 5.0)
     var scaleFactor: Double = 1.1
 
-    @AlgorithmParameter(name = "Min Neighbors", minValue = 0.0, maxValue = 20.0)
+    @AlgorithmParameter(name = "Min Neighbors", minValue = 1.0, maxValue = 20.0)
     var minNeighbors: Int = 3
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
