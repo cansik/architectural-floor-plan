@@ -185,3 +185,15 @@ fun Long.toTimeStamp(): String {
 
     return String.format("%02d:%02d:%02d:%d", hour, minute, second, this)
 }
+
+fun Mat.replaceColor(oldColor: Scalar, newColor: Scalar) {
+    this.replaceColor(oldColor, newColor, this)
+}
+
+fun Mat.replaceColor(oldColor: Scalar, newColor: Scalar, dest: Mat) {
+    val mask = this.zeros()
+    val ncimage = Mat(this.size(), dest.type(), newColor)
+
+    Core.inRange(this, oldColor, oldColor, mask)
+    ncimage.copyTo(dest, mask)
+}
