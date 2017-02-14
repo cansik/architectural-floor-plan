@@ -45,6 +45,9 @@ class NikieRoomDetection : IAlgorithm {
 
         //Sparse points
         val RADIUS = 8
+
+        //Door detection
+        val ADDDETECTRATIO = 0.5
     }
 
     override val name: String
@@ -193,7 +196,7 @@ class NikieRoomDetection : IAlgorithm {
             val door = foundDoorsArray[i]
             val doorPoints = mutableListOf<Point>()
             sparsePoints.forEach { point: Point ->
-                if (point.x < door.x + door.width + searchDistance && point.x > door.x - searchDistance && point.y < door.y + door.height + searchDistance && point.y > door.y - searchDistance) {
+                if (point.x < door.x + door.width + (door.width* ADDDETECTRATIO) && point.x > door.x - (door.width* ADDDETECTRATIO) && point.y < door.y + door.height + (door.height* ADDDETECTRATIO) && point.y > door.y - (door.height* ADDDETECTRATIO)) {
                     doorPoints.add(point)
                 }
             }
@@ -266,10 +269,6 @@ class NikieRoomDetection : IAlgorithm {
         var cornerdet = localoriginal.copy()
         val cornerdetnorm = cornerdet.zeros()
         val cornerdetnormscaled = cornerdet.zeros()
-        //cornerdet = cornerdet.to32SC1()
-
-        // sharpen image before corner detect
-        //cornerdet.sharpen(1.9)
 
         Imgproc.cornerHarris(cornerdet, cornerdet, BLOCKSIZE, KSIZE, K)
         Core.normalize(cornerdet, cornerdetnorm, ALPHA, BETA, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
