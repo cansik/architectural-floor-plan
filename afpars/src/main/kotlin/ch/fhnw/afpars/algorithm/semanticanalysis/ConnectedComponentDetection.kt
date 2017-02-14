@@ -3,7 +3,12 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.ui.control.editor.shapes.PolygonShape
+import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.util.*
+import javafx.geometry.Dimension2D
+import javafx.geometry.Point2D
+import javafx.scene.paint.Color
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Scalar
@@ -57,8 +62,14 @@ class ConnectedComponentDetection : IAlgorithm {
         // remove contours which touch the image border
         contours.contours.removeAll { it.isOnBorder(gray, borderApprox) }
 
-        // create output
-        
+        // add output shapes
+        image.addLayer("rooms", *contours.contours
+                .map { c ->
+                    val s = PolygonShape(c.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList())
+                    s.fill = Color(0.0, 1.0, 1.0, 0.5)
+                    s.stroke = Color(0.0, 1.0, 1.0, 1.0)
+                    s
+                }.toTypedArray())
 
         history.add(AFImage(gray, "Gray"))
         history.add(AFImage(mask, "Mask"))
