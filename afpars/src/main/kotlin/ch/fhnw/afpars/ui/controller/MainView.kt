@@ -1,8 +1,10 @@
 package ch.fhnw.afpars.ui.controller
 
 import ch.fhnw.afpars.algorithm.IAlgorithm
+import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
+import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
+import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
-import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.io.opencv.MatRender
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
@@ -47,8 +49,10 @@ class MainView {
 
     val defaultWorkflow = Workflow(
             arrayListOf(
+                    MorphologicalTransform(),
                     CascadeClassifierDetector(),
-                    ShapeDistanceMatching()
+                    NikieRoomDetection(),
+                    ConnectedComponentDetection()
             ).toTypedArray())
 
     val rulerTool = RulerTool()

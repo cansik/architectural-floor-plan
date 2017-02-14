@@ -20,11 +20,10 @@ class ConnectedComponentDetection : IAlgorithm {
         get() = "Connected Component Detection"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
+        // watershed image! 128 => Background, 0 => Borders, 200 => foreground
         val gray = image.image.copy().to8U()
-
-        println("Type: $gray")
-
         gray.threshold(treshold)
+
         val nativeComponents = gray.connectedComponentsWithStats()
         val components = nativeComponents.getConnectedComponents()
 
