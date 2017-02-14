@@ -3,10 +3,9 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.connectedComponentsWithStats
-import ch.fhnw.afpars.util.copy
-import ch.fhnw.afpars.util.threshold
-import ch.fhnw.afpars.util.to8U
+import ch.fhnw.afpars.util.*
+import org.opencv.core.Core
+import org.opencv.core.Scalar
 
 /**
  * Created by cansik on 13.02.17.
@@ -27,9 +26,26 @@ class ConnectedComponentDetection : IAlgorithm {
         val nativeComponents = gray.connectedComponentsWithStats()
         val components = nativeComponents.getConnectedComponents()
 
-        println("found ${components.size} components!")
+        println("found ${components.size - 1} components!")
+
+        // grab all areas
+        val mask = gray.zeros()
+
+        components.filter { it.label != 0 }.forEach {
+            val labeledMask = nativeComponents.labeled.getRegionMask(it.label)
+            labeledMask.replaceColor(Scalar(255.0), Scalar(55.0 + (200 / (components.size - 1) * it.label)))
+
+            Core.add(mask, labeledMask, mask)
+            labeledMask.release()
+        }
+
+        //mask.threshold(1.0)
+
+        // find contours
+
 
         history.add(AFImage(gray, "Gray"))
+        history.add(AFImage(mask, "Mask"))
 
         // cleanup
         nativeComponents.release()
