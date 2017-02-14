@@ -31,6 +31,7 @@ class NikieRoomDetection : IAlgorithm {
 
         //Angles
         val DOORCLOSINGANGLE = 2 * Math.PI / 180
+        val ERRORRECT = 2 * Math.PI / 180
 
         //Normalize
         val ALPHA = BLACK
@@ -47,7 +48,8 @@ class NikieRoomDetection : IAlgorithm {
         val RADIUS = 8
 
         //Door detection
-        val ADDDETECTRATIO = 0.5
+        val ADDDETECTRATIO = 0.25
+        val DOORSIZEFACTOR = 1.25
     }
 
     override val name: String
@@ -61,12 +63,6 @@ class NikieRoomDetection : IAlgorithm {
 
     @AlgorithmParameter(name = "Distance", minValue = 1.0, maxValue = 10.0)
     var distance1 = 2
-
-    @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
-    var treshold = 26.0
-
-    @AlgorithmParameter(name = "Searchdistance", minValue = 0.0, maxValue = 100.0)
-    var searchDistance = 10.0
 
 
     /*
@@ -165,6 +161,7 @@ class NikieRoomDetection : IAlgorithm {
         history.add(AFImage(contmarkers, "findContour"))
         history.add(AFImage(background, "Background"))
         history.add(AFImage(summedUp, "Summed Up"))
+        history.add(AFImage(watershedoriginal, "Orig with door closing"))
         history.add(AFImage(watershed, "Watershed"))
 
         println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
@@ -219,13 +216,14 @@ class NikieRoomDetection : IAlgorithm {
                             if (innerJ == k) continue@outerloop
                             innerloop@ for (innerK in (innerJ + 1)..size) {
                                 if (innerK == k) continue@innerloop
-                                System.out.println("J: " + j + " K: " + k + " iJ: " + innerJ + " iK: " + innerK)
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
                                     if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, DOORCLOSINGANGLE)) {
-                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, DOORCLOSINGANGLE)) {
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
-                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, DOORCLOSINGANGLE)) {
-                                            Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
+                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, DOORCLOSINGANGLE)&& (angles[j][innerJ] as Double).isRectangular(angles[j][k] as Double, ERRORRECT)) {
+                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< DOORSIZEFACTOR*door.width && Math.abs(doorPoints[j].y - doorPoints[innerJ].y)< DOORSIZEFACTOR*door.height )
+                                                Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
+                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, DOORCLOSINGANGLE)&& (angles[j][innerK] as Double).isRectangular(angles[j][k] as Double, ERRORRECT)) {
+                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< DOORSIZEFACTOR*door.width && Math.abs(doorPoints[j].y - doorPoints[innerK].y)< DOORSIZEFACTOR*door.height )
+                                                Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(BLACK), -1)
                                         }
                                     }
                                 }

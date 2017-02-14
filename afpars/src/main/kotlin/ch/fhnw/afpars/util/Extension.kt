@@ -141,6 +141,11 @@ fun Double.isApproximate(value: Double, error: Double): Boolean {
     return (Math.abs(Math.abs(this) - Math.abs(value)) < error)
 }
 
+fun Double.isRectangular(value:Double,error: Double):Boolean{
+    val result = Math.abs(Math.abs(this) - Math.abs(value))
+    return result > Math.PI/2-error && result < Math.PI/2+error
+}
+
 fun Image.toMat(): Mat {
     val width = this.width.toInt()
     val height = this.height.toInt()
