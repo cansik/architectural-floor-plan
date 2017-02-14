@@ -56,15 +56,7 @@ class NikieRoomDetection : IAlgorithm {
         val markers = original.image.zeros()
         //Foreground
         val foreground = original.image.zeros()
-        //Keypoints
-        var drawkeypoints = original.clone().image
 
-        val file = File("C:\\Users\\AlexL\\OneDrive\\Bilder\\test.jpg")
-        val door = AFImageReader().read(file.toPath())
-        var drawkeypoints1 = door.clone().image
-
-        val file1 = File("D:\\FHNW\\Bachelor\\architectural-floor-plan\\afpars\\data\\A_N1.png")
-        val basic = AFImageReader().read(file1.toPath())
 
         /*
         Distanztranformation
@@ -256,8 +248,6 @@ class NikieRoomDetection : IAlgorithm {
         history.add(AFImage(background, "Background"))
         history.add(AFImage(summedUp, "Summed Up"))
         history.add(AFImage(watershed, "Watershed"))
-        history.add(AFImage(drawkeypoints, "Keypoints"))
-        history.add(AFImage(drawkeypoints1, "Keypoints"))
 
         println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
         return AFImage(watershed)
