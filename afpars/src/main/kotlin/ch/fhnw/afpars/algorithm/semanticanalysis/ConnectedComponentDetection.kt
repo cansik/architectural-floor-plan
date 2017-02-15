@@ -3,6 +3,7 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.model.RoomPolygonShape
 import ch.fhnw.afpars.ui.control.editor.shapes.PolygonShape
 import ch.fhnw.afpars.util.*
 import javafx.geometry.Point2D
@@ -27,8 +28,8 @@ class ConnectedComponentDetection : IAlgorithm {
         get() = "Connected Component Detection"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        // watershed image! 128 => Background, 0 => Borders, 200 => foreground
         val gray = image.image.copy().to8U()
+        Imgproc.cvtColor(gray, gray, Imgproc.COLOR_BGR2GRAY)
         gray.threshold(treshold)
 
         val nativeComponents = gray.connectedComponentsWithStats()
@@ -63,7 +64,7 @@ class ConnectedComponentDetection : IAlgorithm {
         // add output shapes
         image.addLayer("rooms", *contours.contours
                 .map { c ->
-                    val s = PolygonShape(c.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList())
+                    val s = RoomPolygonShape(c, c.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList())
                     s.fill = Color(0.0, 1.0, 1.0, 0.5)
                     s.stroke = Color(0.0, 1.0, 1.0, 1.0)
                     s

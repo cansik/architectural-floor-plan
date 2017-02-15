@@ -3,18 +3,21 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
+import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosing
 import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.io.opencv.MatRender
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.model.RoomPolygonShape
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.Layer
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
+import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
 import ch.fhnw.afpars.workflow.Workflow
@@ -49,9 +52,9 @@ class MainView {
 
     val defaultWorkflow = Workflow(
             arrayListOf(
-                    MorphologicalTransform(),
                     CascadeClassifierDetector(),
-                    NikieRoomDetection(),
+                    MorphologicalTransform(),
+                    GapClosing(),
                     ConnectedComponentDetection()
             ).toTypedArray())
 
@@ -106,6 +109,17 @@ class MainView {
             image.set(img)
             imageUpdated()
         }
+
+        // on change, edit all polygons in layers
+        rulerTool.pixelLength.addListener { o ->
+            canvas.layers.forEach { l ->
+                l.shapes.filterIsInstance<RoomPolygonShape>().forEach {
+                    it.relation = rulerTool.pixelLength.value
+                }
+            }
+
+            updateLayers()
+        }
     }
 
     fun setupView() {
@@ -132,6 +146,10 @@ class MainView {
         Platform.runLater({
             val afImage = image.value
             canvas.displayImage(afImage.image.toImage())
+
+            // also show original image
+            if(afImage.attributes.containsKey(AFImageReader.ORIGINAL_IMAGE))
+                canvas.addImage(canvas.layers.single{it.name == "Image"}, afImage.attributes[AFImageReader.ORIGINAL_IMAGE]!!.toImage(), false)
 
             // show layers
             for ((name, shapes) in afImage.layers) {
@@ -206,7 +224,9 @@ class MainView {
     fun loadImageFromClipBoard(e: ActionEvent) {
         val cb = Clipboard.getSystemClipboard()
         if (cb.hasImage()) {
-            image.set(AFImage(cb.image.toMat()))
+            val afImg = AFImage(cb.image.toMat())
+            afImg.attributes.put( AFImageReader.ORIGINAL_IMAGE, afImg.image.copy())
+            image.set(afImg)
             updateUI()
         }
     }

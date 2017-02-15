@@ -179,12 +179,7 @@ class ImageEditor : Pane() {
         val imageLayer = Layer("Image")
         val drawLayer = Layer("Draw")
 
-        val imageRect = RectangleShape()
-        imageRect.size = Dimension2D(image.width, image.height)
-        imageRect.noStroke()
-        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
-
-        imageLayer.shapes.add(imageRect)
+        addImage(imageLayer, image)
 
         layers.clear()
         layers.add(imageLayer)
@@ -194,6 +189,17 @@ class ImageEditor : Pane() {
         resetZoom()
         resize()
         redraw()
+    }
+
+    fun addImage(imageLayer : Layer, image: Image, visible : Boolean = true)
+    {
+        val imageRect = RectangleShape()
+        imageRect.visible = visible
+        imageRect.size = Dimension2D(image.width, image.height)
+        imageRect.noStroke()
+        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
+
+        imageLayer.shapes.add(imageRect)
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
