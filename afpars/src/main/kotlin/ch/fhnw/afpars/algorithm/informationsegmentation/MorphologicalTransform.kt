@@ -35,6 +35,7 @@ class MorphologicalTransform() : IAlgorithm {
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
+        image.attributes.remove(MORPH);
 
         threshold(img.image, treshold)
 
@@ -47,7 +48,7 @@ class MorphologicalTransform() : IAlgorithm {
         dilate(img.image, closingSize)
         image.attributes.put(MORPH,img.image)
         history.add(img)
-        return image
+        return img
     }
 
     fun erode(img: Mat, erosionSize: Int) {
