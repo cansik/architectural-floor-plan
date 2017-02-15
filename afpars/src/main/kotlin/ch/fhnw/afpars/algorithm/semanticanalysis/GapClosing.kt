@@ -28,8 +28,11 @@ class GapClosing:IAlgorithm{
 
         //Harris corner
         val BLOCKSIZE = 3
-        val KSIZE = 5
-        val K = 0.04
+        val KSIZE = 7
+        val K = 0.1
+
+        // 5 & 0.12015 254
+        // 7 & 0.10101 267
 
         val CORNERMIN = 170
 
@@ -77,6 +80,7 @@ class GapClosing:IAlgorithm{
         /*Close doors */
         doorClosing(image, sparsePoints, watch, watershedoriginal)
 
+        history.add(AFImage(cornerdet, "Cornerdet"))
         history.add(AFImage(cornerdetnormscaled, "CornerdetScaled"))
         history.add(AFImage(watershedoriginal, "Orig with door closing"))
 
@@ -87,7 +91,7 @@ class GapClosing:IAlgorithm{
 
     private fun doorClosing(image: AFImage, sparsePoints: MutableList<Point>, watch: Stopwatch, watershedoriginal: Mat) {
         println("${watch.elapsed().toTimeStamp()}\nClose doors")
-        val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
+        val foundDoors: MatOfRect = image.attributes.get(AFImage.doorName) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
 
         for (i in 0..foundDoors.rows() - 1) {

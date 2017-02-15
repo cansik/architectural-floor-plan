@@ -10,6 +10,7 @@ import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.structuralanalysis.TMDoorDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
+import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.PreviewImageView
 import ch.fhnw.afpars.util.opencv.combinePoints
 import ch.fhnw.afpars.util.opencv.sparsePoints
@@ -36,6 +37,7 @@ class ExperimentsView {
             imageViewResult!!.newImage(it.image.toImage())
         }
     }
+
 
     fun testSparsePoint() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
@@ -73,7 +75,7 @@ class ExperimentsView {
 
             workflowEngine.run(Workflow(
                     arrayListOf(
-                            CascadeClassifierDetector(),
+                            CascadeClassifierDetector(AFImage.doorCascade, AFImage.doorName),
                             ShapeDistanceMatching()
                     ).toTypedArray()
             ), destination,
@@ -172,7 +174,7 @@ class ExperimentsView {
             workflowEngine.run(Workflow(
                     arrayListOf(
 
-                            CascadeClassifierDetector(),
+                            CascadeClassifierDetector(AFImage.doorCascade, AFImage.doorName),
                             MorphologicalTransform(),
                             GapClosing(),
                             ConnectedComponentDetection()
