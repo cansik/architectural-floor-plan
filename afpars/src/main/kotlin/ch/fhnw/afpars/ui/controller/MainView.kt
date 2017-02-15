@@ -18,6 +18,7 @@ import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import ch.fhnw.afpars.util.copy
+import ch.fhnw.afpars.util.resize
 import ch.fhnw.afpars.util.toImage
 import ch.fhnw.afpars.util.toMat
 import ch.fhnw.afpars.workflow.Workflow
@@ -35,6 +36,7 @@ import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
+import org.opencv.core.Mat
 import java.nio.file.Files
 
 
@@ -42,6 +44,12 @@ import java.nio.file.Files
  * Created by cansik on 15.01.17.
  */
 class MainView {
+    companion object
+    {
+        @JvmStatic
+        val MAX_TEXTURE_SIZE = 2048
+    }
+
     val image = SimpleObjectProperty<AFImage>()
 
     val statusText = SimpleObjectProperty<String>("Status")
@@ -225,9 +233,7 @@ class MainView {
         val cb = Clipboard.getSystemClipboard()
         if (cb.hasImage()) {
             val afImg = AFImage(cb.image.toMat())
-            afImg.attributes.put( AFImageReader.ORIGINAL_IMAGE, afImg.image.copy())
-            image.set(afImg)
-            updateUI()
+            loadImage(afImg)
         }
     }
 
@@ -246,10 +252,29 @@ class MainView {
         val result = fileChooser.showOpenDialog(stage)
 
         if (result != null) {
-            image.set(AFImageReader().read(result.toPath()))
-            statusText.set("image ${result.name} loaded!")
-            updateUI()
+            loadImage(AFImageReader().read(result.toPath()))
         }
+    }
+
+    fun loadImage(afImg : AFImage)
+    {
+        // resize if needed
+        if(afImg.image.width() > MAX_TEXTURE_SIZE || afImg.image.height() > MAX_TEXTURE_SIZE) {
+            var nimg = Mat()
+
+            if (afImg.image.width() > afImg.image.height())
+                nimg = afImg.image.resize(MAX_TEXTURE_SIZE, 0)
+            else
+                nimg = afImg.image.resize(0, MAX_TEXTURE_SIZE)
+
+            afImg.image.release()
+            afImg.image = nimg
+        }
+
+        image.set(afImg)
+        afImg.attributes.put( AFImageReader.ORIGINAL_IMAGE, afImg.image.copy())
+        statusText.set("image ${afImg.name} loaded!")
+        updateUI()
     }
 
     fun toolChanged(e: ActionEvent) {
