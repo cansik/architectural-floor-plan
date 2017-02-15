@@ -16,12 +16,7 @@ class GapClosing:IAlgorithm{
         //Colors
         val BLACK = 0.0
         val GRAY = 128.0
-        val LIGHTGRAY = 200.0
         val WHITE = 255.0
-
-        //Threshold
-        val THRESHOLD = GRAY
-        val MAXVAL = WHITE
 
         //Angles
         val DOORCLOSINGANGLE = 2 * Math.PI / 180
@@ -99,7 +94,7 @@ class GapClosing:IAlgorithm{
             val door = foundDoorsArray[i]
             val doorPoints = mutableListOf<Point>()
             sparsePoints.forEach { point: Point ->
-                if (point.x < door.x + door.width + (door.width* NikieRoomDetection.ADDDETECTRATIO) && point.x > door.x - (door.width* NikieRoomDetection.ADDDETECTRATIO) && point.y < door.y + door.height + (door.height* NikieRoomDetection.ADDDETECTRATIO) && point.y > door.y - (door.height* NikieRoomDetection.ADDDETECTRATIO)) {
+                if (point.x < door.x + door.width + (door.width* ADDDETECTRATIO) && point.x > door.x - (door.width* ADDDETECTRATIO) && point.y < door.y + door.height + (door.height* ADDDETECTRATIO) && point.y > door.y - (door.height*ADDDETECTRATIO)) {
                     doorPoints.add(point)
                 }
             }
@@ -123,12 +118,12 @@ class GapClosing:IAlgorithm{
                             innerloop@ for (innerK in (innerJ + 1)..size) {
                                 if (innerK == k) continue@innerloop
                                 if (innerJ != j && innerK != k && innerJ != k && innerK != j) {
-                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, NikieRoomDetection.DOORCLOSINGANGLE)) {
-                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, NikieRoomDetection.DOORCLOSINGANGLE)&& (angles[j][innerJ] as Double).isRectangular(angles[j][k] as Double, NikieRoomDetection.ERRORRECT)) {
-                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< NikieRoomDetection.DOORSIZEFACTOR *door.width && Math.abs(doorPoints[j].y - doorPoints[innerJ].y)< NikieRoomDetection.DOORSIZEFACTOR *door.height )
+                                    if ((angles[j][k] as Double).isApproximate(angles[innerJ][innerK] as Double, DOORCLOSINGANGLE)) {
+                                        if ((angles[j][innerJ] as Double).isApproximate(angles[k][innerK] as Double, DOORCLOSINGANGLE)&& (angles[j][innerJ] as Double).isRectangular(angles[j][k] as Double, ERRORRECT)) {
+                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< DOORSIZEFACTOR *door.width && Math.abs(doorPoints[j].y - doorPoints[innerJ].y)< DOORSIZEFACTOR *door.height )
                                                 Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(NikieRoomDetection.BLACK), -1)
-                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, NikieRoomDetection.DOORCLOSINGANGLE)&& (angles[j][innerK] as Double).isRectangular(angles[j][k] as Double, NikieRoomDetection.ERRORRECT)) {
-                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< NikieRoomDetection.DOORSIZEFACTOR *door.width && Math.abs(doorPoints[j].y - doorPoints[innerK].y)< NikieRoomDetection.DOORSIZEFACTOR *door.height )
+                                        } else if ((angles[j][innerK] as Double).isApproximate(angles[k][innerJ] as Double, DOORCLOSINGANGLE)&& (angles[j][innerK] as Double).isRectangular(angles[j][k] as Double, ERRORRECT)) {
+                                            if(Math.abs(doorPoints[j].x - doorPoints[k].x)< DOORSIZEFACTOR *door.width && Math.abs(doorPoints[j].y - doorPoints[innerK].y)< DOORSIZEFACTOR *door.height )
                                                 Imgproc.rectangle(watershedoriginal, doorPoints[j], doorPoints[innerK], Scalar(NikieRoomDetection.BLACK), -1)
                                         }
                                     }
@@ -148,10 +143,10 @@ class GapClosing:IAlgorithm{
         val cornerdetnorm = cornerdet.zeros()
         val cornerdetnormscaled = cornerdet.zeros()
 
-        Imgproc.cornerHarris(cornerdet, cornerdet, NikieRoomDetection.BLOCKSIZE, NikieRoomDetection.KSIZE, NikieRoomDetection.K)
-        Core.normalize(cornerdet, cornerdetnorm, NikieRoomDetection.ALPHA, NikieRoomDetection.BETA, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
+        Imgproc.cornerHarris(cornerdet, cornerdet, BLOCKSIZE, KSIZE, K)
+        Core.normalize(cornerdet, cornerdetnorm, ALPHA, BETA, Core.NORM_MINMAX, CvType.CV_32FC1, Mat())
         Core.convertScaleAbs(cornerdetnorm, cornerdetnormscaled)
-        val threshhigh = NikieRoomDetection.CORNERMIN
+        val threshhigh = CORNERMIN
         val points = mutableListOf<Point>()
         // Drawing a circle around corners
         for (j in 0..cornerdetnorm.rows() - 1) {
@@ -173,7 +168,7 @@ class GapClosing:IAlgorithm{
         println("sparsed point cloud to ${sparsePoints.size} points!")
 
         for (p in sparsePoints)
-            Imgproc.circle(cornerdetnormscaled, p, NikieRoomDetection.RADIUS, Scalar(NikieRoomDetection.BLACK, NikieRoomDetection.BLACK, NikieRoomDetection.WHITE))
+            Imgproc.circle(cornerdetnormscaled, p, RADIUS, Scalar(BLACK, BLACK,WHITE))
         return Triple(cornerdet, cornerdetnormscaled, sparsePoints)
     }
 
