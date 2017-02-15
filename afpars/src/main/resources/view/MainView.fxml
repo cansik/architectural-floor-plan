@@ -16,12 +16,12 @@
                 <FlowPane hgap="5.0" layoutY="-2.0" prefHeight="60.0" prefWidth="750.0" vgap="5.0"
                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#loadImageFromFile" text="Load File">
+                        <Button fx:id="loadFromFileButton" mnemonicParsing="false" onAction="#loadImageFromFile" text="Load File">
                             <FlowPane.margin>
                                 <Insets/>
                             </FlowPane.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#loadImageFromClipBoard" text="Load Clipboard"/>
+                        <Button fx:id="loadFromClipBoardButton" mnemonicParsing="false" onAction="#loadImageFromClipBoard" text="Load Clipboard"/>
                         <Separator orientation="VERTICAL"/>
                         <Button fx:id="runWorkflowButton" mnemonicParsing="false" onAction="#runWorkflow"
                                 text="Run Workflow"/>

@@ -6,6 +6,7 @@ import ch.fhnw.afpars.util.toCvScalar
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.paint.Color
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
@@ -37,8 +38,12 @@ class PolygonShape() : BaseShape() {
     }
 
     override fun toString(): String {
-        val area = polygonArea(points.map { it.x }.toDoubleArray(), points.map { it.y }.toDoubleArray(), points.size)
-        return "Poly (${area.format(0)} px)"
+        return "Poly (${getSize().format(0)} px)"
+    }
+
+    fun getSize() : Double
+    {
+        return polygonArea(points.map { it.x }.toDoubleArray(), points.map { it.y }.toDoubleArray(), points.size)
     }
 
     fun polygonArea(x : DoubleArray, y : DoubleArray, npoints : Int) : Double

@@ -4,9 +4,7 @@ import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.editor.shapes.PolygonShape
-import ch.fhnw.afpars.ui.control.editor.shapes.RectangleShape
 import ch.fhnw.afpars.util.*
-import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import org.opencv.core.Core

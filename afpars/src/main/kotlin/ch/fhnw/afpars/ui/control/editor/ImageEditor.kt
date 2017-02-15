@@ -39,10 +39,11 @@ class ImageEditor : Pane() {
 
     // basic view controls
     var zoomScale = 0.0
+
     var canvasTransformation = Point2D.ZERO!!
     var zoomTransformation = Point2D.ZERO!!
 
-    var minimumZoom = 0.5
+    var minimumZoom = 0.0
     var maximumZoom = 50.0
 
     val onShapeAdded = Event<Layer>()
@@ -142,14 +143,22 @@ class ImageEditor : Pane() {
     }
 
     fun resetZoom() {
-        canvasTransformation = Point2D.ZERO
-        zoomTransformation = Point2D.ZERO
+        // call reset zoom twice
+        resetZoomImp()
+        resetZoomImp()
+    }
 
-        zoomScale = 0.0
+    fun resetZoomImp() {
+        canvasTransformation = Point2D.ZERO!!
+        zoomTransformation = Point2D.ZERO!!
+
+        zoomScale = minimumZoom
+        relationScale = 1.0
 
         canvas.translateX = 0.0
         canvas.translateY = 0.0
 
+        resize()
         zoom(canvas, 1.0, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
     }
 
@@ -181,6 +190,9 @@ class ImageEditor : Pane() {
         layers.add(imageLayer)
         layers.add(drawLayer)
         activeLayer = drawLayer
+
+        resetZoom()
+        resize()
         redraw()
     }
 

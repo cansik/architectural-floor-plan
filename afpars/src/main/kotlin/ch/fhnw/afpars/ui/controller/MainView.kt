@@ -75,6 +75,12 @@ class MainView {
     @FXML
     var breadCrumbLabel: Label? = null
 
+    @FXML
+    var loadFromClipBoardButton : Button? = null
+
+    @FXML
+    var loadFromFileButton : Button? = null
+
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -300,6 +306,9 @@ class MainView {
             breadCrumbLabel!!.isVisible = true
             nextStepButton!!.isVisible = true
             cancelWorkflowButton!!.isVisible = true
+
+            loadFromFileButton!!.isDisable = true
+            loadFromClipBoardButton!!.isDisable = true
         })
     }
 
@@ -311,6 +320,8 @@ class MainView {
             nextStepButton!!.isVisible = false
             cancelWorkflowButton!!.isVisible = false
 
+            loadFromFileButton!!.isDisable = false
+            loadFromClipBoardButton!!.isDisable = false
         })
     }
 }
