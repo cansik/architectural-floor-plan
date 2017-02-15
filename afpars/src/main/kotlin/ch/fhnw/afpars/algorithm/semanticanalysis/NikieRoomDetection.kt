@@ -184,7 +184,7 @@ class NikieRoomDetection : IAlgorithm {
 
     private fun doorClosing(image: AFImage, sparsePoints: MutableList<Point>, watch: Stopwatch, watershedoriginal: Mat) {
         println("${watch.elapsed().toTimeStamp()}\nClose doors")
-        val foundDoors: MatOfRect = image.attributes.get(CascadeClassifierDetector.CASCADE_ATTRIBUT) as MatOfRect
+        val foundDoors: MatOfRect = image.attributes.get(AFImage.doorName) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
 
         for (i in 0..foundDoors.rows() - 1) {

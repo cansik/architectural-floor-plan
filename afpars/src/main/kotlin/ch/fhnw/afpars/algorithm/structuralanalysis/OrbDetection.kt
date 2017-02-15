@@ -19,7 +19,7 @@ class OrbDetection : IAlgorithm {
         get() = "ORB Detection"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        val areas = MatOfRect(image.attributes[CascadeClassifierDetector.CASCADE_ATTRIBUT])
+        val areas = MatOfRect(image.attributes[AFImage.doorName])
         val featureMatcher = SimpleFeatureMatcher()
 
         // load default door and extract features

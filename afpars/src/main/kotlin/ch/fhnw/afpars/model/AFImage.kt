@@ -12,6 +12,10 @@ class AFImage : Cloneable {
     var image: Mat
     val attributes: MutableMap<String, Mat>
     val layers: MutableMap<String, MutableList<BaseShape>>
+    companion object{
+        val doorCascade = "cascade-files/cascade_600_1500.xml"
+        val doorName = "doors"
+    }
 
 
     constructor(image: Mat,
@@ -33,5 +37,11 @@ class AFImage : Cloneable {
     public override fun clone(): AFImage {
         val img = AFImage(image.copy(), name, this.attributes, this.layers)
         return img
+    }
+
+    public fun clear(){
+        image.release()
+        attributes.clear()
+        System.gc()
     }
 }

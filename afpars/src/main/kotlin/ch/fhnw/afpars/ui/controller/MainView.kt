@@ -60,7 +60,7 @@ class MainView {
 
     val defaultWorkflow = Workflow(
             arrayListOf(
-                    CascadeClassifierDetector(),
+                    CascadeClassifierDetector(AFImage.doorCascade,AFImage.doorName),
                     MorphologicalTransform(),
                     GapClosing(),
                     ConnectedComponentDetection()

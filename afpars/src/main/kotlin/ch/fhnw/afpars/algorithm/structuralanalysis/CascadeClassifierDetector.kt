@@ -20,10 +20,7 @@ import org.opencv.objdetect.CascadeClassifier
 /**
  * Created by cansik on 22.12.16.
  */
-class CascadeClassifierDetector : IAlgorithm {
-    companion object {
-        val CASCADE_ATTRIBUT = "cascadeareas"
-    }
+class CascadeClassifierDetector(val cascadeFile:String,val saveName:String) : IAlgorithm {
 
     override val name: String
         get() = "Cascade Classifier Object Detector"
@@ -37,9 +34,9 @@ class CascadeClassifierDetector : IAlgorithm {
     @AlgorithmParameter(name = "Min Neighbors", minValue = 1.0, maxValue = 20.0)
     var minNeighbors: Int = 3
 
-    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        val cascadeDetector = CascadeClassifier("cascade-files/cascade_600_1500.xml")
 
+    override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
+        val cascadeDetector = CascadeClassifier(cascadeFile)
         // morphological transform
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,
                 Size(erosionSize, erosionSize))
@@ -65,10 +62,9 @@ class CascadeClassifierDetector : IAlgorithm {
         history.add(AFImage(preparedImage, "Erode Image"))
         history.add(AFImage(result, "Marked Image"))
 
-        image.attributes.put(CASCADE_ATTRIBUT, areas)
-
+        image.attributes.put(saveName, areas)
         // add output shapes
-        image.addLayer("doors", *areas.toArray()
+        image.addLayer(saveName, *areas.toArray()
                 .map { rect ->
                     val s = RectangleShape(
                             location = Point2D(rect.x.toDouble(), rect.y.toDouble()),
