@@ -47,7 +47,11 @@ class RulerTool : LineTool() {
 
             try {
                 val value = lengthText.toDouble()
-                pixelLength.set(distance / value)
+
+                println("Distance: $distance")
+                println("Value: $value")
+
+                pixelLength.set(value / distance)
                 println("One Pixel is: ${pixelLength.value} cm")
             } catch (ex: Exception) {
                 println("Argument is not a double!")

@@ -45,7 +45,7 @@ class GapClosing:IAlgorithm{
     }
 
     override val name: String
-        get() = "Nikie Room Detection"
+        get() = "Gap Closing Algorithm"
 
     @AlgorithmParameter(name = "Distance", minValue = 1.0, maxValue = 10.0)
     var distance1 = 2
@@ -85,7 +85,9 @@ class GapClosing:IAlgorithm{
         history.add(AFImage(watershedoriginal, "Orig with door closing"))
 
         println("${watch.elapsed().toTimeStamp()}\n finished! ${watch.stop().toTimeStamp()}")
-        return AFImage(watershedoriginal)
+
+        image.image = watershedoriginal
+        return image
     }
 
 

@@ -6,15 +6,17 @@ import ch.fhnw.afpars.util.toCvScalar
 import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.paint.Color
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.opencv.core.Mat
+import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
 
 /**
  * Created by cansik on 14.02.17.
  */
-class PolygonShape() : BaseShape() {
-    var points : MutableList<Point2D> = mutableListOf()
+open class PolygonShape() : BaseShape() {
+    var points = mutableListOf<Point2D>()
 
     constructor(points : MutableList<Point2D> = mutableListOf<Point2D>()) : this() {
         this.points = points
@@ -37,11 +39,15 @@ class PolygonShape() : BaseShape() {
     }
 
     override fun toString(): String {
-        val area = polygonArea(points.map { it.x }.toDoubleArray(), points.map { it.y }.toDoubleArray(), points.size)
-        return "Poly (${area.format(0)} px)"
+        return "Poly (${area().format(0)} px)"
     }
 
-    fun polygonArea(x : DoubleArray, y : DoubleArray, npoints : Int) : Double
+    fun area() : Double
+    {
+        return polygonArea(points.map { it.x }.toDoubleArray(), points.map { it.y }.toDoubleArray(), points.size)
+    }
+
+    private fun polygonArea(x : DoubleArray, y : DoubleArray, npoints : Int) : Double
     {
         var area = 0.0
         var j = npoints - 1

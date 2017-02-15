@@ -41,6 +41,7 @@ class ViewTool : BaseEditorTool() {
 
         // scale
         imageEditor.zoomScale += -1 * event.deltaY * scaleSpeed
+        imageEditor.zoomScale = Math.min(Math.max(imageEditor.minimumZoom, imageEditor.zoomScale), imageEditor.maximumZoom)
         imageEditor.resize()
     }
 }

@@ -39,10 +39,11 @@ class ImageEditor : Pane() {
 
     // basic view controls
     var zoomScale = 0.0
+
     var canvasTransformation = Point2D.ZERO!!
     var zoomTransformation = Point2D.ZERO!!
 
-    var minimumZoom = 0.5
+    var minimumZoom = 0.0
     var maximumZoom = 50.0
 
     val onShapeAdded = Event<Layer>()
@@ -142,14 +143,22 @@ class ImageEditor : Pane() {
     }
 
     fun resetZoom() {
-        canvasTransformation = Point2D.ZERO
-        zoomTransformation = Point2D.ZERO
+        // call reset zoom twice
+        resetZoomImp()
+        resetZoomImp()
+    }
 
-        zoomScale = 0.0
+    fun resetZoomImp() {
+        canvasTransformation = Point2D.ZERO!!
+        zoomTransformation = Point2D.ZERO!!
+
+        zoomScale = minimumZoom
+        relationScale = 1.0
 
         canvas.translateX = 0.0
         canvas.translateY = 0.0
 
+        resize()
         zoom(canvas, 1.0, layoutX + zoomTransformation.x, layoutY + zoomTransformation.y)
     }
 
@@ -170,18 +179,27 @@ class ImageEditor : Pane() {
         val imageLayer = Layer("Image")
         val drawLayer = Layer("Draw")
 
-        val imageRect = RectangleShape()
-        imageRect.size = Dimension2D(image.width, image.height)
-        imageRect.noStroke()
-        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
-
-        imageLayer.shapes.add(imageRect)
+        addImage(imageLayer, image)
 
         layers.clear()
         layers.add(imageLayer)
         layers.add(drawLayer)
         activeLayer = drawLayer
+
+        resetZoom()
+        resize()
         redraw()
+    }
+
+    fun addImage(imageLayer : Layer, image: Image, visible : Boolean = true)
+    {
+        val imageRect = RectangleShape()
+        imageRect.visible = visible
+        imageRect.size = Dimension2D(image.width, image.height)
+        imageRect.noStroke()
+        imageRect.fill = ImagePattern(image, 0.0, 0.0, image.width, image.height, false)
+
+        imageLayer.shapes.add(imageRect)
     }
 
     /** Allow to zoom/relationScale any node with pivot at scene (x,y) coordinates.
