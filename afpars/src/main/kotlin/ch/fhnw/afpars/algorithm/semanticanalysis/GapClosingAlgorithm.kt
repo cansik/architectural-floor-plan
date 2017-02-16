@@ -11,7 +11,7 @@ import ch.fhnw.afpars.util.opencv.sparsePoints
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
-class GapClosing:IAlgorithm{
+class GapClosingAlgorithm :IAlgorithm{
     companion object {
         //Colors
         val BLACK = 0.0

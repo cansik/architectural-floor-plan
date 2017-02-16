@@ -3,7 +3,7 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
-import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosing
+import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
 import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.io.opencv.MatRender
@@ -66,7 +66,7 @@ class MainView {
             arrayListOf(
                     CascadeClassifierDetector(AFImage.DOOR_CASCADE,AFImage.DOOR_ATTRIBUTE_NAME),
                     MorphologicalTransform(),
-                    GapClosing(),
+                    GapClosingAlgorithm(),
                     ConnectedComponentDetection()
             ).toTypedArray())
 
