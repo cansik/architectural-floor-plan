@@ -8,14 +8,15 @@ import org.opencv.core.Mat
  * Created by cansik on 06.10.16.
  */
 class AFImage : Cloneable {
+    companion object{
+        val DOOR_CASCADE = "cascade-files/cascade_600_1500.xml"
+        val DOOR_ATTRIBUTE_NAME = "doors"
+    }
+
     var name: String
     var image: Mat
     val attributes: MutableMap<String, Mat>
     val layers: MutableMap<String, MutableList<BaseShape>>
-    companion object{
-        val doorCascade = "cascade-files/cascade_600_1500.xml"
-        val doorName = "doors"
-    }
 
 
     constructor(image: Mat,

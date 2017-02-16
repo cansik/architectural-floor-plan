@@ -93,7 +93,7 @@ class GapClosing:IAlgorithm{
 
     private fun doorClosing(image: AFImage, sparsePoints: MutableList<Point>, watch: Stopwatch, watershedoriginal: Mat) {
         println("${watch.elapsed().toTimeStamp()}\nClose doors")
-        val foundDoors: MatOfRect = image.attributes.get(AFImage.doorName) as MatOfRect
+        val foundDoors: MatOfRect = image.attributes.get(AFImage.DOOR_ATTRIBUTE_NAME) as MatOfRect
         val foundDoorsArray = foundDoors.toArray()
 
         for (i in 0..foundDoors.rows() - 1) {

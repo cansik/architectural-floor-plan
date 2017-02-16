@@ -75,7 +75,7 @@ class ExperimentsView {
 
             workflowEngine.run(Workflow(
                     arrayListOf(
-                            CascadeClassifierDetector(AFImage.doorCascade, AFImage.doorName),
+                            CascadeClassifierDetector(AFImage.DOOR_CASCADE, AFImage.DOOR_ATTRIBUTE_NAME),
                             ShapeDistanceMatching()
                     ).toTypedArray()
             ), destination,
@@ -174,7 +174,7 @@ class ExperimentsView {
             workflowEngine.run(Workflow(
                     arrayListOf(
 
-                            CascadeClassifierDetector(AFImage.doorCascade, AFImage.doorName),
+                            CascadeClassifierDetector(AFImage.DOOR_CASCADE, AFImage.DOOR_ATTRIBUTE_NAME),
                             MorphologicalTransform(),
                             GapClosing(),
                             ConnectedComponentDetection()

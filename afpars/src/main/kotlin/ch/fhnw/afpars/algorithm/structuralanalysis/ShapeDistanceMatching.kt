@@ -18,7 +18,7 @@ class ShapeDistanceMatching : ch.fhnw.afpars.algorithm.IAlgorithm {
         get() = "BaseShape Distance Matching"
 
     override fun run(image: ch.fhnw.afpars.model.AFImage, history: MutableList<ch.fhnw.afpars.model.AFImage>): ch.fhnw.afpars.model.AFImage {
-        val areas = org.opencv.core.MatOfRect(image.attributes[AFImage.doorName])
+        val areas = org.opencv.core.MatOfRect(image.attributes[AFImage.DOOR_ATTRIBUTE_NAME])
 
         // load default door contour
         val doorTemplate = org.opencv.imgcodecs.Imgcodecs.imread("data/door.png")

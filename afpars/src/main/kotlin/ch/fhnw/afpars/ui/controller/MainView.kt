@@ -64,7 +64,7 @@ class MainView {
 
     val defaultWorkflow = Workflow(
             arrayListOf(
-                    CascadeClassifierDetector(AFImage.doorCascade,AFImage.doorName),
+                    CascadeClassifierDetector(AFImage.DOOR_CASCADE,AFImage.DOOR_ATTRIBUTE_NAME),
                     MorphologicalTransform(),
                     GapClosing(),
                     ConnectedComponentDetection()
@@ -216,7 +216,6 @@ class MainView {
         layerTreeView!!.cellFactory = CheckBoxTreeCell.forTreeView()
 
         for (layer in canvas.layers.reversed()) {
-            //val layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
             val layerItem = CheckBoxTreeItem(TagItem(item = layer))
             layerItem.isSelected = layer.visible
             layerItem.selectedProperty().addListener { o ->
