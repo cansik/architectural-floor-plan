@@ -1,5 +1,6 @@
 package ch.fhnw.afpars.ui.control.editor.shapes
 
+import ch.fhnw.afpars.geometry.Vector2
 import ch.fhnw.afpars.util.format
 import ch.fhnw.afpars.util.toCvPoint
 import ch.fhnw.afpars.util.toCvScalar
@@ -61,5 +62,24 @@ open class PolygonShape() : BaseShape() {
         }
 
         return area / 2.0
+    }
+
+    /**
+     * PNPoly Method:
+     * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html#The%20C%20Code
+     */
+    override fun contains(point: Point2D): Boolean {
+        var inside = false
+        var i = 0
+        var j = points.size - 1
+        while (i < points.size) {
+            if (points[i].y > point.y != points[j].y > point.y
+                    && point.x < (points[j].x - points[i].x)
+                    * (point.y - points[i].y)
+                    / (points[j].y - points[i].y) + points[i].x)
+                inside = !inside
+            j = i++
+        }
+        return inside
     }
 }

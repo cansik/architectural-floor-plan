@@ -3,6 +3,7 @@ package ch.fhnw.afpars.ui.control.editor.shapes
 import ch.fhnw.afpars.io.opencv.IMatRenderable
 import ch.fhnw.afpars.io.svg.ISvgRenderable
 import ch.fhnw.afpars.util.toAwtColor
+import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -16,8 +17,13 @@ import java.awt.BasicStroke
 abstract class BaseShape : ISvgRenderable, IMatRenderable {
     var fill: Paint = Color.WHITE!!
     var stroke: Paint = Color.BLACK!!
+
+    var markedFill: Paint = Color(1.0, 0.64, 0.0, 0.5)
+    var markedStroke: Paint = Color(1.0, 0.64, 0.0, 1.0)
+
     var strokeWeight = 1.0
     var visible = true
+    var marked = false
 
     fun noFill() {
         fill = Color.TRANSPARENT
@@ -28,6 +34,8 @@ abstract class BaseShape : ISvgRenderable, IMatRenderable {
     }
 
     abstract fun render(gc: GraphicsContext)
+
+    abstract fun contains(point : Point2D) : Boolean
 
     override fun renderToSvg(g: SVGGraphics2D) {
         // prepare drawing

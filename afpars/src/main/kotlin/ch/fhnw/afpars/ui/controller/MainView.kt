@@ -19,6 +19,7 @@ import ch.fhnw.afpars.ui.control.editor.tools.LineTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
+import ch.fhnw.afpars.ui.items
 import ch.fhnw.afpars.util.copy
 import ch.fhnw.afpars.util.resize
 import ch.fhnw.afpars.util.toImage
@@ -70,6 +71,8 @@ class MainView {
             ).toTypedArray())
 
     val rulerTool = RulerTool()
+
+    val viewTool = ViewTool()
 
     @FXML
     var layoutPane: BorderPane? = null
@@ -131,6 +134,13 @@ class MainView {
 
             updateLayers()
         }
+
+        // select shape if one is selected
+        viewTool.shapesSelected += { shapes ->
+            val items = layerTreeView!!.items()
+            val treeViewItem = items.filter { shapes.filter{ s -> it.value.item == s}.isNotEmpty() }.first()
+            layerTreeView!!.selectionModel.select(treeViewItem)
+        }
     }
 
     fun setupView() {
@@ -149,7 +159,7 @@ class MainView {
         cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
 
         // setup treeview
-        layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> println("selected item changed!") }
+        layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
 
         setWorkflowStopMode()
 
@@ -173,6 +183,7 @@ class MainView {
                 canvas.layers.add(1, layer)
             }
 
+            canvas.activeTool = viewTool
             updateLayers()
             canvas.redraw()
         })
@@ -233,29 +244,6 @@ class MainView {
         layerTreeView!!.root = rootItem
     }
 
-
-    fun removeSelectedItem()
-    {
-        if(layerTreeView!!.selectionModel.selectedItem == null)
-            return
-
-        val item = layerTreeView!!.selectionModel.selectedItem
-
-        // delete only if is leave
-        if(item.isLeaf)
-        {
-            when((item.parent.value.item as Layer).name)
-            {
-                ImageEditor.DRAW_LAYER_NAME -> canvas.layers
-                        .single { it.name == ImageEditor.DRAW_LAYER_NAME }
-                        .shapes.remove(item.value.item as BaseShape)
-            }
-        }
-
-        updateLayers()
-        canvas.redraw()
-    }
-
     fun updateUI() {
         updateLayers()
     }
@@ -310,7 +298,7 @@ class MainView {
 
     fun toolChanged(e: ActionEvent) {
         when ((e.source as Button).id) {
-            "arrowButton" -> canvas.activeTool = ViewTool()
+            "arrowButton" -> canvas.activeTool = viewTool
             "rulerButton" -> canvas.activeTool = rulerTool
             "lineButton" -> {
                 val tool = LineTool()
@@ -404,5 +392,47 @@ class MainView {
             loadFromFileButton!!.isDisable = false
             loadFromClipBoardButton!!.isDisable = false
         })
+    }
+
+    private fun removeSelectedItem()
+    {
+        if(layerTreeView!!.selectionModel.selectedItem == null)
+            return
+
+        val item = layerTreeView!!.selectionModel.selectedItem
+
+        // delete only if is leave
+        if(item.parent.value.item is Layer)
+        {
+            when((item.parent.value.item as Layer).name)
+            {
+                ImageEditor.DRAW_LAYER_NAME -> canvas.layers
+                        .single { it.name == ImageEditor.DRAW_LAYER_NAME }
+                        .shapes.remove(item.value.item as BaseShape)
+            }
+        }
+
+        updateLayers()
+        canvas.redraw()
+    }
+
+    private fun markSelectedItem()
+    {
+        if(layerTreeView!!.selectionModel.selectedItem == null)
+            return
+
+        val item = layerTreeView!!.selectionModel.selectedItem
+
+        // select only if is leave
+        if(item.parent.value.item is Layer)
+        {
+            val shape = item.value.item as BaseShape
+
+            // deselected all shapes
+            canvas.layers.forEach { l -> l.shapes.forEach { s -> s.marked = false } }
+            shape.marked = true
+
+            canvas.redraw()
+        }
     }
 }

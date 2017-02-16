@@ -179,6 +179,14 @@ class ImageEditor : Pane() {
             gc.stroke = it.stroke
 
             it.render(gc)
+
+            if(it.marked)
+            {
+                gc.fill = it.markedFill
+                gc.stroke = it.markedStroke
+
+                it.render(gc)
+            }
         }
     }
 

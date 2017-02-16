@@ -39,4 +39,18 @@ open class OvalShape() : BaseShape() {
     override fun toString(): String {
         return "Oval (${location.x.format(1)} | ${location.y.format(1)}, w: ${size.width.format(1)}, h: ${size.height.format(1)})"
     }
+
+    override fun contains(point: Point2D): Boolean {
+        val ellw = size.width
+        if (ellw <= 0.0) {
+            return false
+        }
+        val normx = (point.x - location.x) / ellw - 0.5
+        val ellh = size.height
+        if (ellh <= 0.0) {
+            return false
+        }
+        val normy = (point.y - location.y) / ellh - 0.5
+        return normx * normx + normy * normy < 0.25
+    }
 }

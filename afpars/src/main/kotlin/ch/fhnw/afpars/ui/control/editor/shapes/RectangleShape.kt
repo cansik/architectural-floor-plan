@@ -44,4 +44,11 @@ class RectangleShape() : BaseShape() {
     override fun toString(): String {
         return "Rect (${location.x.format(1)} | ${location.y.format(1)}, w: ${size.width.format(1)}, h: ${size.height.format(1)})"
     }
+
+    override fun contains(point: Point2D): Boolean {
+        return location.x <= point.x
+            && location.y <= point.y
+            && point.x <= location.x + size.width
+            && point.y <= location.y + size.height
+    }
 }
