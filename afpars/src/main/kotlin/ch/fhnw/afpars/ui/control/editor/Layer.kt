@@ -9,4 +9,8 @@ class Layer(var name: String = "Layer") {
     var visible = true
 
     val shapes = mutableListOf<BaseShape>()
+
+    override fun toString(): String {
+        return "$name (${shapes.size})"
+    }
 }

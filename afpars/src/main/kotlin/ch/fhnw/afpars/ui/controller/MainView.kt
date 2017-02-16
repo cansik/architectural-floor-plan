@@ -11,8 +11,10 @@ import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.model.RoomPolygonShape
+import ch.fhnw.afpars.ui.control.TagItem
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.Layer
+import ch.fhnw.afpars.ui.control.editor.shapes.BaseShape
 import ch.fhnw.afpars.ui.control.editor.tools.LineTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
@@ -37,6 +39,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
 import org.opencv.core.Mat
+import java.awt.Shape
 import java.nio.file.Files
 
 
@@ -72,7 +75,7 @@ class MainView {
     var layoutPane: BorderPane? = null
 
     @FXML
-    var layerTreeView: TreeView<String>? = null
+    var layerTreeView: TreeView<TagItem>? = null
 
     @FXML
     var runWorkflowButton: Button? = null
@@ -145,6 +148,9 @@ class MainView {
         nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
         cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
 
+        // setup treeview
+        layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> println("selected item changed!") }
+
         setWorkflowStopMode()
 
         updateUI()
@@ -157,7 +163,8 @@ class MainView {
 
             // also show original image
             if(afImage.attributes.containsKey(AFImageReader.ORIGINAL_IMAGE))
-                canvas.addImage(canvas.layers.single{it.name == "Image"}, afImage.attributes[AFImageReader.ORIGINAL_IMAGE]!!.toImage(), false)
+                canvas.addImage(canvas.layers.single{it.name == ImageEditor.IMAGE_LAYER_NAME},
+                        afImage.attributes[AFImageReader.ORIGINAL_IMAGE]!!.toImage(), false)
 
             // show layers
             for ((name, shapes) in afImage.layers) {
@@ -190,7 +197,7 @@ class MainView {
     }
 
     fun updateLayers() {
-        val rootItem = CheckBoxTreeItem("layers")
+        val rootItem = CheckBoxTreeItem(TagItem(name = "layers"))
         rootItem.isExpanded = true
 
         layerTreeView!!.isShowRoot = false
@@ -198,7 +205,8 @@ class MainView {
         layerTreeView!!.cellFactory = CheckBoxTreeCell.forTreeView()
 
         for (layer in canvas.layers.reversed()) {
-            val layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
+            //val layerItem = CheckBoxTreeItem("${layer.name} (${layer.shapes.size} Items)")
+            val layerItem = CheckBoxTreeItem(TagItem(item = layer))
             layerItem.isSelected = layer.visible
             layerItem.selectedProperty().addListener { o ->
                 run {
@@ -209,7 +217,7 @@ class MainView {
             rootItem.children.add(layerItem)
 
             for (shape in layer.shapes) {
-                val shapeItem = CheckBoxTreeItem("$shape")
+                val shapeItem = CheckBoxTreeItem(TagItem(item = shape))
                 shapeItem.isSelected = layer.visible
                 shapeItem.selectedProperty().addListener { o ->
                     run {
@@ -223,6 +231,29 @@ class MainView {
         }
 
         layerTreeView!!.root = rootItem
+    }
+
+
+    fun removeSelectedItem()
+    {
+        if(layerTreeView!!.selectionModel.selectedItem == null)
+            return
+
+        val item = layerTreeView!!.selectionModel.selectedItem
+
+        // delete only if is leave
+        if(item.isLeaf)
+        {
+            when((item.parent.value.item as Layer).name)
+            {
+                ImageEditor.DRAW_LAYER_NAME -> canvas.layers
+                        .single { it.name == ImageEditor.DRAW_LAYER_NAME }
+                        .shapes.remove(item.value.item as BaseShape)
+            }
+        }
+
+        updateLayers()
+        canvas.redraw()
     }
 
     fun updateUI() {
@@ -336,6 +367,11 @@ class MainView {
                 Files.write(file.toPath(), listOf(svg.svgDocument))
             }
         })
+    }
+
+    fun removeItem(e : ActionEvent)
+    {
+        removeSelectedItem()
     }
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {

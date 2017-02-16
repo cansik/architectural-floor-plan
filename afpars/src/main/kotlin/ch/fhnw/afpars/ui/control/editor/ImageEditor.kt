@@ -21,6 +21,16 @@ import javafx.scene.shape.Rectangle
  * Created by cansik on 25.01.17.
  */
 class ImageEditor : Pane() {
+
+    companion object
+    {
+        @JvmStatic
+        val DRAW_LAYER_NAME = "draw"
+
+        @JvmStatic
+        val IMAGE_LAYER_NAME = "image"
+    }
+
     var canvas = ResizableCanvas(600.0, 400.0)
     val outputClip = Rectangle()
 
@@ -176,8 +186,8 @@ class ImageEditor : Pane() {
         resizeCanvas(image.width, image.height)
 
         // set layer
-        val imageLayer = Layer("Image")
-        val drawLayer = Layer("Draw")
+        val imageLayer = Layer(IMAGE_LAYER_NAME)
+        val drawLayer = Layer(DRAW_LAYER_NAME)
 
         addImage(imageLayer, image)
 
