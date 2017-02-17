@@ -4,9 +4,7 @@ import javafx.geometry.Dimension2D
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import org.opencv.core.Point
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.*
 
 /**
  * Created by cansik on 29.01.17.

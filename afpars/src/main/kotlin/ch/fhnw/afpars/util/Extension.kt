@@ -224,3 +224,9 @@ fun MatOfPoint.toMatOfPoint2f(): MatOfPoint2f {
     this.convertTo(dst, CvType.CV_32F)
     return dst
 }
+
+
+fun MatOfPoint.drawPolyLine(img : Mat, closed : Boolean = true, color : Scalar = Scalar(0.0), thickness :Int = 2)
+{
+    Imgproc.polylines(img, listOf(this), closed, color, thickness)
+}

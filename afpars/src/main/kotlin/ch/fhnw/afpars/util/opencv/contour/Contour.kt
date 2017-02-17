@@ -6,6 +6,10 @@ import ch.fhnw.afpars.util.toMatOfPoint2f
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Moments
+import javax.swing.Spring.height
+import org.opencv.core.MatOfPoint
+
+
 
 /**
  * Created by cansik on 14.02.17.
@@ -32,6 +36,21 @@ class Contour(val nativeContour: MatOfPoint) {
 
     fun convexHull(clockwise: Boolean = true): MatOfInt {
         return nativeContour.convexHull(clockwise)
+    }
+
+    fun convexHullPoints(clockwise: Boolean = true) : MatOfPoint
+    {
+        val hull = convexHull(clockwise)
+
+        val mopOut = MatOfPoint()
+        mopOut.create(hull.size().height.toInt(), 1, CvType.CV_32SC2)
+
+        for (i in 0..hull.size().height.toInt() - 1) {
+            val point = doubleArrayOf(nativeContour.get(hull.get(i, 0)[0].toInt(), 0)[0], nativeContour.get(hull.get(i, 0)[0].toInt(), 0)[1])
+            mopOut.put(i, 0, *point)
+        }
+
+        return mopOut
     }
 
     fun isContourConvex(): Boolean {
@@ -64,6 +83,10 @@ class Contour(val nativeContour: MatOfPoint) {
         }
 
         return false
+    }
+
+    fun drawContour(dest: Mat, color: Scalar = Scalar(0.0, 0.0, 255.0)) {
+        Imgproc.drawContours(dest, listOf(nativeContour), -1, color)
     }
 
     fun release() {

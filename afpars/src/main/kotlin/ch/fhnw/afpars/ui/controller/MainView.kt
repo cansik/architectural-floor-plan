@@ -6,6 +6,7 @@ import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
 import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
 import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.structuralanalysis.ExteriorWallClosing
 import ch.fhnw.afpars.io.opencv.MatRender
 import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
@@ -66,6 +67,7 @@ class MainView {
             arrayListOf(
                     CascadeClassifierDetector(AFImage.DOOR_CASCADE,AFImage.DOOR_ATTRIBUTE_NAME),
                     MorphologicalTransform(),
+                    ExteriorWallClosing(),
                     GapClosingAlgorithm(),
                     ConnectedComponentDetection()
             ).toTypedArray())
@@ -133,6 +135,8 @@ class MainView {
             }
 
             updateLayers()
+
+            canvas.activeTool = viewTool
         }
 
         // select shape if one is selected
