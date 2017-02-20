@@ -16,7 +16,7 @@
     <top>
         <AnchorPane prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #333333;" BorderPane.alignment="CENTER">
             <children>
-                <ProgressIndicator layoutX="561.0" layoutY="18.0" prefHeight="25.0" prefWidth="25.0" AnchorPane.rightAnchor="14.0" />
+                <ProgressIndicator fx:id="progressIndicator" layoutX="561.0" layoutY="18.0" prefHeight="25.0" prefWidth="25.0" AnchorPane.rightAnchor="14.0" />
                 <FlowPane hgap="5.0" layoutY="-2.0" prefHeight="60.0" prefWidth="750.0" vgap="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0">
                     <children>
                         <Button fx:id="loadFromFileButton" mnemonicParsing="false" onAction="#loadImageFromFile" text="Load File">
@@ -57,7 +57,7 @@
     <bottom>
         <FlowPane prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #696969;" BorderPane.alignment="CENTER">
             <children>
-                <Label text="Status" />
+                <Label fx:id="statusLabel" text="Status" />
             </children>
         </FlowPane>
     </bottom>

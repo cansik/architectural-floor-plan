@@ -12,6 +12,7 @@ import ch.fhnw.afpars.io.reader.AFImageReader
 import ch.fhnw.afpars.io.svg.SvgRender
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.model.RoomPolygonShape
+import ch.fhnw.afpars.ui.UITask
 import ch.fhnw.afpars.ui.control.TagItem
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
 import ch.fhnw.afpars.ui.control.editor.Layer
@@ -100,6 +101,12 @@ class MainView {
     @FXML
     var loadFromFileButton : Button? = null
 
+    @FXML
+    var progressIndicator : ProgressIndicator? = null
+
+    @FXML
+    var statusLabel : Label? = null
+
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -148,26 +155,35 @@ class MainView {
     }
 
     fun setupView() {
-        // init canvas
-        canvas.prefWidth(100.0)
-        canvas.prefWidth(100.0)
+        UITask.run({
 
-        layoutPane!!.center = canvas
+            // init canvas
+            canvas.prefWidth(100.0)
+            canvas.prefWidth(100.0)
 
-        canvas.onShapeAdded += { updateUI() }
+            layoutPane!!.center = canvas
 
-        // setup buttons
-        runWorkflowButton!!.managedProperty().bind(runWorkflowButton!!.visibleProperty())
-        breadCrumbLabel!!.managedProperty().bind(breadCrumbLabel!!.visibleProperty())
-        nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
-        cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
+            canvas.onShapeAdded += { updateUI() }
 
-        // setup treeview
-        layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
+            // setup buttons
+            runWorkflowButton!!.managedProperty().bind(runWorkflowButton!!.visibleProperty())
+            breadCrumbLabel!!.managedProperty().bind(breadCrumbLabel!!.visibleProperty())
+            nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
+            cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
 
-        setWorkflowStopMode()
+            // setup treeview
+            layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
 
-        updateUI()
+            // setup task model
+            UITask.status.addListener { o -> statusLabel!!.text = UITask.status.value }
+            UITask.running.addListener { o -> progressIndicator!!.isVisible = UITask.running.value }
+
+            setWorkflowStopMode()
+
+        }, {
+            updateUI()
+        },
+                "UI Setup")
     }
 
     fun imageUpdated() {
@@ -274,7 +290,7 @@ class MainView {
         val result = fileChooser.showOpenDialog(stage)
 
         if (result != null) {
-            loadImage(AFImageReader().read(result.toPath()))
+            UITask.run({loadImage(AFImageReader().read(result.toPath()))}, taskName = "load image")
         }
     }
 
