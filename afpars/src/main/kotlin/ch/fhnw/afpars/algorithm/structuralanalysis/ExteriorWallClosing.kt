@@ -21,6 +21,9 @@ class ExteriorWallClosing : IAlgorithm {
     @AlgorithmParameter(name = "Wall Thickness", minValue = 1.0, maxValue = 50.0)
     var thickness = 10.0
 
+    @AlgorithmParameter(name = "Approximation Weight", minValue = 0.0, maxValue = 0.5, majorTick = 0.01)
+    var weight = 0.00
+
     override val name: String
         get() = "Exterior Wall Closing"
 
@@ -45,12 +48,16 @@ class ExteriorWallClosing : IAlgorithm {
         // output result
         hull.drawPolyLine(contourOutput, color = Scalar(255.0, 0.0, 255.0))
 
+        // approximate polydp
+        val approxHull = hull.approxPolyDP(weight = weight)
+        approxHull.drawPolyLine(contourOutput, color = Scalar(0.0, 255.0, 255.0))
+
         // draw convex hull around building
-        hull.drawPolyLine(image.image, color = Scalar(0.0), thickness = thickness.toInt())
+        approxHull.drawPolyLine(image.image, color = Scalar(0.0), thickness = thickness.toInt())
 
         history.add(AFImage(gray, "negate"))
         history.add(AFImage(contourOutput, "contours"))
 
-        return image
+        return image.clone()
     }
 }

@@ -116,13 +116,13 @@ fun Mat.convertToJavaCV(): opencv_core.Mat {
     return jcvmat
 }
 
-fun MatOfPoint.approxPolyDP(epsilon: Double? = null): MatOfPoint {
+fun MatOfPoint.approxPolyDP(epsilon: Double? = null, weight : Double = 0.01): MatOfPoint {
     val cont = MatOfPoint2f(this.to32FC2())
     val approxDoorContour2f = MatOfPoint2f()
 
     var eps = epsilon
     if (eps == null)
-        eps = 0.01 * Imgproc.arcLength(cont, true)
+        eps = weight * Imgproc.arcLength(cont, true)
 
     Imgproc.approxPolyDP(cont, approxDoorContour2f, eps, true)
     return MatOfPoint(approxDoorContour2f.to32S())
