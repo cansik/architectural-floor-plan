@@ -457,6 +457,10 @@ class MainView {
                 ImageEditor.DRAW_LAYER_NAME -> canvas.layers
                         .single { it.name == ImageEditor.DRAW_LAYER_NAME }
                         .shapes.remove(item.value.item as BaseShape)
+
+                ConnectedComponentDetection.ROOM_LAYER_NAME -> canvas.layers
+                        .single { it.name == ConnectedComponentDetection.ROOM_LAYER_NAME }
+                        .shapes.remove(item.value.item as RoomPolygonShape)
             }
         }
 
