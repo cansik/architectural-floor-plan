@@ -31,7 +31,8 @@
                         <Button fx:id="nextStepButton" mnemonicParsing="false" onAction="#nextStep" text="Next" />
                         <Button fx:id="cancelWorkflowButton" mnemonicParsing="false" onAction="#cancelWorkflow" text="Cancel" />
                         <Separator orientation="VERTICAL" />
-                        <Button mnemonicParsing="false" onAction="#exportLayer" text="Export" />
+                        <Button mnemonicParsing="false" onAction="#exportLayer" text="Export SVG" />
+                        <Button mnemonicParsing="false" onAction="#exportToCSV" text="Export CSV" />
                     </children>
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -375,6 +375,36 @@ class MainView {
         })
     }
 
+    fun exportToCSV(e : ActionEvent)
+    {
+        val stage = (e.source as Node).scene.window as Stage
+
+        val fileChooser = FileChooser()
+        fileChooser.initialFileName = "rooms.csv"
+        fileChooser.title = "Export rooms as csv"
+        fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Comma-Separated Values", "*.csv"))
+
+        val file = fileChooser.showSaveDialog(stage)
+
+        if (file != null) {
+            val seperator = ";"
+            val b = StringBuilder()
+
+            // write header
+            b.append("id${seperator}name${seperator}size${seperator}pixel")
+            b.append(System.lineSeparator())
+
+            // write content
+            val rooms = canvas.layers.single { it.name ==  ConnectedComponentDetection.ROOM_LAYER_NAME}.shapes
+            rooms.filterIsInstance<RoomPolygonShape>().forEachIndexed { i, room ->
+                b.append("$i$seperator$room$seperator${room.areaInCentimeter()}$seperator${room.area()}")
+                b.append(System.lineSeparator())
+            }
+
+            Files.write(file.toPath(), listOf(b.toString()))
+        }
+    }
+
     fun removeItem(e : ActionEvent)
     {
         removeSelectedItem()

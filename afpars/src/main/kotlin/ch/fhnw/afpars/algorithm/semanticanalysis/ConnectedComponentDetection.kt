@@ -17,6 +17,11 @@ import org.opencv.imgproc.Imgproc
  * Created by cansik on 13.02.17.
  */
 class ConnectedComponentDetection : IAlgorithm {
+    companion object
+    {
+        @JvmStatic
+        val ROOM_LAYER_NAME = "rooms"
+    }
 
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 128.0
@@ -76,7 +81,7 @@ class ConnectedComponentDetection : IAlgorithm {
         contours.drawContours(borderApproxImage, color = Scalar(0.0, 255.0, 0.0))
 
         // add output shapes
-        image.addLayer("rooms", *contours.contours
+        image.addLayer(ROOM_LAYER_NAME, *contours.contours
                 .map { c ->
                     val s = RoomPolygonShape(c, c.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList())
                     s.fill = Color(0.0, 1.0, 1.0, 0.5)
