@@ -24,17 +24,17 @@ import org.opencv.imgproc.Imgproc
 
 class ExperimentsView {
     @FXML
-    var imageViewOriginal: PreviewImageView? = null
+    lateinit var imageViewOriginal: PreviewImageView
 
     @FXML
-    var imageViewResult: PreviewImageView? = null
+    lateinit var imageViewResult: PreviewImageView
 
     val workflowEngine = WorkflowEngine()
 
     init {
         workflowEngine.finished += {
             println("algorithm workflowEngine finished!")
-            imageViewResult!!.newImage(it.image.toImage())
+            imageViewResult.newImage(it.image.toImage())
         }
     }
 
@@ -57,7 +57,7 @@ class ExperimentsView {
         for (p in sparsePoints)
             Imgproc.circle(image, p, 8, Scalar(0.0, 0.0, 255.0))
 
-        imageViewOriginal!!.newImage(image.toImage())
+        imageViewOriginal.newImage(image.toImage())
     }
 
     fun testCascadeClassifer() {
@@ -137,7 +137,7 @@ class ExperimentsView {
         if (file != null) {
             val source = AFImageReader().read(file.toPath())
 
-            imageViewOriginal!!.newImage(source.image.toImage())
+            imageViewOriginal.newImage(source.image.toImage())
 
             val destination = source
 
@@ -165,7 +165,7 @@ class ExperimentsView {
         if (file != null) {
             val source = AFImageReader().read(file.toPath())
 
-            imageViewOriginal!!.newImage(source.image.toImage())
+            imageViewOriginal.newImage(source.image.toImage())
 
             val destination = source
 

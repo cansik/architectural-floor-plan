@@ -4,7 +4,6 @@ import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
 import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
-import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ExteriorWallClosing
 import ch.fhnw.afpars.io.opencv.MatRender
@@ -42,7 +41,6 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.opencv.core.Core
 import org.opencv.core.Mat
-import java.awt.Shape
 import java.nio.file.Files
 
 
@@ -78,34 +76,34 @@ class MainView {
     val viewTool = ViewTool()
 
     @FXML
-    var layoutPane: BorderPane? = null
+    lateinit var layoutPane: BorderPane
 
     @FXML
-    var layerTreeView: TreeView<TagItem>? = null
+    lateinit var layerTreeView: TreeView<TagItem>
 
     @FXML
-    var runWorkflowButton: Button? = null
+    lateinit var runWorkflowButton: Button
 
     @FXML
-    var nextStepButton: Button? = null
+    lateinit var nextStepButton: Button
 
     @FXML
-    var cancelWorkflowButton: Button? = null
+    lateinit var cancelWorkflowButton: Button
 
     @FXML
-    var breadCrumbLabel: Label? = null
+    lateinit var breadCrumbLabel: Label
 
     @FXML
-    var loadFromClipBoardButton : Button? = null
+    lateinit var loadFromClipBoardButton : Button
 
     @FXML
-    var loadFromFileButton : Button? = null
+    lateinit var loadFromFileButton : Button
 
     @FXML
-    var progressIndicator : ProgressIndicator? = null
+    lateinit var progressIndicator : ProgressIndicator
 
     @FXML
-    var statusLabel : Label? = null
+    lateinit var statusLabel : Label
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
@@ -148,9 +146,9 @@ class MainView {
 
         // select shape if one is selected
         viewTool.shapesSelected += { shapes ->
-            val items = layerTreeView!!.items()
+            val items = layerTreeView.items()
             val treeViewItem = items.filter { shapes.filter{ s -> it.value.item == s}.isNotEmpty() }.first()
-            layerTreeView!!.selectionModel.select(treeViewItem)
+            layerTreeView.selectionModel.select(treeViewItem)
         }
     }
 
@@ -161,22 +159,22 @@ class MainView {
             canvas.prefWidth(100.0)
             canvas.prefWidth(100.0)
 
-            layoutPane!!.center = canvas
+            layoutPane.center = canvas
 
             canvas.onShapeAdded += { updateUI() }
 
             // setup buttons
-            runWorkflowButton!!.managedProperty().bind(runWorkflowButton!!.visibleProperty())
-            breadCrumbLabel!!.managedProperty().bind(breadCrumbLabel!!.visibleProperty())
-            nextStepButton!!.managedProperty().bind(nextStepButton!!.visibleProperty())
-            cancelWorkflowButton!!.managedProperty().bind(cancelWorkflowButton!!.visibleProperty())
+            runWorkflowButton.managedProperty().bind(runWorkflowButton.visibleProperty())
+            breadCrumbLabel.managedProperty().bind(breadCrumbLabel.visibleProperty())
+            nextStepButton.managedProperty().bind(nextStepButton.visibleProperty())
+            cancelWorkflowButton.managedProperty().bind(cancelWorkflowButton.visibleProperty())
 
             // setup treeview
-            layerTreeView!!.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
+            layerTreeView.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
 
             // setup task model
-            UITask.status.addListener { o -> statusLabel!!.text = UITask.status.value }
-            UITask.running.addListener { o -> progressIndicator!!.isVisible = UITask.running.value }
+            UITask.status.addListener { o -> statusLabel.text = UITask.status.value }
+            UITask.running.addListener { o -> progressIndicator.isVisible = UITask.running.value }
 
             setWorkflowStopMode()
 
@@ -231,9 +229,9 @@ class MainView {
         val rootItem = CheckBoxTreeItem(TagItem(name = "layers"))
         rootItem.isExpanded = true
 
-        layerTreeView!!.isShowRoot = false
-        layerTreeView!!.isEditable = true
-        layerTreeView!!.cellFactory = CheckBoxTreeCell.forTreeView()
+        layerTreeView.isShowRoot = false
+        layerTreeView.isEditable = true
+        layerTreeView.cellFactory = CheckBoxTreeCell.forTreeView()
 
         for (layer in canvas.layers.reversed()) {
             val layerItem = CheckBoxTreeItem(TagItem(item = layer))
@@ -260,7 +258,7 @@ class MainView {
             }
         }
 
-        layerTreeView!!.root = rootItem
+        layerTreeView.root = rootItem
     }
 
     fun updateUI() {
@@ -383,42 +381,42 @@ class MainView {
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
         Platform.runLater({
-            breadCrumbLabel!!.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
+            breadCrumbLabel.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
         })
     }
 
     private fun setWorkflowRunningMode() {
         Platform.runLater({
-            runWorkflowButton!!.isVisible = false
+            runWorkflowButton.isVisible = false
 
-            breadCrumbLabel!!.isVisible = true
-            nextStepButton!!.isVisible = true
-            cancelWorkflowButton!!.isVisible = true
+            breadCrumbLabel.isVisible = true
+            nextStepButton.isVisible = true
+            cancelWorkflowButton.isVisible = true
 
-            loadFromFileButton!!.isDisable = true
-            loadFromClipBoardButton!!.isDisable = true
+            loadFromFileButton.isDisable = true
+            loadFromClipBoardButton.isDisable = true
         })
     }
 
     private fun setWorkflowStopMode() {
         Platform.runLater({
-            runWorkflowButton!!.isVisible = true
+            runWorkflowButton.isVisible = true
 
-            breadCrumbLabel!!.isVisible = false
-            nextStepButton!!.isVisible = false
-            cancelWorkflowButton!!.isVisible = false
+            breadCrumbLabel.isVisible = false
+            nextStepButton.isVisible = false
+            cancelWorkflowButton.isVisible = false
 
-            loadFromFileButton!!.isDisable = false
-            loadFromClipBoardButton!!.isDisable = false
+            loadFromFileButton.isDisable = false
+            loadFromClipBoardButton.isDisable = false
         })
     }
 
     private fun removeSelectedItem()
     {
-        if(layerTreeView!!.selectionModel.selectedItem == null)
+        if(layerTreeView.selectionModel.selectedItem == null)
             return
 
-        val item = layerTreeView!!.selectionModel.selectedItem
+        val item = layerTreeView.selectionModel.selectedItem
 
         // delete only if is leave
         if(item.parent.value.item is Layer)
@@ -437,10 +435,10 @@ class MainView {
 
     private fun markSelectedItem()
     {
-        if(layerTreeView!!.selectionModel.selectedItem == null)
+        if(layerTreeView.selectionModel.selectedItem == null)
             return
 
-        val item = layerTreeView!!.selectionModel.selectedItem
+        val item = layerTreeView.selectionModel.selectedItem
 
         // select only if is leave
         if(item.parent.value.item is Layer)

@@ -23,26 +23,26 @@ import java.nio.file.Files
  */
 class EditorDemo {
     @FXML
-    var editor: ImageEditor? = null
+    lateinit var editor: ImageEditor
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
     }
 
     fun viewToolClicked(e: ActionEvent) {
-        editor!!.activeTool = ViewTool()
+        editor.activeTool = ViewTool()
     }
 
     fun ellipseToolClicked(e: ActionEvent) {
-        editor!!.activeTool = OvalTool()
+        editor.activeTool = OvalTool()
     }
 
     fun lineToolClicked(e: ActionEvent) {
-        editor!!.activeTool = LineTool()
+        editor.activeTool = LineTool()
     }
 
     fun rectangleToolClicked(e: ActionEvent) {
-        editor!!.activeTool = RectangleTool()
+        editor.activeTool = RectangleTool()
     }
 
     fun loadImage(e: ActionEvent) {
@@ -53,7 +53,7 @@ class EditorDemo {
             val source = AFImageReader().read(file.toPath())
             val image = source.image.toImage()
 
-            editor!!.resizeCanvas(image.width, image.height)
+            editor.resizeCanvas(image.width, image.height)
 
             // set layer
             val imageLayer = Layer("Image")
@@ -66,11 +66,11 @@ class EditorDemo {
 
             imageLayer.shapes.add(imageRect)
 
-            editor!!.layers.clear()
-            editor!!.layers.add(imageLayer)
-            editor!!.layers.add(drawLayer)
-            editor!!.activeLayer = drawLayer
-            editor!!.redraw()
+            editor.layers.clear()
+            editor.layers.add(imageLayer)
+            editor.layers.add(drawLayer)
+            editor.activeLayer = drawLayer
+            editor.redraw()
         }
     }
 
@@ -79,9 +79,9 @@ class EditorDemo {
         fileChooser.title = "Export image"
         val file = fileChooser.showSaveDialog(null)
         if (file != null) {
-            val svg = SvgRender.render(editor!!.canvas.width.toInt(),
-                    editor!!.canvas.height.toInt(),
-                    editor!!.activeLayer.shapes)
+            val svg = SvgRender.render(editor.canvas.width.toInt(),
+                    editor.canvas.height.toInt(),
+                    editor.activeLayer.shapes)
 
             Files.write(file.toPath(), listOf(svg.svgDocument))
         }

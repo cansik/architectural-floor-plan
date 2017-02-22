@@ -26,13 +26,13 @@ import kotlin.properties.Delegates
  */
 class ParameterEditView {
     @FXML
-    var previewImage: ImageEditor? = null
+    lateinit var previewImage: ImageEditor
 
     @FXML
-    var editControlBox: VBox? = null
+    lateinit var editControlBox: VBox
 
     @FXML
-    var historyListView: ListView<AFImage>? = null
+    lateinit var historyListView: ListView<AFImage>
 
     var historyImages = FXCollections.observableArrayList<AFImage>()
 
@@ -58,8 +58,8 @@ class ParameterEditView {
         // create ui elements for fields
         fields.forEach { createFieldElement(it) }
 
-        historyListView!!.items = historyImages
-        historyListView!!.cellFactory = Callback { listView ->
+        historyListView.items = historyImages
+        historyListView.cellFactory = Callback { listView ->
             object : ListCell<AFImage>() {
                 override fun updateItem(item: AFImage?, empty: Boolean) {
                     if (item != null) {
@@ -71,7 +71,7 @@ class ParameterEditView {
                             // true makes this load in background
                             val imageView = ImageView(item.image.toImage())
                             imageView.preserveRatioProperty().set(true)
-                            imageView.fitWidth = historyListView!!.width * 0.75
+                            imageView.fitWidth = historyListView.width * 0.75
 
                             val label = Label(item.name)
                             graphic = VBox(label, imageView)
@@ -80,10 +80,10 @@ class ParameterEditView {
                 }
             }
         }
-        historyListView!!.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        historyListView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
             if (newValue != null) {
-                previewImage!!.resetZoom()
-                previewImage!!.displayImage(newValue.image.toImage())
+                previewImage.resetZoom()
+                previewImage.displayImage(newValue.image.toImage())
             }
         }
 
@@ -91,7 +91,7 @@ class ParameterEditView {
     }
 
     fun nextButtonClicked() {
-        val stage = previewImage!!.scene.window as Stage
+        val stage = previewImage.scene.window as Stage
         stage.close()
     }
 
@@ -103,7 +103,7 @@ class ParameterEditView {
         this.result = result
 
         Platform.runLater {
-            lastSelectedImage = Math.max(0, historyListView!!.selectionModel.selectedIndex)
+            lastSelectedImage = Math.max(0, historyListView.selectionModel.selectedIndex)
 
             // add history
             historyImages.clear()
@@ -111,9 +111,9 @@ class ParameterEditView {
             historyImages.add(result)
             result.name = "Result"
 
-            historyListView!!.scrollTo(lastSelectedImage)
-            historyListView!!.selectionModel.select(lastSelectedImage)
-            historyListView!!.focusModel.focus(lastSelectedImage)
+            historyListView.scrollTo(lastSelectedImage)
+            historyListView.selectionModel.select(lastSelectedImage)
+            historyListView.focusModel.focus(lastSelectedImage)
         }
     }
 
@@ -162,7 +162,7 @@ class ParameterEditView {
         // show controls
         val box = HBox(nameLabel, valueSlider, inputField)
         box.spacing = 10.0
-        editControlBox!!.children.add(box)
+        editControlBox.children.add(box)
     }
 
     private fun getAlgorithmParameters(obj: IAlgorithm): List<Field> {
