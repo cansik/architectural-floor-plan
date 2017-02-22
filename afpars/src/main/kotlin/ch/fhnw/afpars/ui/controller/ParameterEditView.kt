@@ -175,6 +175,8 @@ class ParameterEditView {
 
     fun setupView() {
         previewImage.redraw()
+        previewImage.resetZoom()
+        previewImage.resize()
     }
 
 }

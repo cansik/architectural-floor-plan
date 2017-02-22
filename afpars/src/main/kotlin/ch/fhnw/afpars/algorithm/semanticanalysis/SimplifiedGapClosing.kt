@@ -2,19 +2,13 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
-import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
-import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.*
-import ch.fhnw.afpars.util.opencv.combinePoints
-import ch.fhnw.afpars.util.opencv.sparsePoints
+import ch.fhnw.afpars.util.replaceColor
+import ch.fhnw.afpars.util.zeros
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 class SimplifiedGapClosing :IAlgorithm{
-    companion object {
-    }
-
     override val name: String
         get() = "Simplified Gap Closing Algorithm"
 
@@ -73,10 +67,8 @@ class SimplifiedGapClosing :IAlgorithm{
             // draw rect
             Imgproc.rectangle(offsetRectImage, offsetRect.tl(), offsetRect.br(), Scalar(0.0, 255.0, 0.0), 2)
 
-            //history.add(AFImage(thresholdImage, "door"))
+            history.add(AFImage(thresholdImage, "door"))
         }
-
-        history.add(AFImage(offsetRectImage, "Offset Rect"))
 
         return original
     }
