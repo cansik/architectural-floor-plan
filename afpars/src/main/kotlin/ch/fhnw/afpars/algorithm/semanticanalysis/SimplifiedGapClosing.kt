@@ -12,7 +12,7 @@ class SimplifiedGapClosing :IAlgorithm{
     override val name: String
         get() = "Simplified Gap Closing Algorithm"
 
-    @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
+    @AlgorithmParameter(name = "Threshold", helpText = "Splits image into black and white.", minValue = 0.0, maxValue = 255.0)
     var threshold = 128.0
 
     @AlgorithmParameter(name = "Opening", minValue = 0.0, maxValue = 20.0)

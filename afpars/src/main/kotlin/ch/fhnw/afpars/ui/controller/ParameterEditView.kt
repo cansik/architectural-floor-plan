@@ -5,14 +5,12 @@ import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.ui.control.RelationNumberField
 import ch.fhnw.afpars.ui.control.editor.ImageEditor
+import ch.fhnw.afpars.util.format
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
-import javafx.scene.control.Label
-import javafx.scene.control.ListCell
-import javafx.scene.control.ListView
-import javafx.scene.control.Slider
+import javafx.scene.control.*
 import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
@@ -133,12 +131,24 @@ class ParameterEditView {
         val inputField = RelationNumberField(0.0, annotation.minValue, annotation.maxValue)
         inputField.prefWidth = 100.0
 
+        val tooltip = Tooltip(annotation.name
+                + System.lineSeparator()
+                + annotation.helpText
+                + System.lineSeparator()
+                + System.lineSeparator()
+                + "Min: ${annotation.minValue.format(2)}"
+                + System.lineSeparator()
+                + "Max: ${annotation.maxValue.format(2)}")
+
+        valueSlider.tooltip = tooltip
+        inputField.tooltip = tooltip
+
         valueSlider.valueProperty().bindBidirectional(inputField.valueProperty())
 
         valueSlider.min = annotation.minValue
         valueSlider.max = annotation.maxValue
         valueSlider.minorTickCount = 1
-        valueSlider.isSnapToTicks = true
+        valueSlider.isSnapToTicks = false
         valueSlider.majorTickUnit = annotation.majorTick
         valueSlider.isShowTickLabels = true
 
