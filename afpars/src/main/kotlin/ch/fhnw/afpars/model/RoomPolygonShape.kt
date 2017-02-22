@@ -17,6 +17,9 @@ class RoomPolygonShape(val contour: Contour, points: MutableList<Point2D> = muta
     }
 
     override fun toString(): String {
-        return "Room (${(areaInCentimeter() / 10000.0).format(2)} m²)"
+        if(relation > 0.0)
+            return "Room (${(areaInCentimeter() / 10000.0).format(2)} m²)"
+        else
+            return "Room (${area()} px)"
     }
 }

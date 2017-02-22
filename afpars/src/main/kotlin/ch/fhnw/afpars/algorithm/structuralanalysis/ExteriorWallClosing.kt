@@ -22,12 +22,14 @@ class ExteriorWallClosing : IAlgorithm {
     var thickness = 10.0
 
     @AlgorithmParameter(name = "Approximation Weight", minValue = 0.0, maxValue = 0.5, majorTick = 0.01)
-    var weight = 0.00
+    var weight = 0.0001
 
     override val name: String
         get() = "Exterior Wall Closing"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
+
+        val output = image.clone()
 
         // negate image
         val gray = image.image.copy()
@@ -53,11 +55,11 @@ class ExteriorWallClosing : IAlgorithm {
         approxHull.drawPolyLine(contourOutput, color = Scalar(0.0, 255.0, 255.0))
 
         // draw convex hull around building
-        approxHull.drawPolyLine(image.image, color = Scalar(0.0), thickness = thickness.toInt())
+        approxHull.drawPolyLine(output.image, color = Scalar(0.0), thickness = thickness.toInt())
 
         history.add(AFImage(gray, "negate"))
         history.add(AFImage(contourOutput, "contours"))
 
-        return image.clone()
+        return output
     }
 }

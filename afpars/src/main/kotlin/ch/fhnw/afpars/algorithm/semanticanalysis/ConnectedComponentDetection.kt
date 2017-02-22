@@ -21,13 +21,19 @@ class ConnectedComponentDetection : IAlgorithm {
     @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
     var treshold = 128.0
 
-    @AlgorithmParameter(name = "Border Approx", minValue = 0.0, maxValue = 255.0)
-    var borderApprox = 10.0
+    @AlgorithmParameter(name = "Border Approx", minValue = 0.0, maxValue = 200.0)
+    var borderApprox = 2.0
+
+    @AlgorithmParameter(name = "Min Room Size", minValue = 0.0, maxValue = 100000.0, majorTick = 10000.0)
+    var minRoomSize = 20000.0
 
     override val name: String
         get() = "Connected Component Detection"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
+
+        val borderApproxImage = image.image.clone()
+
         val gray = image.image.copy().to8U()
         Imgproc.cvtColor(gray, gray, Imgproc.COLOR_BGR2GRAY)
         gray.threshold(treshold)
@@ -50,6 +56,7 @@ class ConnectedComponentDetection : IAlgorithm {
 
         // create color image
         val colorMap = gray.zeros(CvType.CV_8UC3)
+
         Imgproc.applyColorMap(mask, colorMap, 2)
 
         // find contours
@@ -60,6 +67,13 @@ class ConnectedComponentDetection : IAlgorithm {
 
         // remove contours which touch the image border
         contours.contours.removeAll { it.isOnBorder(gray, borderApprox) }
+
+        // remove minimum contours
+        contours.contours.removeAll {
+            RoomPolygonShape(it, it.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList()).area() < minRoomSize }
+
+        // create output image with border approx
+        contours.drawContours(borderApproxImage, color = Scalar(0.0, 255.0, 0.0))
 
         // add output shapes
         image.addLayer("rooms", *contours.contours
@@ -73,6 +87,7 @@ class ConnectedComponentDetection : IAlgorithm {
         history.add(AFImage(gray, "Gray"))
         history.add(AFImage(mask, "Mask"))
         history.add(AFImage(colorMap, "ColorMap"))
+        history.add(AFImage(borderApproxImage, "Border Approx"))
 
         // cleanup
         nativeComponents.release()

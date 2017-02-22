@@ -59,7 +59,7 @@ class GapClosingAlgorithm :IAlgorithm{
         watch.start()
 
         //Originalbild
-        val original = AFImage(image.attributes.get(MorphologicalTransform.MORPH)!!)
+        val original = image
 
         val localoriginal = Mat()
 

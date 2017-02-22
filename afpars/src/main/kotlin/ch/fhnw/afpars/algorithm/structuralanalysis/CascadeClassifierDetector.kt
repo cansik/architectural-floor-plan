@@ -26,12 +26,12 @@ class CascadeClassifierDetector(val cascadeFile:String,val saveName:String) : IA
         get() = "Cascade Classifier Object Detector"
 
     @AlgorithmParameter(name = "Erosion Size",minValue = 1.0)
-    var erosionSize: Double = 10.0
+    var erosionSize: Double = 1.0
 
-    @AlgorithmParameter(name = "Scale Factor", minValue = 1.1, maxValue = 5.0)
+    @AlgorithmParameter(name = "Scale Factor", minValue = 1.1, maxValue = 5.0, majorTick = 0.1)
     var scaleFactor: Double = 1.1
 
-    @AlgorithmParameter(name = "Min Neighbors", minValue = 1.0, maxValue = 20.0)
+    @AlgorithmParameter(name = "Min Neighbors", minValue = 1.0, maxValue = 20.0, majorTick = 1.0)
     var minNeighbors: Int = 3
 
 
