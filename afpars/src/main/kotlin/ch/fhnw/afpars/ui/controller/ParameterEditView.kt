@@ -173,4 +173,8 @@ class ParameterEditView {
         return fields
     }
 
+    fun setupView() {
+        previewImage.redraw()
+    }
+
 }

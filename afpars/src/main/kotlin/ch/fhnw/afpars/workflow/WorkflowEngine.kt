@@ -66,6 +66,7 @@ class WorkflowEngine {
 
         Platform.runLater {
             val stage = Stage()
+            stage.setOnShown { controller.setupView() }
             stage.title = "Algorithm: ${algorithm.name}"
             stage.scene = Scene(root)
             stage.showAndWait()

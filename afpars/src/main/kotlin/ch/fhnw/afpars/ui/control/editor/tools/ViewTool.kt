@@ -45,7 +45,7 @@ class ViewTool : BaseEditorTool() {
     override fun onCanvasMouseClicked(imageEditor: ImageEditor, event: MouseEvent) {
         // check if items selected
         val point = Point2D(event.x, event.y)
-        val shapes = imageEditor.layers.flatMap { it.shapes.filter { it.contains(point) } }
+        val shapes = imageEditor.layers.flatMap { it.shapes.filter { it.visible }.filter { it.contains(point) } }
 
         if(shapes.isNotEmpty())
             shapesSelected(shapes)

@@ -4,6 +4,7 @@ import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
 import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
+import ch.fhnw.afpars.algorithm.semanticanalysis.SimplifiedGapClosing
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ExteriorWallClosing
 import ch.fhnw.afpars.io.opencv.MatRender
@@ -67,7 +68,7 @@ class MainView {
                     CascadeClassifierDetector(AFImage.DOOR_CASCADE,AFImage.DOOR_ATTRIBUTE_NAME),
                     MorphologicalTransform(),
                     ExteriorWallClosing(),
-                    GapClosingAlgorithm(),
+                    SimplifiedGapClosing(),
                     ConnectedComponentDetection()
             ).toTypedArray())
 
