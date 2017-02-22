@@ -11,8 +11,13 @@
         <ImageEditor id="test" fx:id="previewImage" prefHeight="327.0" prefWidth="604.0" layoutX="166.0"
                      layoutY="14.0" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="166.0"
                      AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="14.0"/>
+
         <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
                 AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="39.0"/>
+
+        <Button layoutX="458.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Cancel"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="95.0"/>
+
         <VBox fx:id="editControlBox" layoutX="13.0" layoutY="270.0" prefHeight="141.0" prefWidth="486.0"
               AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="101.0"/>
         <ListView fx:id="historyListView" layoutX="14.0" layoutY="14.0" prefHeight="211.0" prefWidth="141.0"

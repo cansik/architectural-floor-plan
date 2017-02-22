@@ -36,8 +36,24 @@ class WorkflowEngine {
             loop@ for (alg in workflow.algorithms) {
 
                 // run algorithm
-                if (editParameters)
-                    currentImage = showEditView(alg, currentImage)
+                if (editParameters) {
+                    var isOk = false
+
+                    while(!isOk) {
+                        val res = showEditView(alg, currentImage)
+                        isOk = res.second
+
+                        // step latch
+                        if(!isOk) {
+                            stepLatch = CountDownLatch(1)
+                            stepLatch.await()
+                        }
+                        else
+                        {
+                            currentImage = res.first
+                        }
+                    }
+                }
                 else
                     currentImage = alg.run(currentImage)
 
@@ -56,7 +72,7 @@ class WorkflowEngine {
         }
     }
 
-    fun showEditView(algorithm: IAlgorithm, afImage: AFImage): AFImage {
+    fun showEditView(algorithm: IAlgorithm, afImage: AFImage): Pair<AFImage, Boolean> {
         val latch = CountDownLatch(1)
 
         val fxmlLoader = FXMLLoader(javaClass.classLoader.getResource("view/ParameterEditView.fxml"))
@@ -75,6 +91,6 @@ class WorkflowEngine {
 
         // wait for ui
         latch.await()
-        return controller.result
+        return Pair(controller.result, controller.isOK)
     }
 }

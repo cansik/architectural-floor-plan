@@ -46,6 +46,8 @@ class ParameterEditView {
 
     var result: AFImage by Delegates.notNull()
 
+    var isOK : Boolean = false
+
     fun initView(algorithm: IAlgorithm, image: AFImage) {
         this.image = image
         this.algorithm = algorithm
@@ -91,6 +93,7 @@ class ParameterEditView {
     }
 
     fun nextButtonClicked() {
+        isOK = true
         val stage = previewImage.scene.window as Stage
         stage.close()
     }
