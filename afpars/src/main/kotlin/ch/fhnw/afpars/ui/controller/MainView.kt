@@ -130,6 +130,8 @@ class MainView {
             println("${algorithm.name} finished!")
             image.set(img)
             imageUpdated()
+
+            progressIndicator.isVisible = false
         }
 
         // on change, edit all polygons in layers
@@ -222,6 +224,7 @@ class MainView {
     }
 
     fun nextStep(e: ActionEvent) {
+        progressIndicator.isVisible = true
         MatRender.render(workflowEngine.currentImage.image, canvas.activeLayer.shapes)
         workflowEngine.nextStep()
     }
@@ -426,6 +429,8 @@ class MainView {
 
             loadFromFileButton.isDisable = true
             loadFromClipBoardButton.isDisable = true
+
+            progressIndicator.isVisible = true
         })
     }
 
@@ -439,6 +444,8 @@ class MainView {
 
             loadFromFileButton.isDisable = false
             loadFromClipBoardButton.isDisable = false
+
+            progressIndicator.isVisible = false
         })
     }
 
