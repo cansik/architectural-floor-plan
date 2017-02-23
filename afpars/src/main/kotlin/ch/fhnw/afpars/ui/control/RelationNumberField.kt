@@ -162,11 +162,11 @@ class RelationNumberField @JvmOverloads constructor(value: Double = 0.0, minimum
     private val paneWidth: Double
         get() = limit(map(value.value!!, minimum.value!!, maximum.value!!, 0.0, pane.width), 0.0, pane.width)
 
-    private fun resize() {
+    public fun resize() {
         valueRect.width = paneWidth
     }
 
-    private fun resizeAnimation() {
+    public fun resizeAnimation() {
         val position = paneWidth
 
         val timeline = Timeline()

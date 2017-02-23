@@ -46,6 +46,8 @@ class ParameterEditView {
 
     var isOK : Boolean = false
 
+    var inputFields = mutableListOf<RelationNumberField>()
+
     fun initView(algorithm: IAlgorithm, image: AFImage) {
         this.image = image
         this.algorithm = algorithm
@@ -136,6 +138,7 @@ class ParameterEditView {
 
         val inputField = RelationNumberField(0.0, annotation.minValue, annotation.maxValue)
         inputField.prefWidth = 100.0
+        inputFields.add(inputField)
 
         val tooltip = Tooltip(annotation.name
                 + System.lineSeparator()
@@ -196,6 +199,12 @@ class ParameterEditView {
         previewImage.redraw()
         previewImage.resetZoom()
         previewImage.resize()
+
+        // fixes lazy resize of input fields
+        inputFields.forEach {
+            it.resize()
+            it.resizeAnimation()
+        }
     }
 
 }

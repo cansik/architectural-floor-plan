@@ -58,6 +58,22 @@ fun Mat.threshold(thresh: Double, maxval: Double = 255.0, type: Int = Imgproc.TH
     Imgproc.threshold(this, this, thresh, maxval, type)
 }
 
+fun Mat.erode(erosionSize: Int) {
+    if(erosionSize == 0)
+        return
+
+    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosionSize + 1.0, 2.0 * erosionSize + 1.0))
+    Imgproc.erode(this, this, element)
+}
+
+fun Mat.dilate(dilationSize: Int) {
+    if(dilationSize == 0)
+        return
+
+    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilationSize + 1.0, 2.0 * dilationSize + 1.0))
+    Imgproc.dilate(this, this, element)
+}
+
 fun Mat.geodesicDilate(mask: Mat, elementSize: Int) {
     this.geodesicDilate(mask, elementSize, this)
 }
@@ -229,4 +245,9 @@ fun MatOfPoint.toMatOfPoint2f(): MatOfPoint2f {
 fun MatOfPoint.drawPolyLine(img : Mat, closed : Boolean = true, color : Scalar = Scalar(0.0), thickness :Int = 2)
 {
     Imgproc.polylines(img, listOf(this), closed, color, thickness)
+}
+
+fun MatOfPoint.fillPoly(img : Mat, color : Scalar = Scalar(0.0))
+{
+    Imgproc.fillPoly(img, listOf(this), color)
 }

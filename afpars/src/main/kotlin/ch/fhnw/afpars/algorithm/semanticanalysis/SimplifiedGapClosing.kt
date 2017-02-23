@@ -3,8 +3,7 @@ package ch.fhnw.afpars.algorithm.semanticanalysis
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.replaceColor
-import ch.fhnw.afpars.util.zeros
+import ch.fhnw.afpars.util.*
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
@@ -46,15 +45,15 @@ class SimplifiedGapClosing :IAlgorithm{
             val thresholdImage = part.zeros()
 
             Imgproc.cvtColor(part, thresholdImage, Imgproc.COLOR_BGR2GRAY)
-            Imgproc.threshold(thresholdImage, thresholdImage, threshold, 255.0, Imgproc.THRESH_BINARY)
+            thresholdImage.threshold(threshold, type = Imgproc.THRESH_BINARY)
 
             // opening
-            dilate(thresholdImage, openingSize)
-            erode(thresholdImage, openingSize)
+            thresholdImage.dilate(openingSize)
+            thresholdImage.erode(openingSize)
 
             // closing
-            erode(thresholdImage, closingSize)
-            dilate(thresholdImage, closingSize)
+            thresholdImage.erode(closingSize)
+            thresholdImage.dilate(closingSize)
 
             // convert back to bgr
             Imgproc.cvtColor(thresholdImage, thresholdImage, Imgproc.COLOR_GRAY2BGR)
@@ -66,28 +65,10 @@ class SimplifiedGapClosing :IAlgorithm{
 
             // draw rect
             Imgproc.rectangle(offsetRectImage, offsetRect.tl(), offsetRect.br(), Scalar(0.0, 255.0, 0.0), 2)
-
-            history.add(AFImage(thresholdImage, "door"))
         }
 
+        history.add(AFImage(offsetRectImage, "offset"))
+
         return original
-    }
-
-    fun erode(img: Mat, erosionSize: Int) {
-        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosionSize + 1.0, 2.0 * erosionSize + 1.0))
-        Imgproc.erode(img, img, element)
-    }
-
-    fun dilate(img: Mat, dilationSize: Int) {
-        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilationSize + 1.0, 2.0 * dilationSize + 1.0))
-        Imgproc.dilate(img, img, element)
-    }
-
-    fun threshold(img: Mat, treshold: Double, maxValue: Double, type: Int) {
-        Imgproc.threshold(img, img, treshold, maxValue, type)
-    }
-
-    fun threshold(img: Mat, treshold: Double) {
-        this.threshold(img, treshold, 255.0, Imgproc.THRESH_BINARY)
     }
 }

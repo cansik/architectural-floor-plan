@@ -3,6 +3,9 @@ package ch.fhnw.afpars.algorithm.informationsegmentation
 import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
+import ch.fhnw.afpars.util.dilate
+import ch.fhnw.afpars.util.erode
+import ch.fhnw.afpars.util.threshold
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -37,35 +40,18 @@ class MorphologicalTransform() : IAlgorithm {
         val img = image.clone()
         image.attributes.remove(MORPH);
 
-        threshold(img.image, treshold)
+        img.image.threshold(treshold)
 
         // opening
-        dilate(img.image, openingSize)
-        erode(img.image, openingSize)
+        img.image.dilate(openingSize)
+        img.image.erode(openingSize)
 
         // closing
-        erode(img.image, closingSize)
-        dilate(img.image, closingSize)
+        img.image.erode(closingSize)
+        img.image.dilate(closingSize)
+
         image.attributes.put(MORPH,img.image)
         history.add(img)
         return img
-    }
-
-    fun erode(img: Mat, erosionSize: Int) {
-        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosionSize + 1.0, 2.0 * erosionSize + 1.0))
-        Imgproc.erode(img, img, element)
-    }
-
-    fun dilate(img: Mat, dilationSize: Int) {
-        val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilationSize + 1.0, 2.0 * dilationSize + 1.0))
-        Imgproc.dilate(img, img, element)
-    }
-
-    fun threshold(img: Mat, treshold: Double, maxValue: Double, type: Int) {
-        Imgproc.threshold(img, img, treshold, maxValue, type)
-    }
-
-    fun threshold(img: Mat, treshold: Double) {
-        this.threshold(img, treshold, 255.0, Imgproc.THRESH_BINARY)
     }
 }
