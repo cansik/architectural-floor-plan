@@ -22,10 +22,7 @@ import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.RulerTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import ch.fhnw.afpars.ui.items
-import ch.fhnw.afpars.util.copy
-import ch.fhnw.afpars.util.resize
-import ch.fhnw.afpars.util.toImage
-import ch.fhnw.afpars.util.toMat
+import ch.fhnw.afpars.util.*
 import ch.fhnw.afpars.workflow.Workflow
 import ch.fhnw.afpars.workflow.WorkflowEngine
 import javafx.application.Platform
@@ -108,6 +105,9 @@ class MainView {
 
     @FXML
     lateinit var breadCrumbBox: ChoiceBox<String>
+
+    @FXML
+    lateinit var roomSizeLabel : Label
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
@@ -267,6 +267,7 @@ class MainView {
         }
 
         layerTreeView.root = rootItem
+        displayTotalRoomSize()
     }
 
     fun updateUI() {
@@ -384,6 +385,9 @@ class MainView {
 
     fun exportToCSV(e : ActionEvent)
     {
+        if(canvas.layers.singleOrNull { it.name ==  ConnectedComponentDetection.ROOM_LAYER_NAME} == null)
+            return
+
         val stage = (e.source as Node).scene.window as Stage
 
         val fileChooser = FileChooser()
@@ -501,5 +505,16 @@ class MainView {
 
             canvas.redraw()
         }
+    }
+
+    private fun displayTotalRoomSize()
+    {
+        if(canvas.layers.singleOrNull { it.name ==  ConnectedComponentDetection.ROOM_LAYER_NAME} == null) {
+            roomSizeLabel.text = ""
+            return
+        }
+
+        val rooms = canvas.layers.single { it.name ==  ConnectedComponentDetection.ROOM_LAYER_NAME}.shapes
+        roomSizeLabel.text = "Total: ${(rooms.map {(it as RoomPolygonShape).areaInCentimeter() }.sum() / 10000.0).format(2)} m²"
     }
 }

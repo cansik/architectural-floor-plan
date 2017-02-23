@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="layoutPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="style/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
@@ -60,7 +61,10 @@
     <bottom>
         <FlowPane prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #696969;" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="statusLabel" text="Status" />
+                <Label fx:id="statusLabel" text="Status" textFill="WHITE">
+               <FlowPane.margin>
+                  <Insets left="10.0" top="10.0" />
+               </FlowPane.margin></Label>
             </children>
         </FlowPane>
     </bottom>
@@ -76,7 +80,19 @@
                     </VBox.margin>
                 </Label>
                 <TreeView fx:id="layerTreeView" prefWidth="260.0" />
-            <Button mnemonicParsing="false" onAction="#removeItem" text="Remove" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#removeItem" text="Remove" />
+                  <Label fx:id="roomSizeLabel" text="-">
+                     <HBox.margin>
+                        <Insets left="20.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="10.0" top="10.0" />
+               </padding>
+            </HBox>
             </children>
         </VBox>
     </right>
