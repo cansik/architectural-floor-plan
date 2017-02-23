@@ -6,6 +6,7 @@ import ch.fhnw.afpars.model.AFImage
 import ch.fhnw.afpars.util.dilate
 import ch.fhnw.afpars.util.erode
 import ch.fhnw.afpars.util.threshold
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -38,7 +39,11 @@ class MorphologicalTransform() : IAlgorithm {
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.clone()
-        image.attributes.remove(MORPH);
+        image.attributes.remove(MORPH)
+
+        // create greyscale of colored image
+        Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_GRAY2BGR)
 
         img.image.threshold(treshold)
 

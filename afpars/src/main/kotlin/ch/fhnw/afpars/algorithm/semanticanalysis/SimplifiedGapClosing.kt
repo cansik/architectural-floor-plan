@@ -20,7 +20,7 @@ class SimplifiedGapClosing :IAlgorithm{
     @AlgorithmParameter(name = "Closing")
     var closingSize = 34
 
-    @AlgorithmParameter(name = "Offset %", minValue = 0.0, maxValue = 1.0)
+    @AlgorithmParameter(name = "Offset %", minValue = 0.0, maxValue = 1.0, majorTick = 0.01)
     var offset = 0.0
 
     /*
@@ -36,10 +36,13 @@ class SimplifiedGapClosing :IAlgorithm{
         history.add(AFImage(original.image.clone(), "original"))
 
         loop@ for (rect in doors.toArray().sortedByDescending(org.opencv.core.Rect::area)) {
-            val offsetRect = Rect(rect.x - (offset * rect.x).toInt(),
-                                rect.y - (offset * rect.y).toInt(),
-                                rect.width + (offset * rect.width).toInt(),
-                                rect.height + (offset * rect.height).toInt())
+            val offsetX = offset * rect.width
+            val offsetY = offset * rect.height
+
+            val offsetRect = Rect(rect.x - offsetX.toInt(),
+                                rect.y - offsetY.toInt(),
+                                rect.width + (offsetX * 2.0).toInt(),
+                                rect.height + (offsetY * 2.0).toInt())
 
             val part = Mat(original.image, offsetRect)
             val thresholdImage = part.zeros()
