@@ -29,8 +29,9 @@ class ConnectedComponentDetection : IAlgorithm {
     @AlgorithmParameter(name = "Border Approx", minValue = 0.0, maxValue = 200.0)
     var borderApprox = 2.0
 
-    @AlgorithmParameter(name = "Min Room Size", minValue = 0.0, maxValue = 100000.0, majorTick = 10000.0)
-    var minRoomSize = 20000.0
+    @AlgorithmParameter(name = "Min Room Size %", helpText = "Minimum room size in percentage relation to the biggest room.",
+            minValue = 0.0, maxValue = 100.0, majorTick = 1.0)
+    var minRoomSize = 5.0
 
     override val name: String
         get() = "Connected Component Detection"
@@ -74,11 +75,13 @@ class ConnectedComponentDetection : IAlgorithm {
         contours.contours.removeAll { it.isOnBorder(gray, borderApprox) }
 
         // remove minimum contours
-        contours.contours.removeAll {
-            RoomPolygonShape(it, it.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList()).area() < minRoomSize }
+        val roomPolygons =  contours.contours.map { RoomPolygonShape(it, it.nativeContour.toArray().map { Point2D(it.x, it.y) }.toMutableList())}
+        val biggestContourArea = roomPolygons.map { it.area() }.max() ?: 0.0
+
+        contours.contours.removeAll ( roomPolygons.filter { it.area() * (100.0 / biggestContourArea) < minRoomSize }.map { it.contour } )
 
         // create output image with border approx
-        contours.drawContours(borderApproxImage, color = Scalar(0.0, 255.0, 0.0))
+        contours.drawContours(borderApproxImage, color = Scalar(0.0, 133.0, 242.0), thickness = -1)
 
         // add output shapes
         image.addLayer(ROOM_LAYER_NAME, *contours.contours
