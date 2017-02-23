@@ -62,7 +62,8 @@ fun Mat.erode(erosionSize: Int) {
     if(erosionSize == 0)
         return
 
-    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * erosionSize + 1.0, 2.0 * erosionSize + 1.0))
+    val structureSize = erosionSize + if ((erosionSize % 2) == 0) 1 else 0
+    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(structureSize.toDouble(), structureSize.toDouble()))
     Imgproc.erode(this, this, element)
 }
 
@@ -70,7 +71,8 @@ fun Mat.dilate(dilationSize: Int) {
     if(dilationSize == 0)
         return
 
-    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilationSize + 1.0, 2.0 * dilationSize + 1.0))
+    val structureSize = dilationSize + if ((dilationSize % 2) == 0) 1 else 0
+    val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(structureSize.toDouble(), structureSize.toDouble()))
     Imgproc.dilate(this, this, element)
 }
 
