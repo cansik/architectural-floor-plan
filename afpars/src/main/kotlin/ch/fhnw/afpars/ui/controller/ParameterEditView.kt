@@ -96,6 +96,12 @@ class ParameterEditView {
         stage.close()
     }
 
+    fun cancelButtonClicked() {
+        isOK = false
+        val stage = previewImage.scene.window as Stage
+        stage.close()
+    }
+
     private fun runAlgorithm() {
         val history = arrayListOf<AFImage>()
         val result = algorithm.run(image, history)

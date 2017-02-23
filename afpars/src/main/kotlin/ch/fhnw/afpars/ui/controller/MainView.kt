@@ -92,9 +92,6 @@ class MainView {
     lateinit var cancelWorkflowButton: Button
 
     @FXML
-    lateinit var breadCrumbLabel: Label
-
-    @FXML
     lateinit var loadFromClipBoardButton : Button
 
     @FXML
@@ -105,6 +102,12 @@ class MainView {
 
     @FXML
     lateinit var statusLabel : Label
+
+    @FXML
+    lateinit var breadCrumbLabel : Label
+
+    @FXML
+    lateinit var breadCrumbBox: ChoiceBox<String>
 
     init {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
@@ -168,6 +171,7 @@ class MainView {
 
             // setup buttons
             runWorkflowButton.managedProperty().bind(runWorkflowButton.visibleProperty())
+            breadCrumbBox.managedProperty().bind(breadCrumbBox.visibleProperty())
             breadCrumbLabel.managedProperty().bind(breadCrumbLabel.visibleProperty())
             nextStepButton.managedProperty().bind(nextStepButton.visibleProperty())
             cancelWorkflowButton.managedProperty().bind(cancelWorkflowButton.visibleProperty())
@@ -415,7 +419,9 @@ class MainView {
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
         Platform.runLater({
-            breadCrumbLabel.text = defaultWorkflow.algorithms.joinToString { (if (it == currentAlgorithm) "!${it.name}!" else it.name) + " > " }
+            breadCrumbBox.items.clear()
+            breadCrumbBox.items.addAll(defaultWorkflow.algorithms.map { it.name })
+            breadCrumbBox.selectionModel.select(currentAlgorithm.name)
         })
     }
 
@@ -423,6 +429,7 @@ class MainView {
         Platform.runLater({
             runWorkflowButton.isVisible = false
 
+            breadCrumbBox.isVisible = true
             breadCrumbLabel.isVisible = true
             nextStepButton.isVisible = true
             cancelWorkflowButton.isVisible = true
@@ -438,6 +445,7 @@ class MainView {
         Platform.runLater({
             runWorkflowButton.isVisible = true
 
+            breadCrumbBox.isVisible = false
             breadCrumbLabel.isVisible = false
             nextStepButton.isVisible = false
             cancelWorkflowButton.isVisible = false
