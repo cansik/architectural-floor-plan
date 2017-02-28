@@ -117,8 +117,9 @@ fun Mat.sharpen(sigmaX: Double = 3.0) {
 }
 
 fun Mat.sharpen(dest: Mat, sigmaX: Double = 3.0) {
-    Imgproc.GaussianBlur(this, dest, Size(0.0, 0.0), sigmaX)
-    Core.addWeighted(dest, 1.5, dest, -0.5, 0.0, dest)
+    val blurred = Mat()
+    Imgproc.GaussianBlur(this, blurred, Size(0.0, 0.0), sigmaX)
+    Core.addWeighted(this, 1.5, blurred, -0.5, 0.0, dest)
 }
 
 fun Mat.negate(dest: Mat) {
