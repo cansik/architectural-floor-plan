@@ -47,6 +47,11 @@ class WorkflowEngine {
                         if(!isOk) {
                             stepLatch = CountDownLatch(1)
                             stepLatch.await()
+
+                            if (cancelRequested) {
+                                cancelRequested = false
+                                break@loop
+                            }
                         }
                         else
                         {
