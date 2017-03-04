@@ -117,6 +117,9 @@ fun Mat.sharpen(sigmaX: Double = 3.0) {
 }
 
 fun Mat.sharpen(dest: Mat, sigmaX: Double = 3.0) {
+    if(sigmaX == 0.0)
+        this.copyTo(dest)
+
     val blurred = Mat()
     Imgproc.GaussianBlur(this, blurred, Size(0.0, 0.0), sigmaX)
     Core.addWeighted(this, 1.5, blurred, -0.5, 0.0, dest)
