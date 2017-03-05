@@ -1,0 +1,1 @@
+java -Djava.library.path=lib/opencv/mac -cp afpars.jar ch.fhnw.afpars.Main
