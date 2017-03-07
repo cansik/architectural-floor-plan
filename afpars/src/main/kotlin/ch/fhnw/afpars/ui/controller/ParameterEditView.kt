@@ -9,14 +9,20 @@ import ch.fhnw.afpars.util.format
 import ch.fhnw.afpars.util.toImage
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.embed.swing.SwingFXUtils
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.Callback
+import java.io.IOException
 import java.lang.reflect.Field
+import javax.imageio.ImageIO
 import kotlin.properties.Delegates
 
 /**
@@ -47,6 +53,8 @@ class ParameterEditView {
     var isOK : Boolean = false
 
     var inputFields = mutableListOf<RelationNumberField>()
+
+    var currentImage : AFImage? = null
 
     fun initView(algorithm: IAlgorithm, image: AFImage) {
         this.image = image
@@ -86,6 +94,8 @@ class ParameterEditView {
             if (newValue != null) {
                 previewImage.resetZoom()
                 previewImage.displayImage(newValue.image.toImage())
+
+                currentImage = newValue
             }
         }
 
@@ -102,6 +112,31 @@ class ParameterEditView {
         isOK = false
         val stage = previewImage.scene.window as Stage
         stage.close()
+    }
+
+    fun saveButtonClicked(e : ActionEvent)
+    {
+        if(currentImage == null)
+            return
+
+        val stage = (e.source as Node).scene.window as Stage
+
+        val fileChooser = FileChooser()
+        fileChooser.initialFileName = "${currentImage!!.name}.png"
+        fileChooser.title = "Save image as png"
+        fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("Portable Network Graphics", "*.png"))
+
+        val file = fileChooser.showSaveDialog(stage)
+
+        if (file != null) {
+            val outputImage = currentImage!!.image.toImage()
+
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(outputImage, null), "png", file)
+            } catch (e: IOException) {
+                println("Error: $e")
+            }
+        }
     }
 
     private fun runAlgorithm() {

@@ -177,6 +177,7 @@ class ExperimentsView {
                             CascadeClassifierDetector(AFImage.DOOR_CASCADE, AFImage.DOOR_ATTRIBUTE_NAME),
                             MorphologicalTransform(),
                             GapClosingAlgorithm(),
+                            NikieRoomDetection(),
                             ConnectedComponentDetection()
                     ).toTypedArray()
             ), destination,
