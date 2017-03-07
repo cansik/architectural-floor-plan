@@ -12,11 +12,14 @@
                      layoutY="14.0" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="166.0"
                      AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="14.0"/>
 
-        <Button layoutX="514.0" layoutY="344.0" mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
-                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="39.0"/>
+        <Button mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="20.0"/>
 
-        <Button layoutX="458.0" layoutY="344.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="Cancel"
-                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="95.0"/>
+        <Button mnemonicParsing="false" onAction="#saveButtonClicked" text="Save Image"
+                AnchorPane.bottomAnchor="140.0" AnchorPane.rightAnchor="20.0"/>
+
+        <Button mnemonicParsing="false" onAction="#cancelButtonClicked" text="Cancel"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="75.0"/>
 
         <VBox fx:id="editControlBox" layoutX="13.0" layoutY="270.0" prefHeight="141.0" prefWidth="450.0"
               AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="150.0"/>
