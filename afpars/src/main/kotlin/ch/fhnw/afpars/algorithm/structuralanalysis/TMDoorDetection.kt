@@ -14,7 +14,7 @@ import org.opencv.imgproc.Imgproc
 class TMDoorDetection : IAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.image
-        val templ = Imgcodecs.imread("data/door.png")
+        val templ = Imgcodecs.imread("template/door.png")
         val match_method = Imgproc.TM_CCOEFF_NORMED
 
         history.add(AFImage(templ, "Template"))
@@ -37,47 +37,17 @@ class TMDoorDetection : IAlgorithm {
         val mmr = Core.minMaxLoc(result)
 
         val matchLoc: Point
-        if (match_method === Imgproc.TM_SQDIFF || match_method === Imgproc.TM_SQDIFF_NORMED) {
+        if (match_method == Imgproc.TM_SQDIFF || match_method == Imgproc.TM_SQDIFF_NORMED) {
             matchLoc = mmr.minLoc
         } else {
             matchLoc = mmr.maxLoc
         }
 
         // / Show me what you got
-        Imgproc.rectangle(img, matchLoc, Point(matchLoc.x + templ.cols(),
-                matchLoc.y + templ.rows()), Scalar(0.0, 255.0, 0.0))
+        Imgproc.rectangle(img, Point(matchLoc.x + templ.width(),
+                matchLoc.y + templ.height()), matchLoc, Scalar(0.0, 255.0, 0.0))
 
         return AFImage(img, "Result")
-    }
-
-    fun combineLines(lines: Mat, maxDistance: Double): List<AFLine> {
-        val combined = mutableListOf<AFLine>()
-
-        // add marker column
-        lines.reshape(lines.cols() + 1, lines.rows())
-
-        for (r in 0..lines.rows()) {
-
-            // check if already marked
-            if (lines[r, 4][0] == 1.0)
-                continue
-
-            // mark this one
-            lines[r, 4][0] = 1.0
-
-            // search nearest line for start and endpoint
-
-        }
-
-        return combined
-    }
-
-    class AFLine(p1: AFPoint, p2: AFPoint) {
-
-    }
-
-    class AFPoint(x: Double, y: Double) {
-
     }
 
     override val name: String
