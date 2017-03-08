@@ -47,7 +47,8 @@ class ExperimentsView {
 
         for (i in 0..50) {
             val p = Point(Math.random() * image.width(), Math.random() * image.height())
-            Imgproc.circle(image, p, 5, Scalar(0.0, 255.0, 0.0))
+            Imgproc.circle(image, p, 2, Scalar(0.0, 255.0, 0.0))
+            Imgproc.circle(image, p, 30, Scalar(255.0, 100.0, 0.0))
             points.add(p)
         }
 
@@ -55,7 +56,7 @@ class ExperimentsView {
         val sparsePoints = points.sparsePoints(30.0).combinePoints()
 
         for (p in sparsePoints)
-            Imgproc.circle(image, p, 8, Scalar(0.0, 0.0, 255.0))
+            Imgproc.circle(image, p, 3, Scalar(0.0, 0.0, 255.0))
 
         imageViewOriginal.newImage(image.toImage())
     }
