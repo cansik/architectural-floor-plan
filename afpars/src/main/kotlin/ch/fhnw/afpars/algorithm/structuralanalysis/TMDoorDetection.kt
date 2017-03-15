@@ -1,9 +1,9 @@
 package ch.fhnw.afpars.algorithm.structuralanalysis
 
+import ch.fhnw.afpars.algorithm.AlgorithmParameter
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.convert
-import ch.fhnw.afpars.util.zeros
+import ch.fhnw.afpars.util.*
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
@@ -12,6 +12,9 @@ import org.opencv.imgproc.Imgproc
  * Created by cansik on 08.11.16.
  */
 class TMDoorDetection : IAlgorithm {
+    @AlgorithmParameter(name = "Threshold", minValue = 0.0, maxValue = 255.0)
+    var treshold = 250.0
+
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
         val img = image.image
         val templ = Imgcodecs.imread("template/door.png")
@@ -46,6 +49,18 @@ class TMDoorDetection : IAlgorithm {
         // / Show me what you got
         Imgproc.rectangle(img, Point(matchLoc.x + templ.width(),
                 matchLoc.y + templ.height()), matchLoc, Scalar(0.0, 255.0, 0.0))
+
+        // find multiple door results
+        val gray = corrleationMap.convert(CvType.CV_8U).copy()
+        gray.threshold(treshold)
+
+        val contourOutput = image.image.copy()
+        val contours = gray.findContours()
+
+        contours.drawContours(contourOutput, color = Scalar(0.0, 0.0, 255.0), thickness = 3)
+
+        history.add(AFImage(gray, "gray"))
+        history.add(AFImage(contourOutput, "doors (${contours.contours.size})"))
 
         return AFImage(img, "Result")
     }
