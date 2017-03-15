@@ -123,7 +123,7 @@ class ExperimentsView {
             workflowEngine.run(Workflow(
                     arrayListOf(
                             //MorphologicalTransform(),
-                            OrbDetection()
+                            TMDoorDetection()
                     ).toTypedArray()
             ), destination,
                     true)
