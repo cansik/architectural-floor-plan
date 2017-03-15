@@ -7,6 +7,7 @@ import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
 import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
 import ch.fhnw.afpars.algorithm.semanticanalysis.NikieRoomDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
+import ch.fhnw.afpars.algorithm.structuralanalysis.OrbDetection
 import ch.fhnw.afpars.algorithm.structuralanalysis.ShapeDistanceMatching
 import ch.fhnw.afpars.algorithm.structuralanalysis.TMDoorDetection
 import ch.fhnw.afpars.io.reader.AFImageReader
@@ -122,7 +123,7 @@ class ExperimentsView {
             workflowEngine.run(Workflow(
                     arrayListOf(
                             //MorphologicalTransform(),
-                            TMDoorDetection()
+                            OrbDetection()
                     ).toTypedArray()
             ), destination,
                     true)

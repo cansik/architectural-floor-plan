@@ -19,11 +19,10 @@ class OrbDetection : IAlgorithm {
         get() = "ORB Detection"
 
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
-        val areas = MatOfRect(image.attributes[AFImage.DOOR_ATTRIBUTE_NAME])
         val featureMatcher = SimpleFeatureMatcher()
 
         // load default door and extract features
-        val doorTemplate = Imgcodecs.imread("data/door.png")
+        val doorTemplate = Imgcodecs.imread("template/door.png")
         val thresholdDoor = doorTemplate.zeros()
 
         Imgproc.cvtColor(doorTemplate, thresholdDoor, Imgproc.COLOR_BGR2GRAY)
