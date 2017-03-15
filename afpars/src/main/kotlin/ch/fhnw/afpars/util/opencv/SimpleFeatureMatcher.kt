@@ -7,6 +7,15 @@ import org.opencv.core.MatOfKeyPoint
 import org.opencv.features2d.DescriptorExtractor
 import org.opencv.features2d.DescriptorMatcher
 import org.opencv.features2d.FeatureDetector
+import com.sun.xml.internal.ws.streaming.XMLStreamReaderUtil.close
+import java.io.OutputStreamWriter
+import java.io.FileOutputStream
+import java.io.File
+import org.bytedeco.javacpp.Loader.getCacheDir
+
+
+
+
 
 /**
  * Created by cansik on 03.01.17.
@@ -18,6 +27,16 @@ class SimpleFeatureMatcher(detectorType: Int = FeatureDetector.ORB,
     private val detector = FeatureDetector.create(detectorType)
     private val extractor = DescriptorExtractor.create(extractorType)
     private val matcher = DescriptorMatcher.create(matcherType)
+
+    init {
+        // set arguments
+        val outputDir = getCacheDir()
+        val outputFile = File.createTempFile("orbDetectorParams", ".YAML", outputDir)
+        writeToFile(outputFile, "%YAML:1.0\nscaleFactor: 1.2\nnLevels: 8\nfirstLevel: 0 \nedgeThreshold: 31\npatchSize: 31\nWTA_K: 2\nscoreType: 1\nnFeatures: 500\n")
+        detector.read(outputFile.path)
+
+        println("detector read parameter")
+    }
 
     fun extract(image: Mat): FeatureExtractionResult {
         val keypoints = MatOfKeyPoint()
@@ -38,5 +57,13 @@ class SimpleFeatureMatcher(detectorType: Int = FeatureDetector.ORB,
         val matches = MatOfDMatch()
         matcher.match(descriptors1, descriptors2, matches)
         return matches
+    }
+
+    private fun writeToFile(file: File, data: String) {
+        val stream = FileOutputStream(file)
+        val outputStreamWriter = OutputStreamWriter(stream)
+        outputStreamWriter.write(data)
+        outputStreamWriter.close()
+        stream.close()
     }
 }
