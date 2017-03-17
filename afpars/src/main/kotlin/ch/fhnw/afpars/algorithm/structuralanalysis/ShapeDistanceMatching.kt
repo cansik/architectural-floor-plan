@@ -1,11 +1,8 @@
 package ch.fhnw.afpars.algorithm.structuralanalysis
 
 import ch.fhnw.afpars.model.AFImage
-import ch.fhnw.afpars.util.approxPolyDP
-import ch.fhnw.afpars.util.zeros
-import org.opencv.core.Mat
-import org.opencv.core.MatOfPoint
-import org.opencv.core.Scalar
+import ch.fhnw.afpars.util.*
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import java.util.*
 
@@ -18,29 +15,29 @@ class ShapeDistanceMatching : ch.fhnw.afpars.algorithm.IAlgorithm {
         get() = "BaseShape Distance Matching"
 
     override fun run(image: ch.fhnw.afpars.model.AFImage, history: MutableList<ch.fhnw.afpars.model.AFImage>): ch.fhnw.afpars.model.AFImage {
-        val areas = org.opencv.core.MatOfRect(image.attributes[AFImage.DOOR_ATTRIBUTE_NAME])
+        val areas = MatOfRect(image.attributes[AFImage.DOOR_ATTRIBUTE_NAME])
 
         // load default door contour
-        val doorTemplate = org.opencv.imgcodecs.Imgcodecs.imread("data/door.png")
+        val doorTemplate = org.opencv.imgcodecs.Imgcodecs.imread("template/door.png")
         val thresholdDoor = doorTemplate.zeros()
 
-        org.opencv.imgproc.Imgproc.cvtColor(doorTemplate, thresholdDoor, org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY)
-        org.opencv.imgproc.Imgproc.threshold(thresholdDoor, thresholdDoor, 128.0, 255.0, org.opencv.imgproc.Imgproc.THRESH_BINARY_INV)
+        Imgproc.cvtColor(doorTemplate, thresholdDoor, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.threshold(thresholdDoor, thresholdDoor, 128.0, 255.0, Imgproc.THRESH_BINARY_INV)
 
-        val doorContours = java.util.ArrayList<org.opencv.core.MatOfPoint>()
-        org.opencv.imgproc.Imgproc.findContours(thresholdDoor, doorContours, org.opencv.core.Mat(), org.opencv.imgproc.Imgproc.RETR_LIST, org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE)
+        val doorContours = ArrayList<MatOfPoint>()
+        Imgproc.findContours(thresholdDoor, doorContours, Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE)
 
         // approx contour
         val doorContour = doorContours[0].approxPolyDP()
-        val doorArea = org.opencv.imgproc.Imgproc.contourArea(doorContour)
+        val doorArea = Imgproc.contourArea(doorContour)
 
-        org.opencv.imgproc.Imgproc.drawContours(doorTemplate, listOf(doorContour), -1, org.opencv.core.Scalar(255.0, 0.0, 0.0))
+        Imgproc.drawContours(doorTemplate, listOf(doorContour), -1, Scalar(255.0, 0.0, 0.0))
         history.add(ch.fhnw.afpars.model.AFImage(doorTemplate, "Door Template"))
 
-        val doors = mutableListOf<Pair<Double, org.opencv.core.Mat>>()
+        val doors = mutableListOf<Pair<Double, Mat>>()
 
         // process all segments
-        loop@ for (rect in areas.toArray().sortedByDescending(org.opencv.core.Rect::area)) {
+        loop@ for (rect in areas.toArray().sortedByDescending(Rect::area)) {
             val part = Mat(image.image, rect)
             val thresholdImage = part.zeros()
 
@@ -79,8 +76,7 @@ class ShapeDistanceMatching : ch.fhnw.afpars.algorithm.IAlgorithm {
         }
 
         doors.sortByDescending { it.first }
-
-        doors.mapTo(history) { AFImage(it.second, "Match: ${it.first}") }
+        doors.filter { it.first > 20.0 }.mapIndexedTo(history) { i, it -> AFImage(it.second, "$i Match: ${it.first}") }
 
         return image
     }
