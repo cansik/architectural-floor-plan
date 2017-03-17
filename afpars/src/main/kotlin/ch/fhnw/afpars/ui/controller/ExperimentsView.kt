@@ -77,7 +77,7 @@ class ExperimentsView {
 
             workflowEngine.run(Workflow(
                     arrayListOf(
-                            CascadeClassifierDetector(AFImage.DOOR_CASCADE, AFImage.DOOR_ATTRIBUTE_NAME),
+                            CascadeClassifierDetector("cascade-files/cascade_thicken.xml", AFImage.DOOR_ATTRIBUTE_NAME),
                             ShapeDistanceMatching()
                     ).toTypedArray()
             ), destination,
