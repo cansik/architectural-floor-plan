@@ -39,10 +39,30 @@ class SimplifiedGapClosing :IAlgorithm{
             val offsetX = offset * rect.width
             val offsetY = offset * rect.height
 
+            var newXPoint = rect.x - offsetX.toInt()
+            var newYPoint = rect.y - offsetY.toInt()
+            var newXHeight = rect.width + (offsetX * 2.0).toInt()
+            var newYHeight = rect.height + (offsetY * 2.0).toInt()
+            if(newXPoint<0){ newXPoint =0}
+            if(newXPoint>original.image.width()){newXPoint =0}
+            if(newYPoint<0){ newYPoint =0}
+            if(newYPoint>original.image.height()){newYPoint =0}
+            if(newXPoint+newXHeight<0){ newXHeight =0}
+            if(newXPoint+newXHeight>original.image.width()){newXHeight = original.image.width()-newXPoint}
+            if(newYPoint+newYHeight<0){ newYHeight =0}
+            if(newYPoint+newYHeight>original.image.height()){
+                newYHeight =original.image.height()-newYPoint
+            }
+
+            /*
             val offsetRect = Rect(rect.x - offsetX.toInt(),
                                 rect.y - offsetY.toInt(),
                                 rect.width + (offsetX * 2.0).toInt(),
-                                rect.height + (offsetY * 2.0).toInt())
+                                rect.height + (offsetY * 2.0).toInt())*/
+            val offsetRect = Rect(newXPoint,
+                    newYPoint,
+                    newXHeight,
+                    newYHeight)
 
             val part = Mat(original.image, offsetRect)
             val thresholdImage = part.zeros()
