@@ -32,4 +32,4 @@ gradle.bat build
 ## About
 *FHNW Bachelor Computer Science*
 
-*Alexander Wyss and Florian Bruggisser*
+*Alexander Wyss and [Florian Bruggisser](mailto:florian@bildspur.ch)*
