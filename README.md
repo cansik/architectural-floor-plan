@@ -11,9 +11,9 @@ The used workflow consists of several algorithms, that are combined to deliver t
 The software is still a prototype and not packaged into an executable. To run the software, you have to run the `run.sh` (Unix) or `run.bat` \ `run64.bat`  (Windows).
 
 ## Development prerequisites
-For development on the existing project, you have to install the JDK 8 (Java Development Kit). The download link to the JDK is the following:
+For development on the existing project, you have to install the Oracle JDK 8 (Java Development Kit) (*OpenJDK is not supported*). The download link to the JDK is the following:
 
-[JDK 8 Download](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+[Oracle JDK 8 Download](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 The project itself can be built with the [gradle build tool](https://gradle.org/).
 
