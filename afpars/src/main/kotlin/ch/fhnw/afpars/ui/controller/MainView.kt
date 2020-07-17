@@ -3,7 +3,6 @@ package ch.fhnw.afpars.ui.controller
 import ch.fhnw.afpars.algorithm.IAlgorithm
 import ch.fhnw.afpars.algorithm.informationsegmentation.MorphologicalTransform
 import ch.fhnw.afpars.algorithm.semanticanalysis.ConnectedComponentDetection
-import ch.fhnw.afpars.algorithm.semanticanalysis.GapClosingAlgorithm
 import ch.fhnw.afpars.algorithm.semanticanalysis.SimplifiedGapClosing
 import ch.fhnw.afpars.algorithm.structuralanalysis.CascadeClassifierDetector
 import ch.fhnw.afpars.algorithm.structuralanalysis.ExteriorWallClosing
@@ -39,7 +38,6 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.bytedeco.javacpp.Loader
 import org.bytedeco.opencv.opencv_java
-import org.opencv.core.Core
 import org.opencv.core.Mat
 import java.nio.file.Files
 
@@ -115,8 +113,7 @@ class MainView {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
         Loader.load(opencv_java::class.java)
 
-        image.addListener {
-            o ->
+        image.addListener { _ ->
             imageUpdated()
         }
 
@@ -141,7 +138,7 @@ class MainView {
         }
 
         // on change, edit all polygons in layers
-        rulerTool.pixelLength.addListener { o ->
+        rulerTool.pixelLength.addListener { _ ->
             canvas.layers.forEach { l ->
                 l.shapes.filterIsInstance<RoomPolygonShape>().forEach {
                     it.relation = rulerTool.pixelLength.value
@@ -180,11 +177,11 @@ class MainView {
             cancelWorkflowButton.managedProperty().bind(cancelWorkflowButton.visibleProperty())
 
             // setup treeview
-            layerTreeView.selectionModel.selectedItemProperty().addListener { o -> markSelectedItem() }
+            layerTreeView.selectionModel.selectedItemProperty().addListener { _ -> markSelectedItem() }
 
             // setup task model
-            UITask.status.addListener { o -> statusLabel.text = UITask.status.value }
-            UITask.running.addListener { o -> progressIndicator.isVisible = UITask.running.value }
+            UITask.status.addListener { _ -> statusLabel.text = UITask.status.value }
+            UITask.running.addListener { _ -> progressIndicator.isVisible = UITask.running.value }
 
             setWorkflowStopMode()
 
@@ -195,7 +192,7 @@ class MainView {
     }
 
     fun imageUpdated() {
-        Platform.runLater({
+        Platform.runLater {
             val afImage = image.value
             canvas.displayImage(afImage.image.toImage())
 
@@ -214,10 +211,10 @@ class MainView {
             canvas.activeTool = viewTool
             updateLayers()
             canvas.redraw()
-        })
+        }
     }
 
-    fun runWorkflow(e: ActionEvent) {
+    fun runWorkflow() {
         if (canvas.layers.size < 2) {
             println("Please load a picture first!")
             return
@@ -230,7 +227,7 @@ class MainView {
         workflowEngine.run(defaultWorkflow, image.value, true, true)
     }
 
-    fun nextStep(e: ActionEvent) {
+    fun nextStep() {
         progressIndicator.isVisible = true
         MatRender.render(workflowEngine.currentImage.image, canvas.activeLayer.shapes)
         workflowEngine.nextStep()
@@ -247,7 +244,7 @@ class MainView {
         for (layer in canvas.layers.reversed()) {
             val layerItem = CheckBoxTreeItem(TagItem(item = layer))
             layerItem.isSelected = layer.visible
-            layerItem.selectedProperty().addListener { o ->
+            layerItem.selectedProperty().addListener { _ ->
                 run {
                     layer.visible = layerItem.isSelected
                     canvas.redraw()
@@ -258,7 +255,7 @@ class MainView {
             for (shape in layer.shapes) {
                 val shapeItem = CheckBoxTreeItem(TagItem(item = shape))
                 shapeItem.isSelected = layer.visible
-                shapeItem.selectedProperty().addListener { o ->
+                shapeItem.selectedProperty().addListener { _ ->
                     run {
                         shape.visible = shapeItem.isSelected
                         canvas.redraw()
@@ -277,7 +274,7 @@ class MainView {
         updateLayers()
     }
 
-    fun loadImageFromClipBoard(e: ActionEvent) {
+    fun loadImageFromClipBoard() {
         val cb = Clipboard.getSystemClipboard()
         if (cb.hasImage()) {
             val afImg = AFImage(cb.image.toMat())
@@ -308,7 +305,7 @@ class MainView {
     {
         // resize if needed
         if(afImg.image.width() > MAX_TEXTURE_SIZE || afImg.image.height() > MAX_TEXTURE_SIZE) {
-            var nimg = Mat()
+            var nimg: Mat
 
             if (afImg.image.width() > afImg.image.height())
                 nimg = afImg.image.resize(MAX_TEXTURE_SIZE, 0)
@@ -350,7 +347,7 @@ class MainView {
         }
     }
 
-    fun cancelWorkflow(e: ActionEvent) {
+    fun cancelWorkflow() {
         workflowEngine.cancelRequested = true
         workflowEngine.nextStep()
     }
@@ -366,7 +363,7 @@ class MainView {
 
         val result = dialog.showAndWait()
 
-        result.ifPresent({ layerName ->
+        result.ifPresent { layerName ->
             val layer = canvas.layers.single { it.name == layerName }
             val fileChooser = FileChooser()
             fileChooser.initialFileName = "${layerName.toLowerCase()}.svg"
@@ -383,7 +380,7 @@ class MainView {
 
                 Files.write(file.toPath(), listOf(svg.svgDocument))
             }
-        })
+        }
     }
 
     fun exportToCSV(e : ActionEvent)
@@ -419,21 +416,21 @@ class MainView {
         }
     }
 
-    fun removeItem(e : ActionEvent)
+    fun removeItem()
     {
         removeSelectedItem()
     }
 
     private fun updateBreadCrump(currentAlgorithm: IAlgorithm) {
-        Platform.runLater({
+        Platform.runLater {
             breadCrumbBox.items.clear()
             breadCrumbBox.items.addAll(defaultWorkflow.algorithms.map { it.name })
             breadCrumbBox.selectionModel.select(currentAlgorithm.name)
-        })
+        }
     }
 
     private fun setWorkflowRunningMode() {
-        Platform.runLater({
+        Platform.runLater {
             runWorkflowButton.isVisible = false
 
             breadCrumbBox.isVisible = true
@@ -445,7 +442,7 @@ class MainView {
             loadFromClipBoardButton.isDisable = true
 
             progressIndicator.isVisible = true
-        })
+        }
     }
 
     private fun setWorkflowStopMode() {

@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox
  */
 class PreviewImageView : ImageView() {
 
-    private val MIN_PIXELS = 10
+    private val minPixels = 10
 
     fun newImage(image: Image) {
         this.image = image
@@ -28,22 +28,22 @@ class PreviewImageView : ImageView() {
 
         val mouseDown = SimpleObjectProperty<Point2D>()
 
-        setOnMousePressed({ e ->
+        setOnMousePressed { e ->
             if (image == null) return@setOnMousePressed
 
             val mousePress = imageViewToImage(this, Point2D(e.x, e.y))
             mouseDown.set(mousePress)
-        })
+        }
 
-        setOnMouseDragged({ e ->
+        setOnMouseDragged { e ->
             if (image == null) return@setOnMouseDragged
 
             val dragPoint = imageViewToImage(this, Point2D(e.x, e.y))
             shift(this, dragPoint.subtract(mouseDown.get()))
             mouseDown.set(imageViewToImage(this, Point2D(e.x, e.y)))
-        })
+        }
 
-        setOnScroll({ e ->
+        setOnScroll { e ->
             if (image == null) return@setOnScroll
 
             val delta = e.deltaY
@@ -52,7 +52,7 @@ class PreviewImageView : ImageView() {
             val scale = clamp(Math.pow(1.01, delta),
 
                     // don't scale so we're zoomed in to fewer than MIN_PIXELS in any direction:
-                    Math.min(MIN_PIXELS / viewport.width, MIN_PIXELS / viewport.height),
+                    Math.min(minPixels / viewport.width, minPixels / viewport.height),
 
                     // don't scale so that we're bigger than image dimensions:
                     Math.max(image.width / viewport.width, image.height / viewport.height))
@@ -79,22 +79,22 @@ class PreviewImageView : ImageView() {
                     0.0, image.height - newHeight)
 
             setViewport(Rectangle2D(newMinX, newMinY, newWidth, newHeight))
-        })
+        }
 
-        setOnMouseClicked({ e ->
+        setOnMouseClicked { e ->
             if (image === null) return@setOnMouseClicked
 
-            if (e.clickCount === 2) {
+            if (e.clickCount == 2) {
                 reset(this, image.width, image.height)
             }
-        })
+        }
     }
 
     private fun createButtons(width: Double, height: Double, imageView: ImageView): HBox {
         val reset = Button("Reset")
-        reset.setOnAction({ e -> reset(imageView, width / 2, height / 2) })
+        reset.setOnAction { reset(imageView, width / 2, height / 2) }
         val full = Button("Full view")
-        full.setOnAction({ e -> reset(imageView, width, height) })
+        full.setOnAction { reset(imageView, width, height) }
         val buttons = HBox(10.0, reset, full)
         buttons.alignment = Pos.CENTER
         buttons.padding = Insets(10.0)

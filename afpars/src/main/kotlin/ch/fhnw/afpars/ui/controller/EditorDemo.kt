@@ -10,7 +10,6 @@ import ch.fhnw.afpars.ui.control.editor.tools.OvalTool
 import ch.fhnw.afpars.ui.control.editor.tools.RectangleTool
 import ch.fhnw.afpars.ui.control.editor.tools.ViewTool
 import ch.fhnw.afpars.util.toImage
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.geometry.Dimension2D
 import javafx.scene.paint.ImagePattern
@@ -29,23 +28,23 @@ class EditorDemo {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
     }
 
-    fun viewToolClicked(e: ActionEvent) {
+    fun viewToolClicked() {
         editor.activeTool = ViewTool()
     }
 
-    fun ellipseToolClicked(e: ActionEvent) {
+    fun ellipseToolClicked() {
         editor.activeTool = OvalTool()
     }
 
-    fun lineToolClicked(e: ActionEvent) {
+    fun lineToolClicked() {
         editor.activeTool = LineTool()
     }
 
-    fun rectangleToolClicked(e: ActionEvent) {
+    fun rectangleToolClicked() {
         editor.activeTool = RectangleTool()
     }
 
-    fun loadImage(e: ActionEvent) {
+    fun loadImage() {
         val fileChooser = FileChooser()
         fileChooser.title = "Open image"
         val file = fileChooser.showOpenDialog(null)
@@ -74,7 +73,7 @@ class EditorDemo {
         }
     }
 
-    fun exportImage(e: ActionEvent) {
+    fun exportImage() {
         val fileChooser = FileChooser()
         fileChooser.title = "Export image"
         val file = fileChooser.showSaveDialog(null)

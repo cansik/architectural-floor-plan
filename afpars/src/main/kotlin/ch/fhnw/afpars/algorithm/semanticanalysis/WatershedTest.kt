@@ -28,7 +28,7 @@ class WatershedTest : IAlgorithm {
 
         history.add(AFImage(mRgba.copy(), "BW"))
 
-        var res = Core.minMaxLoc(mRgba)
+        Core.minMaxLoc(mRgba)
 
 
 

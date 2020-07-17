@@ -28,7 +28,7 @@ class RectangleRoomDetection : IAlgorithm {
         //Canny
         Imgproc.cvtColor(img.image, img.image, Imgproc.COLOR_BGR2GRAY)
         Imgproc.GaussianBlur(img.image, img.image, Size(11.0, 11.0), 0.0, 0.0)
-        val otsu_thresh_val = Imgproc.threshold(img.image, img.image, 0.0, 255.0, Imgproc.THRESH_OTSU)
+        Imgproc.threshold(img.image, img.image, 0.0, 255.0, Imgproc.THRESH_OTSU)
         Imgproc.Canny(img.image, img.image, threshHold1, threshHold2, apertureSize, true)
 
 

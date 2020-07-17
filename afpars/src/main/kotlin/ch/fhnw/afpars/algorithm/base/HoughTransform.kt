@@ -13,15 +13,14 @@ import org.opencv.imgproc.Imgproc
 class HoughTransform : IAlgorithm {
     override fun run(image: AFImage, history: MutableList<AFImage>): AFImage {
 
-        var destination = image.image
+        val destination = image.image
 
         //Canny Image
         //val dilation_size1 = 8
         //val element2 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * dilation_size1 + 1.0, 2.0 * dilation_size1 + 1.0))
         //Imgproc.erode(destination,destination,element2)
-        var canny = Mat()
+        val canny = Mat()
         //Imgproc.blur(destination, canny, Size(3.0,3.0) );
-        val threshlow = 1.0
         Imgproc.Canny(destination, canny, 50.0, 150.0);
 
         //HoughTransformation (result = nx4)

@@ -71,20 +71,20 @@ class ImageEditor : Pane() {
         style = "-fx-background-color: #696969;"
 
         // setup resize
-        widthProperty().addListener { o -> resize() }
-        heightProperty().addListener { o -> resize() }
+        widthProperty().addListener { _ -> resize() }
+        heightProperty().addListener { _ -> resize() }
 
         // setup clipping
         clip = outputClip
 
-        layoutBoundsProperty().addListener({ ov, oldValue, newValue ->
+        layoutBoundsProperty().addListener { _, _, newValue ->
             outputClip.width = newValue.width
             outputClip.height = newValue.height
-        })
+        }
 
         // set cursor
         cursor = activeTool.cursor
-        activeToolProperty.addListener { o -> cursor = activeTool.cursor }
+        activeToolProperty.addListener { _ -> cursor = activeTool.cursor }
 
         // tool listeners
         // canvas

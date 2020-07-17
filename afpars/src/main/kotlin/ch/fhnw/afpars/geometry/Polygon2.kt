@@ -32,13 +32,6 @@ class Polygon2() : Serializable {
         return inside
     }
 
-    /**
-     * Finds the best position to insert the point.
-     */
-    fun addPoint(p: Vector2) {
-
-    }
-
     companion object {
 
         private const val serialVersionUID = 1L

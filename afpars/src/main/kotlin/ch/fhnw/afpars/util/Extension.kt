@@ -83,7 +83,7 @@ fun Mat.geodesicDilate(mask: Mat, elementSize: Int, dest: Mat) {
     val img = this.clone()
     val element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0 * elementSize + 1.0, 2.0 * elementSize + 1.0))
 
-    var last = img.zeros()
+    var last: Mat
     val next = img.copy()
     do {
         last = next.copy()
@@ -205,7 +205,7 @@ fun Mat.connectedComponents(connectivity: Int = 8, ltype: Int = CvType.CV_32S): 
     return labeled
 }
 
-fun Mat.connectedComponentsWithStats(connectivity: Int = 8, ltype: Int = CvType.CV_32S): ConnectedComponentsResult {
+fun Mat.connectedComponentsWithStats(): ConnectedComponentsResult {
     val labeled = this.zeros()
     val rectComponents = Mat()
     val centComponents = Mat()

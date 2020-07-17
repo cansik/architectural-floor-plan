@@ -69,7 +69,7 @@ class ParameterEditView {
         fields.forEach { createFieldElement(it) }
 
         historyListView.items = historyImages
-        historyListView.cellFactory = Callback { listView ->
+        historyListView.cellFactory = Callback { _ ->
             object : ListCell<AFImage>() {
                 override fun updateItem(item: AFImage?, empty: Boolean) {
                     if (item != null) {
@@ -90,7 +90,7 @@ class ParameterEditView {
                 }
             }
         }
-        historyListView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        historyListView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 previewImage.resetZoom()
                 previewImage.displayImage(newValue.image.toImage())
@@ -203,7 +203,7 @@ class ParameterEditView {
             Double::class.java -> valueSlider.value = field.get(algorithm) as Double
         }
 
-        valueSlider.valueProperty().addListener { observableValue, old, new ->
+        valueSlider.valueProperty().addListener { _, _, new ->
             run {
                 when (field.type) {
                     Int::class.java -> field.set(algorithm, new.toInt())
