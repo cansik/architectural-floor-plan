@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="layoutPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="style/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.fhnw.afpars.ui.controller.MainView">
+    <top>
+        <AnchorPane prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #333333;" BorderPane.alignment="CENTER">
+            <children>
+                <ProgressIndicator fx:id="progressIndicator" layoutX="561.0" layoutY="18.0" prefHeight="25.0" prefWidth="25.0" AnchorPane.rightAnchor="14.0" />
+                <FlowPane hgap="5.0" layoutY="-2.0" prefHeight="60.0" prefWidth="750.0" vgap="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Button fx:id="loadFromFileButton" mnemonicParsing="false" onAction="#loadImageFromFile" text="Load File">
+                            <FlowPane.margin>
+                                <Insets />
+                            </FlowPane.margin>
+                        </Button>
+                        <Button fx:id="loadFromClipBoardButton" mnemonicParsing="false" onAction="#loadImageFromClipBoard" text="Load Clipboard" />
+                        <Separator orientation="VERTICAL" />
+                        <Button fx:id="runWorkflowButton" mnemonicParsing="false" onAction="#runWorkflow" text="Run Workflow" />
+                        <Label fx:id="breadCrumbLabel" text="Next Step:" textFill="WHITE" />
+                        <ChoiceBox fx:id="breadCrumbBox" prefWidth="200.0" />
+                        <Button fx:id="nextStepButton" mnemonicParsing="false" onAction="#nextStep" text="Next" />
+                        <Button fx:id="cancelWorkflowButton" mnemonicParsing="false" onAction="#cancelWorkflow" text="Cancel" />
+                        <Separator orientation="VERTICAL" />
+                        <Button mnemonicParsing="false" onAction="#exportLayer" text="Export SVG" />
+                        <Button mnemonicParsing="false" onAction="#exportToCSV" text="Export CSV" />
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </FlowPane>
+            </children>
+        </AnchorPane>
+    </top>
+    <left>
+        <FlowPane hgap="5.0" prefHeight="471.0" prefWidth="80.0" vgap="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button id="arrowButton" mnemonicParsing="false" onAction="#toolChanged" styleClass="toolButton" />
+                <Button id="rulerButton" mnemonicParsing="false" onAction="#toolChanged" styleClass="toolButton" />
+                <Button id="lineButton" mnemonicParsing="false" onAction="#toolChanged" styleClass="toolButton" />
+                <Button id="rectButton" mnemonicParsing="false" onAction="#toolChanged" styleClass="toolButton" />
+                <Button id="eraseButton" mnemonicParsing="false" onAction="#toolChanged" styleClass="toolButton" />
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </BorderPane.margin>
+        </FlowPane>
+    </left>
+    <bottom>
+        <FlowPane prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #696969;" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="statusLabel" text="Status" textFill="WHITE">
+               <FlowPane.margin>
+                  <Insets left="10.0" top="10.0" />
+               </FlowPane.margin></Label>
+            </children>
+        </FlowPane>
+    </bottom>
+    <center>
+        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+    </center>
+    <right>
+        <VBox prefHeight="500.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Layers">
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                    </VBox.margin>
+                </Label>
+                <TreeView fx:id="layerTreeView" prefWidth="260.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#removeItem" text="Remove" />
+                  <Label fx:id="roomSizeLabel" text="-">
+                     <HBox.margin>
+                        <Insets left="20.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            </children>
+        </VBox>
+    </right>
+</BorderPane>

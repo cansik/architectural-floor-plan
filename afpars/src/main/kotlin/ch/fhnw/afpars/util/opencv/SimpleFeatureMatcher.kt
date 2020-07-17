@@ -1,32 +1,25 @@
 package ch.fhnw.afpars.util.opencv
 
 import ch.fhnw.afpars.util.to8UC3
+import org.bytedeco.javacpp.Loader.getCacheDir
 import org.opencv.core.Mat
 import org.opencv.core.MatOfDMatch
 import org.opencv.core.MatOfKeyPoint
-import org.opencv.features2d.DescriptorExtractor
 import org.opencv.features2d.DescriptorMatcher
-import org.opencv.features2d.FeatureDetector
-import com.sun.xml.internal.ws.streaming.XMLStreamReaderUtil.close
-import java.io.OutputStreamWriter
-import java.io.FileOutputStream
+import org.opencv.features2d.DescriptorMatcher.BRUTEFORCE_HAMMING
+import org.opencv.features2d.Feature2D
+import org.opencv.features2d.ORB
 import java.io.File
-import org.bytedeco.javacpp.Loader.getCacheDir
-
-
-
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 
 
 /**
  * Created by cansik on 03.01.17.
  */
-class SimpleFeatureMatcher(detectorType: Int = FeatureDetector.ORB,
-                           extractorType: Int = DescriptorExtractor.ORB,
-                           matcherType: Int = DescriptorMatcher.BRUTEFORCE_HAMMING) {
-
-    private val detector = FeatureDetector.create(detectorType)
-    private val extractor = DescriptorExtractor.create(extractorType)
-    private val matcher = DescriptorMatcher.create(matcherType)
+class SimpleFeatureMatcher(private val detector: Feature2D = ORB.create(),
+                           private val extractor: Feature2D = ORB.create(),
+                           private val matcher: DescriptorMatcher = DescriptorMatcher.create(BRUTEFORCE_HAMMING)) {
 
     init {
         // set arguments

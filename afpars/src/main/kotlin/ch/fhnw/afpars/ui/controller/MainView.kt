@@ -37,6 +37,8 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import org.bytedeco.javacpp.Loader
+import org.bytedeco.opencv.opencv_java
 import org.opencv.core.Core
 import org.opencv.core.Mat
 import java.nio.file.Files
@@ -110,7 +112,8 @@ class MainView {
     lateinit var roomSizeLabel : Label
 
     init {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+        //System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+        Loader.load(opencv_java::class.java)
 
         image.addListener {
             o ->

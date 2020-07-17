@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import ch.fhnw.afpars.ui.control.PreviewImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+            prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.fhnw.afpars.ui.controller.ExperimentsView">
+    <children>
+        <Button layoutX="450.0" layoutY="600.0" mnemonicParsing="false" onAction="#testSparsePoint"
+                text="Sparse Points"/>
+        <Button layoutX="450.0" layoutY="516.0" mnemonicParsing="false" onAction="#testCascadeClassifer"
+                text="CC Door ShapeMatching"/>
+        <Button layoutX="234.0" layoutY="516.0" mnemonicParsing="false" onAction="#testOpenCV_Clicked"
+                text="Watershed"/>
+        <Button layoutX="120.0" layoutY="516.0" mnemonicParsing="false" onAction="#testScaleClicked"
+                text="Scale Test"/>
+        <Button layoutX="350.0" layoutY="516.0" mnemonicParsing="false" onAction="#testDoorDetectionClicked"
+                text="Door Test"/>
+        <PreviewImageView id="test" fx:id="imageViewResult" fitHeight="465.0" fitWidth="465.0" layoutX="575.0"
+                          layoutY="20.0"
+                          pickOnBounds="true" preserveRatio="true"
+                          style="-fx-border-color: black; -fx-border-width: 1.0;"
+                          styleClass="test"/>
+        <PreviewImageView fx:id="imageViewOriginal" fitHeight="465.0" fitWidth="465.0" layoutX="40.0" layoutY="20.0"
+                          pickOnBounds="true" preserveRatio="true"
+                          style="-fx-border-color: black; -fx-border-width: 1.0;"/>
+        <Button layoutX="773.0" layoutY="516.0" mnemonicParsing="false" onAction="#testImage_Clicked"
+                text="Image Test"/>
+    </children>
+</AnchorPane>

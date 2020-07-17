@@ -1,41 +1,65 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.beryx.jlink' version '2.12.0'
+}
+
 group 'ch.fhnw.afpars'
 version '1.0'
 
-buildscript {
-    ext.kotlin_version = '1.0.4'
+def javaCvVersion = '1.5.3'
 
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
-
-apply plugin: 'kotlin'
-apply plugin: 'idea'
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
-configurations {
-    all*.exclude group: 'org.bytedeco', module: 'javacpp-presets'
-}
-
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
+    // jfreesvg
     compile group: 'org.jfree', name: 'jfreesvg', version: '3.2'
 
-    compile files('lib/opencv/opencv-310.jar')
-    compile files('lib/javacv-bin/opencv.jar')
-    compile group: 'org.bytedeco', name: 'javacv', version: '1.2'
+    // javacv
+    compile group: 'org.bytedeco', name: 'javacv', version: "$javaCvVersion"
+    compile group: 'org.bytedeco', name: 'javacv-platform', version: "$javaCvVersion"
+
+    // opencv
+    compile group: 'org.bytedeco', name: 'opencv-platform', version: "4.3.0-$javaCvVersion"
+    compile group: 'org.bytedeco', name: 'openblas-platform', version: "0.3.9-$javaCvVersion"
+
+    // javafx
+    compile group: 'org.openjfx', name: 'javafx-base', version: '11.0.2'
+    compile group: 'org.openjfx', name: 'javafx-controls', version: '11.0.2'
+    compile group: 'org.openjfx', name: 'javafx-swing', version: '11.0.2'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 task fatJar(type: Jar) {
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'afpars'
+    }
+}
+
+application {
+    mainClassName = "$moduleName/ch/fhnw/afpars/Main"
 }

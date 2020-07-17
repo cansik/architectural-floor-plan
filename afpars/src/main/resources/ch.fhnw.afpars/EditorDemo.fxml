@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import ch.fhnw.afpars.ui.control.editor.ImageEditor?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.fhnw.afpars.ui.controller.EditorDemo">
+    <children>
+        <Button layoutX="29.0" layoutY="35.0" mnemonicParsing="false" text="View" AnchorPane.leftAnchor="29.0"
+                AnchorPane.topAnchor="35.0" onAction="#viewToolClicked"/>
+        <Button layoutX="31.0" layoutY="123.0" mnemonicParsing="false" text="Line" AnchorPane.leftAnchor="29.0"
+                AnchorPane.topAnchor="123.0" onAction="#lineToolClicked"/>
+        <Button layoutX="29.0" layoutY="76.0" mnemonicParsing="false" text="Rect" AnchorPane.leftAnchor="29.0"
+                AnchorPane.topAnchor="76.0" onAction="#rectangleToolClicked"/>
+        <Button layoutX="29.0" layoutY="160.0" mnemonicParsing="false" text="Ellipse" AnchorPane.leftAnchor="29.0"
+                AnchorPane.topAnchor="160.0" onAction="#ellipseToolClicked"/>
+        <Button layoutX="10.0" layoutY="5.0" mnemonicParsing="false" text="Load Image" AnchorPane.leftAnchor="10.0"
+                AnchorPane.topAnchor="5.0" onAction="#loadImage"/>
+
+        <Button layoutX="10.0" layoutY="200.0" mnemonicParsing="false" text="Export" AnchorPane.leftAnchor="10.0"
+                AnchorPane.topAnchor="200.0" onAction="#exportImage"/>
+        <ImageEditor fx:id="editor" layoutX="100.0" layoutY="31.0"
+                     style="-fx-background-color: #696969;" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="100.0"
+                     AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="31.0"/>
+    </children>
+</AnchorPane>

@@ -4,7 +4,6 @@ import ch.fhnw.afpars.util.opencv.cc.ConnectedComponentsResult
 import ch.fhnw.afpars.util.opencv.contour.ContourResult
 import javafx.scene.image.Image
 import javafx.scene.image.WritablePixelFormat
-import org.bytedeco.javacpp.opencv_core
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
@@ -130,8 +129,8 @@ fun Mat.negate(dest: Mat) {
     Core.subtract(invertedColorMatrix, this, dest)
 }
 
-fun Mat.convertToJavaCV(): opencv_core.Mat {
-    val jcvmat = opencv_core.Mat(this.rows(), this.cols(), CvType.CV_8UC3)
+fun Mat.convertToJavaCV(): org.bytedeco.opencv.opencv_core.Mat {
+    val jcvmat = org.bytedeco.opencv.opencv_core.Mat(this.rows(), this.cols(), CvType.CV_8UC3)
     val return_buff = ByteArray((this.total() * this.channels()).toInt())
     this.get(0, 0, return_buff)
     jcvmat.data().put(*return_buff)
@@ -165,7 +164,7 @@ fun Mat.findContours(method: Int = Imgproc.CHAIN_APPROX_SIMPLE): ContourResult {
     return ContourResult(nativeContours, hierarchy)
 }
 
-fun opencv_core.KeyPointVector.convertToOpenCV(): MatOfKeyPoint {
+fun org.bytedeco.opencv.opencv_core.KeyPointVector.convertToOpenCV(): MatOfKeyPoint {
     val matofkp = MatOfKeyPoint()
     val keyptlist = mutableListOf<KeyPoint>()
     for (i in 0..this.size()) {

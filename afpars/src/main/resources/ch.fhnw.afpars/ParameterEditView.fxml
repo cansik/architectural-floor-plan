@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import ch.fhnw.afpars.ui.control.editor.ImageEditor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="516.0"
+            prefWidth="790.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.fhnw.afpars.ui.controller.ParameterEditView">
+    <children>
+        <ImageEditor id="test" fx:id="previewImage" prefHeight="327.0" prefWidth="604.0" layoutX="166.0"
+                     layoutY="14.0" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="166.0"
+                     AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="14.0"/>
+
+        <Button mnemonicParsing="false" onAction="#nextButtonClicked" text="Next"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="20.0"/>
+
+        <Button mnemonicParsing="false" onAction="#saveButtonClicked" text="Save Image"
+                AnchorPane.bottomAnchor="140.0" AnchorPane.rightAnchor="20.0"/>
+
+        <Button mnemonicParsing="false" onAction="#cancelButtonClicked" text="Cancel"
+                AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="75.0"/>
+
+        <VBox fx:id="editControlBox" layoutX="13.0" layoutY="270.0" prefHeight="141.0" prefWidth="450.0"
+              AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="150.0"/>
+        <ListView fx:id="historyListView" layoutX="14.0" layoutY="14.0" prefHeight="211.0" prefWidth="141.0"
+                  AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0"/>
+    </children>
+</AnchorPane>

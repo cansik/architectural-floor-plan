@@ -1,0 +1,27 @@
+.toolButton {
+    -fx-background-size: 75% 75%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+}
+
+#arrowButton {
+    -fx-background-image: url("../images/navigate.png");
+}
+
+#lineButton {
+    -fx-background-image: url("../images/line.png");
+}
+
+#rectButton {
+    -fx-background-image: url("../images/rect.png");
+}
+
+#eraseButton {
+    -fx-background-image: url("../images/eraser.png");
+}
+
+#rulerButton {
+    -fx-background-image: url("../images/ruler.png");
+}
