@@ -1,22 +1,15 @@
-dist: trusty
+dist: xenial
 notifications:
   email: false
 language: java
-jdk:
-  - oraclejdk8
-
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
 
 # command to build
 install:
   - "cd afpars"
-  - "gradle assemble"
+  - "./gradlew assemble"
 
 # command to run tests
 script:
-  - "gradle check"
+  - "./gradlew check"
 
 after_success:
