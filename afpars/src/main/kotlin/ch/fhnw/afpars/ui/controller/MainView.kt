@@ -402,13 +402,14 @@ class MainView {
             val b = StringBuilder()
 
             // write header
-            b.append("id${seperator}name${seperator}size${seperator}pixel")
+            b.append("id${seperator}name${seperator}size${seperator}pixel${seperator}vertices(x,y)")
             b.append(System.lineSeparator())
 
             // write content
             val rooms = canvas.layers.single { it.name ==  ConnectedComponentDetection.ROOM_LAYER_NAME}.shapes
             rooms.filterIsInstance<RoomPolygonShape>().forEachIndexed { i, room ->
-                b.append("$i$seperator$room$seperator${room.areaInCentimeter()}$seperator${room.area()}")
+                b.append("$i$seperator$room$seperator${room.areaInCentimeter()}$seperator${room.area()}$seperator")
+                b.append(room.points.joinToString(seperator) { "${it.x},${it.y}" })
                 b.append(System.lineSeparator())
             }
 
