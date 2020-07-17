@@ -10,7 +10,7 @@ version '1.0'
 def javaCvVersion = '1.5.3'
 
 javafx {
-    version = "11"
+    version = "13"
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
