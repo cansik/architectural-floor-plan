@@ -13,10 +13,10 @@ The software is still a prototype and not packaged into an executable. To run th
 ```bash
 cd afpars
 
-// unix
+# unix / macOS
 ./gradlew run
 
-// windows
+# windows
 gradlew.bat run
 ```
 
@@ -28,10 +28,10 @@ The project itself can be built with the [gradle build tool](https://gradle.org/
 ```bash
 cd afpars
 
-// unix
+# unix / macOS
 ./gradlew build
 
-// windows
+# windows
 gradlew.bat build
 ```
 
