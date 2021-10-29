@@ -1,4 +1,4 @@
-# Automatic analysis and simplification of architectural floor plans [![Build Status](https://travis-ci.org/cansik/architectural-floor-plan.svg?branch=master)](https://travis-ci.org/cansik/architectural-floor-plan) [![codebeat badge](https://codebeat.co/badges/244f2179-f84e-4a39-8943-3285d0cf8337)](https://codebeat.co/projects/github-com-cansik-architectural-floor-plan)
+# Automatic analysis and simplification of architectural floor plans [![Build Status](https://travis-ci.org/cansik/architectural-floor-plan.svg?branch=master)](https://travis-ci.org/cansik/architectural-floor-plan) [![codebeat badge](https://codebeat.co/badges/244f2179-f84e-4a39-8943-3285d0cf8337)](https://codebeat.co/projects/github-com-cansik-architectural-floor-plan) [![DOI](https://zenodo.org/badge/69436030.svg)](https://zenodo.org/badge/latestdoi/69436030)
 This software is an architectural floor plan analysis and recognition system to create extended plans for building services.
 
 ## Abstract
