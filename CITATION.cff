@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Bruggisser"
+    given-names: "Florian"
+    orcid: "https://orcid.org/0009-0003-0645-6746"
+    affiliation: "FHNW"
+  - family-names: "Wyss"
+    given-names: "Alexander"
+    affiliation: "FHNW"
+title: "AFPARS - Automatic analysis and simplification of architectural floor plans"
+type: software
+version: "1.1.0"
+doi: "10.5281/zenodo.5614862"
+date-released: "2017-03-24"
+url: "https://github.com/cansik/architectural-floor-plan"
+repository-code: "https://github.com/cansik/architectural-floor-plan"
+keywords:
+  - floor plan
+  - architecture
+  - computer vision
+  - image processing
+  - pattern recognition
+  - building analysis
+  - plan simplification
+  - CAD
